@@ -1,0 +1,62 @@
+name: Bouwen en publiceren
+
+# De gratis uitgave. Bij elke tag wordt het losse html-bestand gebouwd,
+# aan de release gehangen en naar GitHub Pages gezet.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  bouwen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Bibliotheken ophalen
+        run: |
+          mkdir -p vendor && cd vendor
+          curl -sLO https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js
+          curl -sLO https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js
+          curl -sLO https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js
+
+      - name: Bouwen
+        run: python3 build.py --alleen-kern
+
+      - name: Controleren dat er geen betaalde code in zit
+        run: |
+          for term in "function renderBelasting" "function berekenPersoon" "g.HB_PRO ="; do
+            if grep -qF "$term" index.html; then
+              echo "::error::betaalde code in de publieke uitgave: $term"; exit 1
+            fi
+          done
+
+      - name: Aan de release hangen
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: index.html
+          generate_release_notes: true
+
+      - name: Naar Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+  publiceren:
+    needs: bouwen
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+    steps:
+      - uses: actions/deploy-pages@v4
