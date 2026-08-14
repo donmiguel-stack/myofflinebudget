@@ -1,0 +1,10 @@
+vendor/
+data.json
+budget.json
+*.local.json
+.DS_Store
+leningen.json
+cats_persoonlijk.json
+cattype.json
+lic_mike.txt
+tools/keys/private.pem
