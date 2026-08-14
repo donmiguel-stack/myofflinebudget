@@ -42,6 +42,7 @@
     catType: {},       // categorie -> 'vast' | 'vrij' | 'opname'
     potjes: [],        // reserveringen: {naam, doel, datum, stand}
     investeringen: [], // {id,type,naam,aantal,inleg,waarde,datum,notitie}
+    leningen: [],      // {id,naam,hoofdsom,pct,maanden,start,renteCum,toelichting}
     settings: { theme: 'auto', hideZak: true, jaar: null, lang: null, cur: 'EUR',
                 maandBasis: 'hist', inkomenOverride: null, budgetAlleMaanden: false }
   };
@@ -64,6 +65,7 @@
   }
 
   function load() {
+    var eigenLeningen = false;
     if (window.HB_BUDGET && !localStorage.getItem(STORE)) S.budget = Object.assign({}, window.HB_BUDGET);
     try {
       var raw = localStorage.getItem(STORE);
@@ -78,8 +80,23 @@
         S.investeringen = d.investeringen || [];
         S.settings = Object.assign(S.settings, d.settings || {});
         if (d.imported) S.imported = d.imported;
+        if (Object.prototype.hasOwnProperty.call(d, 'leningen')) { S.leningen = d.leningen || []; eigenLeningen = true; }
       }
     } catch (e) { console.warn('opslag lezen mislukt', e); }
+    // Stond er nog een lijst in het bronbestand (oude opzet), neem die dan één
+    // keer over. Daarna is de opslag leidend: wat je hier weghaalt, blijft weg.
+    if (!eigenLeningen && window.HB_LENINGEN && window.HB_LENINGEN.length) {
+      S.leningen = window.HB_LENINGEN.map(function (l, i) {
+        return {
+          id: 'oud' + i, naam: l.naam || ('Lening ' + (i + 1)),
+          hoofdsom: +l.hoofdsom || 0,
+          pct: (+l.pct || 0) * 100,          // stond als breuk in het bronbestand
+          maanden: Math.max(0, Math.round(+l.maanden || 0)),   // 0 = aflossingsvrij
+          start: l.renteVanaf || new Date().toISOString().slice(0, 10),
+          renteCum: +l.renteCum || 0, toelichting: l.toelichting || ''
+        };
+      });
+    }
   }
 
   function save() {
@@ -88,7 +105,7 @@
       localStorage.setItem(STORE, JSON.stringify({
         budget: S.budget, overrides: S.overrides, manual: S.manual, userRules: S.userRules,
         catType: S.catType, potjes: S.potjes || [], investeringen: S.investeringen || [], settings: S.settings,
-        imported: S.imported || []
+        imported: S.imported || [], leningen: S.leningen || []
       }));
       flash(T('saved'));
     } catch (e) { flash(T('save_failed', { e: e.message }), true); }
@@ -1361,7 +1378,8 @@
       versie: 1, gemaakt: new Date().toISOString(),
       budget: S.budget, overrides: S.overrides, manual: S.manual, userRules: S.userRules,
       catType: S.catType, potjes: S.potjes || [], investeringen: S.investeringen || [],
-      imported: S.imported || [], settings: S.settings
+      imported: S.imported || [], settings: S.settings,
+      leningen: S.leningen || []
     }, null, 1)], { type: 'application/json' });
     var a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -1396,6 +1414,7 @@
         S.catType = d.catType || {};
         S.potjes = d.potjes || [];
         S.investeringen = d.investeringen || S.investeringen || [];
+        if (Object.prototype.hasOwnProperty.call(d, 'leningen')) S.leningen = d.leningen || [];
         S.settings = Object.assign(S.settings, d.settings || {});
         save(); fillFilters(); renderAll();
         flash(T('backup_loaded'));
@@ -1405,53 +1424,101 @@
   }
 
   // ---------------------------------------------------------------- Leningen
-  function renderLeningen() {
-    var vandaag = new Date();
-    function rente(hoofdsom, pct, vanaf) {
-      var dagen = (vandaag - new Date(vanaf)) / 86400000;
-      return hoofdsom * pct * dagen / 365;
+  // Leningen vul je hier zelf in: naam, bedrag, rente per jaar en looptijd in
+  // maanden. Ze staan in je eigen opslag, net als de rest — er gaat niets naar
+  // buiten. Laat je de looptijd op nul, dan geldt de lening als aflossingsvrij:
+  // er wordt dan alleen rente bijgeschreven vanaf de startdatum.
+  function leningCijfers(l) {
+    var hoofdsom = +l.hoofdsom || 0;
+    var i = (+l.pct || 0) / 100 / 12;                    // rente per maand
+    var n = Math.max(0, Math.round(+l.maanden || 0));    // looptijd in maanden
+    var start = new Date((l.start || new Date().toISOString().slice(0, 10)) + 'T00:00:00');
+    var maandenOm = Math.floor((new Date() - start) / 86400000 / 30.4375);
+    var r = { n: n, termijn: 0, renteTotaal: 0, verstreken: Math.max(0, maandenOm), rest: hoofdsom, eind: null };
+    if (!n) {                                            // aflossingsvrij
+      var dagen = Math.max(0, (new Date() - start) / 86400000);
+      r.renteTotaal = hoofdsom * ((+l.pct || 0) / 100) * dagen / 365 + (+l.renteCum || 0);
+      r.rest = hoofdsom + r.renteTotaal;
+      return r;
     }
-    var L = window.HB_LENINGEN || [];
-    var host = document.getElementById('len-body');
-    var totaal = 0;
-    if (!L.length) {
-      host.innerHTML = '<div class="note mt">' + T('loans_none') + '</div>';
-      document.getElementById('len-totaal').textContent = eur(0);
-    }
-    host.innerHTML = L.length ? L.map(function (l) {
-      var r = l.renteCum + rente(l.hoofdsom, l.pct, l.renteVanaf);
-      var t = l.hoofdsom + r;
-      totaal += t;
-      return '<div class="card mt"><h2>' + esc(l.naam) + '</h2><p>' + esc(l.toelichting) + '</p>' +
-        '<table><tbody>' +
-        '<tr><td>' + T('principal') + '</td><td class="num">' + eur(l.hoofdsom) + '</td></tr>' +
-        '<tr><td>' + T('accrued') + '</td><td class="num">' + eur(r) + '</td></tr>' +
-        '<tr style="font-weight:650"><td>' + T('total_due') + '</td><td class="num">' + eur(t) + '</td></tr>' +
-        '</tbody></table></div>';
-    }).join('') : host.innerHTML;
-    document.getElementById('len-totaal').textContent = eur(totaal);
+    r.termijn = i ? (hoofdsom * i) / (1 - Math.pow(1 + i, -n)) : hoofdsom / n;
+    r.renteTotaal = r.termijn * n - hoofdsom;
+    var k = Math.min(r.verstreken, n);
+    r.rest = i
+      ? hoofdsom * Math.pow(1 + i, k) - r.termijn * (Math.pow(1 + i, k) - 1) / i
+      : hoofdsom - r.termijn * k;
+    if (r.rest < 0.005) r.rest = 0;
+    var e = new Date(Date.UTC(start.getFullYear(), start.getMonth(), start.getDate()));
+    e.setUTCMonth(e.getUTCMonth() + n);
+    r.eind = e.toISOString().slice(0, 10);
+    return r;
+  }
 
-    // scenario
-    function num(id) { return parseFloat(document.getElementById(id).value) || 0; }
-    function calc() {
-      var netto = (num('sc-prijs') - num('sc-hyp')) * (num('sc-deel') / 100) - num('sc-belasting');
-      var b = L[0] ? L[0].hoofdsom + L[0].renteCum + rente(L[0].hoofdsom, L[0].pct, L[0].renteVanaf) : 0;
-      var m = L[1] ? L[1].hoofdsom + L[1].renteCum + rente(L[1].hoofdsom, L[1].pct, L[1].renteVanaf) : 0;
-      var naB = netto - b;
-      var aflM = Math.max(0, Math.min(naB, m));
-      document.getElementById('sc-uit').innerHTML =
-        '<table><tbody>' +
-        '<tr><td>' + T('available') + '</td><td class="num">' + eur(netto) + '</td></tr>' +
-        '<tr><td>' + esc(T('repay_full', { x: L[0] ? L[0].naam : '1' })) + '</td><td class="num neg">' + eur(-b) + '</td></tr>' +
-        '<tr><td>' + esc(T('repay', { x: L[1] ? L[1].naam : '2' })) + '</td><td class="num neg">' + eur(-aflM) + '</td></tr>' +
-        '<tr style="font-weight:650"><td>' + T('left_over') + '</td><td class="num">' + eur(netto - b - aflM) + '</td></tr>' +
-        '<tr><td>' + T('debt_after') + '</td><td class="num">' + eur(m - aflM) + '</td></tr>' +
-        '</tbody></table>';
-    }
-    ['sc-prijs', 'sc-hyp', 'sc-deel', 'sc-belasting'].forEach(function (id) {
-      document.getElementById(id).addEventListener('input', calc);
+  function renderLeningen() {
+    var host = document.getElementById('len-body');
+    if (!host) return;
+    var L = S.leningen || [];
+    var totaal = 0;
+    host.innerHTML = L.length ? L.map(function (l) {
+      var r = leningCijfers(l);
+      totaal += r.rest;
+      var rijen =
+        '<tr><td>' + T('principal') + '</td><td class="num">' + eur(l.hoofdsom) + '</td></tr>' +
+        '<tr><td>' + T('loan_rate') + '</td><td class="num">' + pctTekst(l.pct) + '</td></tr>';
+      if (r.n) {
+        rijen +=
+          '<tr><td>' + T('loan_term') + '</td><td class="num">' + T('loan_months', { n: r.n }) + '</td></tr>' +
+          '<tr><td>' + T('loan_monthly') + '</td><td class="num">' + eur(r.termijn) + '</td></tr>' +
+          '<tr><td>' + T('loan_interest_total') + '</td><td class="num">' + eur(r.renteTotaal) + '</td></tr>' +
+          '<tr><td>' + T('loan_paid') + '</td><td class="num">' +
+            T('loan_of_months', { k: Math.min(r.verstreken, r.n), n: r.n }) + '</td></tr>' +
+          '<tr><td>' + T('loan_end') + '</td><td class="num">' + dmy(r.eind) + '</td></tr>';
+      } else {
+        rijen +=
+          '<tr><td>' + T('loan_term') + '</td><td class="num">' + T('loan_interest_only') + '</td></tr>' +
+          '<tr><td>' + T('accrued') + '</td><td class="num">' + eur(r.renteTotaal) + '</td></tr>';
+      }
+      rijen += '<tr style="font-weight:650"><td>' + T('loan_outstanding') + '</td><td class="num">' + eur(r.rest) + '</td></tr>';
+      return '<div class="card mt">' +
+        '<div class="rowflex" style="justify-content:space-between;align-items:center">' +
+        '<h2 style="margin:0">' + esc(l.naam) + '</h2>' +
+        '<button class="btn ghost danger len-del" data-id="' + esc(l.id) + '">' + T('del') + '</button></div>' +
+        (l.toelichting ? '<p>' + esc(l.toelichting) + '</p>' : '') +
+        '<table class="mt"><tbody>' + rijen + '</tbody></table></div>';
+    }).join('') : '<div class="note mt">' + T('loans_none') + '</div>';
+    document.getElementById('len-totaal').textContent = eur(totaal);
+    host.querySelectorAll('.len-del').forEach(function (b) {
+      b.addEventListener('click', function () {
+        S.leningen = (S.leningen || []).filter(function (x) { return x.id !== b.dataset.id; });
+        save(); renderLeningen();
+      });
     });
-    calc();
+  }
+
+  function pctTekst(p) {
+    var v = +p || 0;
+    try { return v.toLocaleString(locale(), { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' %'; }
+    catch (e) { return v.toFixed(2) + ' %'; }
+  }
+
+  function addLening() {
+    var naam = String(document.getElementById('len-naam').value || '').trim();
+    var bedrag = parseFloat(document.getElementById('len-bedrag').value) || 0;
+    if (!naam || !bedrag) { flash(T('loan_need_name'), true); return; }
+    S.leningen = S.leningen || [];
+    S.leningen.push({
+      id: 'l' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+      naam: naam,
+      hoofdsom: bedrag,
+      pct: parseFloat(document.getElementById('len-rente').value) || 0,
+      maanden: Math.max(0, Math.round(parseFloat(document.getElementById('len-maanden').value) || 0)),
+      start: document.getElementById('len-start').value || new Date().toISOString().slice(0, 10),
+      renteCum: 0,
+      toelichting: ''
+    });
+    document.getElementById('len-naam').value = '';
+    document.getElementById('len-bedrag').value = '';
+    save(); renderLeningen();
   }
 
   // ---------------------------------------------------------------- Investeringen
@@ -1874,6 +1941,10 @@
       S.settings.maandBasis = this.value; save(); renderMaand();
     });
     document.getElementById('btn-kas-add').addEventListener('click', addKas);
+    var bLenAdd = document.getElementById('btn-len-add');
+    if (bLenAdd) bLenAdd.addEventListener('click', addLening);
+    var lenStart = document.getElementById('len-start');
+    if (lenStart && !lenStart.value) lenStart.value = new Date().toISOString().slice(0, 10);
     var chkAlle = document.getElementById('chk-alle-maanden');
     if (chkAlle) chkAlle.addEventListener('change', function () {
       S.settings.budgetAlleMaanden = this.checked; save(); renderBudget();

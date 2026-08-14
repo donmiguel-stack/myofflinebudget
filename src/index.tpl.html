@@ -190,18 +190,20 @@
       <h2 data-i18n="loans_title">Openstaande leningen</h2>
       <p><span data-i18n="loans_p"></span> <strong id="len-totaal"></strong></p>
     </div>
-    <div id="len-body"></div>
     <div class="card mt">
-      <h2 data-i18n="scenario_title">Scenario: verkoop van het huis</h2>
+      <h2 data-i18n="loan_add">Lening toevoegen</h2>
+      <p data-i18n="loan_add_p"></p>
       <div class="rowflex">
-        <label><span data-i18n="sale_price">Verkoopprijs</span> <input type="number" id="sc-prijs" value="475000" step="1000" style="width:130px"></label>
-        <label><span data-i18n="mortgage">Hypotheek</span> <input type="number" id="sc-hyp" value="85500" step="500" style="width:120px"></label>
-        <label><span data-i18n="your_share">Jouw aandeel %</span> <input type="number" id="sc-deel" value="50" step="5" style="width:80px"></label>
-        <label><span data-i18n="inh_tax">Erfbelasting</span> <input type="number" id="sc-belasting" value="0" step="1000" style="width:120px"></label>
+        <label><span data-i18n="loan_name">Naam</span> <input type="text" id="len-naam" style="min-width:200px"></label>
+        <label><span data-i18n="loan_amount">Bedrag</span> <input type="number" id="len-bedrag" step="100" style="width:130px"></label>
+        <label><span data-i18n="loan_rate">Rente % per jaar</span> <input type="number" id="len-rente" value="0" step="0.05" style="width:120px"></label>
+        <label><span data-i18n="loan_term">Looptijd</span> <input type="number" id="len-maanden" value="0" step="1" min="0" style="width:110px"><small class="muted" style="margin-left:5px" data-i18n="loan_term_unit"></small></label>
+        <label><span data-i18n="loan_start">Startdatum</span> <input type="date" id="len-start" style="width:160px"></label>
+        <button class="btn primary" id="btn-len-add" data-i18n="add">Toevoegen</button>
       </div>
-      <div class="note warn mt" data-i18n="tax_warning"></div>
-      <div class="mt" id="sc-uit"></div>
+      <div class="note mt" data-i18n="loan_term_note"></div>
     </div>
+    <div id="len-body"></div>
   </section>
 
   <!-- ================================================= Investeringen -->
@@ -284,6 +286,7 @@
       <p data-i18n="about_2"></p>
       <h2 class="mt" data-i18n="about_h2"></h2>
       <ul>
+        <li data-i18n="about_li0"></li>
         <li data-i18n="about_li1"></li>
         <li data-i18n="about_li2"></li>
         <li data-i18n="about_li3"></li>
