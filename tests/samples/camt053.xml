@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:camt.053.001.02">
+  <BkToCstmrStmt>
+    <GrpHdr><MsgId>M1</MsgId><CreDtTm>2026-03-05T10:00:00</CreDtTm></GrpHdr>
+    <Stmt>
+      <Id>S1</Id>
+      <Acct><Id><IBAN>NL91ABNA0417164300</IBAN></Id><Ccy>EUR</Ccy></Acct>
+      <Ntry>
+        <Amt Ccy="EUR">1250.00</Amt>
+        <CdtDbtInd>DBIT</CdtDbtInd>
+        <Sts>BOOK</Sts>
+        <BookgDt><Dt>2026-03-01</Dt></BookgDt>
+        <ValDt><Dt>2026-03-01</Dt></ValDt>
+        <NtryDtls><TxDtls>
+          <RltdPties><Cdtr><Nm>Verhuurder BV</Nm></Cdtr></RltdPties>
+          <RmtInf><Ustrd>Huur maart 2026</Ustrd></RmtInf>
+        </TxDtls></NtryDtls>
+      </Ntry>
+      <Ntry>
+        <Amt Ccy="EUR">2500.00</Amt>
+        <CdtDbtInd>CRDT</CdtDbtInd>
+        <BookgDt><Dt>2026-03-02</Dt></BookgDt>
+        <NtryDtls><TxDtls>
+          <RltdPties><Dbtr><Nm>Werkgever NV</Nm></Dbtr></RltdPties>
+          <RmtInf><Ustrd>Salaris maart</Ustrd></RmtInf>
+        </TxDtls></NtryDtls>
+      </Ntry>
+    </Stmt>
+  </BkToCstmrStmt>
+</Document>

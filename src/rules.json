@@ -1,0 +1,861 @@
+{
+ "rules": [
+  {
+   "groep": "Inkomen",
+   "cat": "Toeslagen & uitkeringen",
+   "pat": [
+    "BELASTINGDIENST.*(ZORGTOESLAG|TOESLAG|HUURTOESLAG)",
+    "\\bSVB\\b",
+    "\\bUWV\\b",
+    "BENEFIT",
+    "ALLOWANCE",
+    "KINDERBIJSLAG",
+    "PENSIOEN",
+    "PENSION"
+   ]
+  },
+  {
+   "groep": "Inkomen",
+   "cat": "Overig inkomen",
+   "pat": [
+    "\\bSVB\\b",
+    "UWV"
+   ]
+  },
+  {
+   "groep": "Wonen",
+   "cat": "Huur / hypotheek",
+   "pat": [
+    "MAXIMUS VASTGOED",
+    "VESTEDA",
+    "WOONSTICHTING",
+    "HYPOTHE",
+    "\\bHUUR\\b",
+    "\\bRENT\\b",
+    "MORTGAGE",
+    "MIETE",
+    "LOYER",
+    "ALQUILER",
+    "VVE\\b",
+    "WOONBOND"
+   ]
+  },
+  {
+   "groep": "Wonen",
+   "cat": "Energie",
+   "pat": [
+    "\\bESSENT\\b",
+    "\\bVATTENFALL\\b",
+    "\\bENGIE\\b",
+    "\\bENECO\\b",
+    "GREENCHOICE",
+    "\\bLUMINUS\\b",
+    "\\bMEGA\\b\\s",
+    "FLUVIUS",
+    "\\bENERGIE\\b",
+    "\\bENERGY\\b",
+    "\\bGAS\\b",
+    "ELEKTRA",
+    "ELECTRIC",
+    "STROM",
+    "\\bEDF\\b",
+    "\\bE\\.ON\\b",
+    "\\bENDESA\\b",
+    "\\bIBERDROLA\\b",
+    "\\bBRITISH GAS\\b",
+    "OCTOPUS ENERGY"
+   ]
+  },
+  {
+   "groep": "Wonen",
+   "cat": "Water",
+   "pat": [
+    "\\bWML\\b",
+    "BRABANT WATER",
+    "\\bVIVAQUA\\b",
+    "DE WATERGROEP",
+    "WATERSCHAP",
+    "\\bWATER\\b",
+    "\\bVITENS\\b",
+    "\\bEVIDES\\b",
+    "\\bDUNEA\\b",
+    "\\bPWN\\b",
+    "\\bOASEN\\b",
+    "THAMES WATER"
+   ]
+  },
+  {
+   "groep": "Wonen",
+   "cat": "Gemeente & belastingen",
+   "pat": [
+    "BSGW",
+    "BELASTINGSAMENWERK",
+    "\\bGEMEENTE\\b",
+    "MUNICIPAL",
+    "AFVALSTOFFEN",
+    "RIOOLHEFFING",
+    "WATERSCHAP",
+    "\\bOZB\\b",
+    "COUNCIL TAX",
+    "GRUNDSTEUER",
+    "TAXE FONCIERE",
+    "\\bAFVALSTOFFEN\\b",
+    "REINIGINGSRECHT",
+    "WATERSCHAPSBELASTING",
+    "LIMBURG ?\\.? ?NET",
+    "\\bMILIEUSTRAAT\\b"
+   ]
+  },
+  {
+   "groep": "Wonen",
+   "cat": "Internet, TV & telefoon",
+   "pat": [
+    "PROXIMUS",
+    "VODAFONE",
+    "\\bKPN\\b",
+    "ZIGGO",
+    "T-MOBILE",
+    "ODIDO",
+    "TELENET",
+    "SIMYO",
+    "LEBARA"
+   ]
+  },
+  {
+   "groep": "Wonen",
+   "cat": "Huis, tuin & klussen",
+   "pat": [
+    "\\bPRAXIS\\b",
+    "\\bHUBO\\b",
+    "\\bGAMMA\\b",
+    "\\bKARWEI\\b",
+    "\\bIKEA\\b",
+    "\\bBRICO\\b",
+    "HORNBACH",
+    "INTRATUIN",
+    "\\bLEEN BAKKER\\b",
+    "\\bSANITAIR\\b",
+    "\\bTEGELS\\b"
+   ]
+  },
+  {
+   "groep": "Verzekeringen",
+   "cat": "Zorgverzekering",
+   "pat": [
+    "\\bVGZ\\b",
+    "ZILVEREN KRUIS",
+    "\\bCZ\\b GROEP",
+    "MENZIS",
+    "ZORGVERZEKER"
+   ]
+  },
+  {
+   "groep": "Verzekeringen",
+   "cat": "Overige verzekeringen",
+   "pat": [
+    "\\bAXA\\b",
+    "\\bASR\\b",
+    "CENTRAAL BEHEER",
+    "\\bDELA\\b",
+    "\\bAEGON\\b",
+    "INTERPOLIS",
+    "\\bUNIVE\\b",
+    "\\bOHRA\\b",
+    "\\bREAAL\\b",
+    "\\bALLIANZ\\b",
+    "\\bDAS\\b\\b"
+   ]
+  },
+  {
+   "groep": "Boodschappen",
+   "cat": "Boodschappen",
+   "pat": [
+    "ALBERT HEIJN",
+    "\\bJUMBO\\b",
+    "\\bALDI\\b",
+    "\\bLIDL\\b",
+    "\\bCOLRUYT\\b",
+    "\\bDELHAIZE\\b",
+    "\\bCARREFOUR\\b",
+    "\\bSPAR\\b",
+    "\\bCORA\\b",
+    "\\bSLIGRO\\b",
+    "\\bHANOS\\b",
+    "\\bMAKRO\\b",
+    "\\bCOOP\\b",
+    "\\bVOMAR\\b",
+    "\\bDIRK\\b",
+    "BAKKER",
+    "SLAGER",
+    "\\bOKAY\\b",
+    "\\bREWE\\b",
+    "\\bGALL & GALL\\b",
+    "\\bMITRA\\b",
+    "\\bKAAS\\b",
+    "\\bPOELIER\\b",
+    "\\bTESCO\\b",
+    "\\bSAINSBURY\\b",
+    "\\bASDA\\b",
+    "\\bMORRISONS\\b",
+    "\\bWAITROSE\\b",
+    "\\bMERCADONA\\b",
+    "\\bEROSKI\\b",
+    "\\bAUCHAN\\b",
+    "\\bINTERMARCHE\\b",
+    "\\bLECLERC\\b",
+    "\\bMONOPRIX\\b",
+    "\\bEDEKA\\b",
+    "\\bKAUFLAND\\b",
+    "\\bPENNY\\b",
+    "\\bNETTO\\b",
+    "\\bBILLA\\b",
+    "\\bCONAD\\b",
+    "\\bESSELUNGA\\b",
+    "\\bMIGROS\\b",
+    "\\bWALMART\\b",
+    "\\bKROGER\\b",
+    "\\bWHOLE FOODS\\b",
+    "\\bTRADER JOE\\b",
+    "\\bPLUS SUPERMARKT\\b"
+   ]
+  },
+  {
+   "groep": "Boodschappen",
+   "cat": "Drogist & apotheek",
+   "pat": [
+    "\\bKRUIDVAT\\b",
+    "\\bETOS\\b",
+    "\\bTREKPLEISTER\\b",
+    "DM-DROGERIE",
+    "APOTHEEK",
+    "\\bDI\\b ",
+    "HOLLAND & BARRETT"
+   ]
+  },
+  {
+   "groep": "Vervoer",
+   "cat": "Brandstof & laden",
+   "pat": [
+    "\\bLUKOIL\\b",
+    "\\bSHELL\\b",
+    "\\bBP\\b",
+    "\\bTOTAL\\b",
+    "\\bESSO\\b",
+    "\\bTANKSTATION\\b",
+    "\\bTAMOIL\\b",
+    "\\bQ8\\b",
+    "\\bFASTNED\\b",
+    "\\bTOTALENERGIES\\b",
+    "\\bARAL\\b",
+    "\\bREPSOL\\b",
+    "\\bCEPSA\\b",
+    "\\bOMV\\b",
+    "\\bCIRCLE K\\b",
+    "\\bTEXACO\\b",
+    "\\bIONITY\\b",
+    "\\bALLEGO\\b",
+    "\\bSHELL RECHARGE\\b",
+    "\\bTESLA SUPERCHARGER\\b",
+    "\\bCHARGEPOINT\\b"
+   ]
+  },
+  {
+   "groep": "Vervoer",
+   "cat": "Parkeren & tol",
+   "pat": [
+    "PARKER",
+    "\\bQ-PARK\\b",
+    "PARKMOBILE",
+    "\\bYELLOWBRICK\\b",
+    "PARKING",
+    "\\bEASYPARK\\b",
+    "\\bQ ?PARK\\b",
+    "EUROLINK MOTORWAY",
+    "\\bMOTORWAY\\b",
+    "GEM MAASTRICHT PAR",
+    "\\bAPCOA\\b",
+    "\\bINTERPARKING\\b",
+    "INDIGO PARK"
+   ]
+  },
+  {
+   "groep": "Vervoer",
+   "cat": "OV & taxi",
+   "pat": [
+    "\\bNS\\b GROEP",
+    "\\bOV-CHIPKAART\\b",
+    "\\bDE LIJN\\b",
+    "\\bNMBS\\b",
+    "\\bUBER\\b(?!\\s*EATS)",
+    "\\bARRIVA\\b",
+    "TRANSLINK",
+    "\\bTFL\\b|TRANSPORT FOR LONDON",
+    "\\bSNCF\\b",
+    "\\bDEUTSCHE BAHN\\b|\\bDB VERTRIEB\\b",
+    "\\bRENFE\\b",
+    "\\bTRENITALIA\\b",
+    "\\bLYFT\\b",
+    "\\bBOLT\\b",
+    "\\bFREENOW\\b",
+    "\\bBLABLACAR\\b",
+    "\\bFLIXBUS\\b"
+   ]
+  },
+  {
+   "groep": "Vervoer",
+   "cat": "Auto: onderhoud & belasting",
+   "pat": [
+    "\\bANWB\\b",
+    "\\bAPK\\b",
+    "\\bBOVAG\\b",
+    "AUTOSCHADE",
+    "GARAGE ",
+    "\\bKWIKFIT\\b",
+    "\\bCARGLASS\\b",
+    "WEGENBELASTING",
+    "MOTORRIJTUIGENBEL"
+   ]
+  },
+  {
+   "groep": "Vrije tijd",
+   "cat": "Uit eten, café & bezorging",
+   "pat": [
+    "RESTAURANT",
+    "\\bCAFE\\b",
+    "CAFÉ",
+    "\\bBRASSERIE\\b",
+    "\\bPIZZERIA\\b",
+    "THUISBEZORGD",
+    "\\bDOMINO",
+    "\\bMCDONALD",
+    "\\bBURGER KING\\b",
+    "\\bKFC\\b",
+    "\\bSTARBUCKS\\b",
+    "\\bBISTRO\\b",
+    "\\bEETCAFE\\b",
+    "FRITUUR",
+    "DE KLEINE HONGER",
+    "\\bTAVERNE\\b",
+    "\\bLUNCHROOM\\b",
+    "\\bIJSSALON\\b",
+    "\\bROND70\\b",
+    "\\bBAR\\b",
+    "ZETTLE_\\*",
+    "SUMUP ?\\*",
+    "\\bTEJO TERRACE\\b",
+    "\\bCOFFEE\\b",
+    "\\bVIVA MARKET\\b",
+    "\\bGODDO\\b",
+    "\\bUBER ?EATS\\b",
+    "\\bDELIVEROO\\b",
+    "\\bJUST EAT\\b",
+    "\\bTAKEAWAY\\b",
+    "\\bGLOVO\\b",
+    "\\bWOLT\\b",
+    "\\bSUBWAY\\b",
+    "\\bPIZZA HUT\\b",
+    "\\bNANDO\\b",
+    "\\bCOSTA COFFEE\\b",
+    "\\bPRET A MANGER\\b"
+   ]
+  },
+  {
+   "groep": "Vrije tijd",
+   "cat": "Abonnementen & streaming",
+   "pat": [
+    "\\bNETFLIX\\b",
+    "\\bSPOTIFY\\b",
+    "DISNEY",
+    "\\bVIAPLAY\\b|NENT GROUP",
+    "\\bHBO\\b",
+    "AMAZON PRIME",
+    "\\bAPPLE\\.COM\\b|APPLE SERVICES|ITUNES",
+    "\\bGOOGLE\\b\\s*\\*",
+    "\\bVIDEOLAND\\b",
+    "\\bZOOM\\b",
+    "\\bAUDIBLE\\b",
+    "\\bYOUTUBE\\b",
+    "\\bPATREON\\b",
+    "\\bSUBSTACK\\b",
+    "PRIME VIDEO",
+    "PRIMEVIDEO",
+    "\\bDISNEY\\b",
+    "\\bPARAMOUNT\\b",
+    "\\bPEACOCK\\b",
+    "\\bCRUNCHYROLL\\b",
+    "\\bDEEZER\\b",
+    "\\bTIDAL\\b",
+    "\\bDAZN\\b",
+    "\\bSKY\\b",
+    "\\bNOW TV\\b",
+    "\\bXBOX\\b",
+    "PLAYSTATION",
+    "\\bNINTENDO\\b",
+    "\\bSTEAM\\b"
+   ]
+  },
+  {
+   "groep": "Vrije tijd",
+   "cat": "Vakantie & reizen",
+   "pat": [
+    "BOOKING\\.COM",
+    "\\bAIRBNB\\b",
+    "\\bTRANSAVIA\\b",
+    "\\bKLM\\b",
+    "\\bHOTEL\\b",
+    "GASTEHAUS|GÄSTEHAUS",
+    "\\bCAMPING\\b",
+    "TOURISMUS",
+    "\\bTUI\\b",
+    "\\bSUNWEB\\b",
+    "\\bFERRY\\b",
+    "\\bSTENA\\b",
+    "\\bEASYJET\\b",
+    "\\bBOOKING\\b",
+    "\\bEXPEDIA\\b",
+    "\\bTRIVAGO\\b",
+    "\\bAIRPORT\\b",
+    "\\bSCHIPHOL\\b",
+    "TRANSAVIACOM",
+    "PENSION ",
+    "\\bGASTRONOMIE\\b",
+    "\\bRYANAIR\\b",
+    "\\bLUFTHANSA\\b",
+    "\\bVUELING\\b",
+    "\\bWIZZ ?AIR\\b",
+    "\\bAIR FRANCE\\b",
+    "\\bBRITISH AIRWAYS\\b",
+    "\\bIBERIA\\b",
+    "\\bEUROWINGS\\b",
+    "\\bCENTER PARCS\\b",
+    "\\bLANDAL\\b",
+    "\\bROOMPOT\\b"
+   ]
+  },
+  {
+   "groep": "Vrije tijd",
+   "cat": "Sport & fitness",
+   "pat": [
+    "BASIC[- ]?FIT",
+    "\\bFITNESS\\b",
+    "SPORTSCHOOL",
+    "HT SPORTS",
+    "\\bDECATHLON\\b",
+    "\\bJD RETAIL\\b|JD SPORTS",
+    "\\bCROSSFIT\\b"
+   ]
+  },
+  {
+   "groep": "Vrije tijd",
+   "cat": "Uitjes & hobby",
+   "pat": [
+    "\\bBIOSCOOP\\b",
+    "\\bPATHE\\b",
+    "KINEPOLIS",
+    "\\bTICKETMASTER\\b",
+    "\\bEVENTIM\\b",
+    "DIERENTUIN",
+    "\\bATTRACTIE\\b",
+    "\\bMUSEUM\\b",
+    "\\bZOO\\b",
+    "CASTLE",
+    "\\bKINEPOLIS\\b",
+    "\\bCINEMA\\b",
+    "\\bTHEATER\\b",
+    "\\bCONCERT\\b",
+    "\\bSCHOUWBURG\\b",
+    "\\bEXPOSITIE\\b",
+    "ENTRYTICKETS",
+    "\\bKINGUIN\\b"
+   ]
+  },
+  {
+   "groep": "Persoonlijk",
+   "cat": "Kleding & schoenen",
+   "pat": [
+    "\\bZEEMAN\\b",
+    "\\bH&M\\b|H EN M",
+    "\\bC&A\\b",
+    "\\bPRIMARK\\b",
+    "\\bZARA\\b",
+    "\\bWE FASHION\\b",
+    "\\bJBC\\b",
+    "\\bBRISTOL\\b",
+    "\\bVAN HAREN\\b",
+    "\\bZALANDO\\b",
+    "\\bSCHOENEN\\b"
+   ]
+  },
+  {
+   "groep": "Persoonlijk",
+   "cat": "Kapper & verzorging",
+   "pat": [
+    "\\bKAPPER\\b",
+    "\\bKAPSALON\\b",
+    "\\bBARBER\\b",
+    "\\bNAGELSTUDIO\\b",
+    "\\bSCHOONHEIDS\\b",
+    "\\bROSSMANN\\b",
+    "\\bDOUGLAS\\b",
+    "\\bICI PARIS\\b"
+   ]
+  },
+  {
+   "groep": "Persoonlijk",
+   "cat": "Optiek & zorg eigen risico",
+   "pat": [
+    "\\bHANS ANDERS\\b",
+    "\\bPEARLE\\b",
+    "\\bSPECSAVERS\\b",
+    "TANDARTS",
+    "FYSIO",
+    "HUISARTS",
+    "ZIEKENHUIS",
+    "\\bZIEKENH"
+   ]
+  },
+  {
+   "groep": "Persoonlijk",
+   "cat": "Cadeaus & donaties",
+   "pat": [
+    "\\bBLOEMEN\\b",
+    "\\bGIRO ?555\\b",
+    "\\bDONATIE\\b",
+    "GREENPEACE",
+    "\\bUNICEF\\b",
+    "\\bKWF\\b",
+    "\\bCADEAU\\b",
+    "\\bKINDEREN VIA\\b"
+   ]
+  },
+  {
+   "groep": "Persoonlijk",
+   "cat": "Huisdieren",
+   "pat": [
+    "\\bPETS PLACE\\b",
+    "\\bDIERENARTS\\b",
+    "\\bZOOPLUS\\b",
+    "\\bDIERENSPECIAAL\\b",
+    "HUISDIER",
+    "ONLINEPETS",
+    "PETSPLACE",
+    "PETS PLACE",
+    "HONDENVOER",
+    "\\bFRESSNAPF\\b",
+    "MAXI ?ZOO",
+    "TOM&CO",
+    "DIERENARTS",
+    "\\bVETERINAR"
+   ]
+  },
+  {
+   "groep": "Huishouden",
+   "cat": "Online shoppen & diversen",
+   "pat": [
+    "\\bTEMU\\b",
+    "\\bBOL\\.COM\\b|BOLCOM",
+    "\\bAMAZON\\b",
+    "\\bACTION\\b",
+    "\\bHEMA\\b",
+    "\\bBLOKKER\\b",
+    "\\bXENOS\\b",
+    "\\bWEHKAMP\\b",
+    "\\bCOOLBLUE\\b",
+    "\\bMEDIAMARKT\\b",
+    "MARKTPLAATS",
+    "\\bALIEXPRESS\\b",
+    "\\bSHEIN\\b",
+    "\\bVINTED\\b",
+    "\\bETSY\\b",
+    "\\bEBAY\\b",
+    "\\bMEDIA MARKT\\b",
+    "\\bBCC\\b",
+    "\\bALTERNATE\\b",
+    "\\bBOL\\b",
+    "\\bTEMU\\b|TEMU\\.COM",
+    "PAYPAL \\*",
+    "VALVE CORPORATION",
+    "\\bSTEAM\\b"
+   ]
+  },
+  {
+   "groep": "Huishouden",
+   "cat": "Post & bezorging",
+   "pat": [
+    "POSTNL",
+    "\\bDHL\\b",
+    "\\bDPD\\b",
+    "\\bGLS\\b",
+    "\\bUPS\\b"
+   ]
+  },
+  {
+   "groep": "Huishouden",
+   "cat": "Loterij & kansspel",
+   "pat": [
+    "POSTCODE LOTERIJ",
+    "\\bLOTTO\\b",
+    "STAATSLOTERIJ",
+    "\\bTOTO\\b",
+    "VRIENDENLOTERIJ"
+   ]
+  },
+  {
+   "groep": "Zakelijk/werk",
+   "cat": "Software & online diensten",
+   "pat": [
+    "\\bADOBE\\b",
+    "MICROSOFT",
+    "\\bOPENAI\\b",
+    "ANTHROPIC",
+    "\\bCANVA\\b",
+    "\\bNOTION\\b",
+    "\\bSLACK\\b",
+    "\\bDROPBOX\\b",
+    "\\bGITHUB\\b",
+    "\\bWORDPRESS\\b",
+    "\\bSQUARESPACE\\b",
+    "\\bLINKEDIN\\b",
+    "\\bMETA PLATFORMS\\b",
+    "\\bPROTON\\b",
+    "\\bZAPIER\\b",
+    "\\bAIRTABLE\\b",
+    "\\bCALENDLY\\b",
+    "\\bNAMECHEAP\\b",
+    "GRAMMARLY",
+    "\\bLOVABLE\\b",
+    "\\bCURSOR\\b",
+    "PERPLEXITY",
+    "\\bELEVENLABS\\b",
+    "\\bHEYGEN\\b",
+    "\\bDESCRIPT\\b",
+    "\\bMOLLIE=",
+    "\\bAPOLLO\\.IO\\b",
+    "\\bSTRIPE\\b",
+    "\\bICLOUD\\b",
+    "\\bGOOGLE ONE\\b",
+    "\\bMICROSOFT 365\\b",
+    "\\bZOOM\\b",
+    "\\bFIGMA\\b",
+    "\\bATLASSIAN\\b",
+    "\\bDIGITALOCEAN\\b",
+    "\\bAWS\\b|AMAZON WEB SERVICES",
+    "\\bCLOUDFLARE\\b",
+    "\\bGODADDY\\b",
+    "\\bIONOS\\b",
+    "\\bBACKBLAZE\\b",
+    "\\b1PASSWORD\\b",
+    "\\bNORDVPN\\b",
+    "\\bEXPRESSVPN\\b",
+    "\\bANTHROPIC\\b",
+    "\\bMIDJOURNEY\\b"
+   ]
+  },
+  {
+   "groep": "Financieel",
+   "cat": "Bankkosten",
+   "pat": [
+    "PAKKETKOSTEN",
+    "\\bKOSTEN\\b.*(PAKKET|RABO|ORANJE|BETAALPAS|GELDOPNAME)",
+    "RABO DIRECTPAKKET",
+    "ORANJEPAKKET",
+    "JAARBIJDRAGE CARD",
+    "\\bKNAB\\b PAKKET",
+    "CREDITRENTE",
+    "\\bDEBETRENTE\\b",
+    "\\bRENTE\\b"
+   ]
+  },
+  {
+   "groep": "Financieel",
+   "cat": "Leningen & aflossingen",
+   "pat": [
+    "DIENST UITVOERING ONDERWIJS|\\bDUO\\b",
+    "AFLOSSING",
+    "\\bTOZO\\b",
+    "KREDIET",
+    "\\bLENING\\b",
+    "\\bSANTANDER\\b",
+    "\\bFINATA\\b",
+    "\\bQANDER\\b",
+    "\\bLOAN\\b",
+    "\\bKREDIET\\b",
+    "\\bCREDIT\\b.*\\bREPAY",
+    "\\bDARLEHEN\\b",
+    "STUDIESCHULD",
+    "STUDENT LOAN"
+   ]
+  },
+  {
+   "groep": "Financieel",
+   "cat": "Creditcard",
+   "pat": [
+    "AMERICAN EXPRESS",
+    "INTERNATIONAL CARD SERVICES",
+    "\\bVISA\\b",
+    "\\bMASTERCARD\\b",
+    "CREDITCARD"
+   ]
+  },
+  {
+   "groep": "Financieel",
+   "cat": "Belastingen",
+   "pat": [
+    "BELASTINGDIENST"
+   ]
+  },
+  {
+   "groep": "Financieel",
+   "cat": "Contant geld",
+   "pat": [
+    "GELDMAAT",
+    "GELDOPNAME",
+    "\\bATM\\b",
+    "^CASH ",
+    "\\bCASH\\b.*PAS:",
+    "\\bSTORTING\\b",
+    "\\bGELDMAAT\\b",
+    "KOSTEN: ?[\\d,]+ EUR",
+    "\\bWU \\d",
+    "WESTERN UNION"
+   ]
+  },
+  {
+   "groep": "Financieel",
+   "cat": "Sparen & beleggen",
+   "pat": [
+    "\\bDEGIRO\\b",
+    "\\bBUX\\b",
+    "\\bBRAND NEW DAY\\b",
+    "\\bMEESMAN\\b",
+    "SPAARREKENING",
+    "\\bCOINBASE\\b",
+    "\\bKRAKEN\\b",
+    "\\bBINANCE\\b",
+    "PAYPAL TOPUP",
+    "ORANJE SPAAR",
+    "\\bTRADE REPUBLIC\\b",
+    "\\bINTERACTIVE BROKERS\\b",
+    "\\bVANGUARD\\b",
+    "\\bREVOLUT\\b",
+    "\\bBITVAVO\\b"
+   ]
+  },
+  {
+   "groep": "Vervoer",
+   "cat": "Autohuur",
+   "pat": [
+    "RENTALCARS",
+    "GOLDCAR",
+    "\\bSIXT\\b|SIXT\\d",
+    "HERTZ",
+    "\\bAVIS\\b",
+    "\\bEUROPCAR\\b",
+    "\\bENTERPRISE RENT\\b"
+   ]
+  },
+  {
+   "groep": "Persoonlijk",
+   "cat": "Coaching & therapie",
+   "pat": [
+    "COACHING",
+    "\\bTHERAPIE\\b",
+    "\\bPSYCHO\\b"
+   ]
+  },
+  {
+   "groep": "Overig",
+   "cat": "Betaalverzoeken & Tikkie",
+   "pat": [
+    "BETAALVERZOEK",
+    "\\bTIKKIE\\b",
+    "^60010259 ",
+    "\\bKNAB\\b (VANDAAG|STEIG)"
+   ]
+  },
+  {
+   "groep": "Persoonlijk",
+   "cat": "Wellness & spa",
+   "pat": [
+    "SPA & WELLNESS",
+    "\\bTHERMEN\\b",
+    "\\bSAUNA\\b",
+    "\\bMASSAGE\\b"
+   ]
+  },
+  {
+   "groep": "Inkomen",
+   "cat": "Salaris & inkomen",
+   "pat": [
+    "SALARIS",
+    "SALARY",
+    "LOON ",
+    "PAYROLL",
+    "WAGE",
+    "GEHALT",
+    "TRAKTEMENT"
+   ]
+  },
+  {
+   "groep": "Persoonlijk",
+   "cat": "Kinderen & opvang",
+   "pat": [
+    "KINDEROPVANG",
+    "\\bCRECHE\\b",
+    "\\bNURSERY\\b",
+    "\\bKITA\\b",
+    "\\bSCHOOL\\b",
+    "\\bTUITION\\b",
+    "\\bBSO\\b"
+   ]
+  },
+  {
+   "groep": "Vrije tijd",
+   "cat": "Boeken & media",
+   "pat": [
+    "KINDLE",
+    "\\bKOBO\\b",
+    "BOEKHANDEL",
+    "\\bLIBRIS\\b",
+    "\\bBRUNA\\b",
+    "BOOKSHOP",
+    "\\bWATERSTONES\\b",
+    "\\bTHALIA\\b",
+    "\\bFNAC\\b",
+    "\\bCASA DEL LIBRO\\b",
+    "BOOKDEPOSITORY",
+    "\\bAUDIBLE\\b"
+   ]
+  },
+  {
+   "groep": "Persoonlijk",
+   "cat": "Cursussen & opleiding",
+   "pat": [
+    "\\bUDEMY\\b",
+    "\\bCOURSERA\\b",
+    "\\bMASTERCLASS\\b",
+    "\\bOPLEIDING\\b",
+    "\\bCURSUS\\b",
+    "ROBBINS RESEARCH",
+    "\\bSKILLSHARE\\b",
+    "\\bDUOLINGO\\b"
+   ]
+  },
+  {
+   "groep": "Financieel",
+   "cat": "Uitgeleend & terugbetaald",
+   "pat": [
+    "\\bUITGELEEND\\b",
+    "\\bLENING AAN\\b",
+    "\\bLOAN TO\\b"
+   ]
+  }
+ ],
+ "eigenRekeningen": [],
+ "internPatronen": [
+  "HARTELIJK BEDANKT VOOR UW BETALING",
+  "BETALING, DANK U",
+  "EIGEN REKENING",
+  "OWN ACCOUNT"
+ ]
+}

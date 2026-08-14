@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Huishoudboekje</title>
+<meta name="description" content="Lokale budget-app. Alle gegevens blijven in je eigen browser.">
+<!--__PWA__-->
+<style>/*__CSS__*/</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span data-i18n="brand">Huishoudboekje</span><span class="tag" data-i18n="brand_tag">lokaal · geen server</span></div>
+  <nav class="tabs">
+    <button data-view="dashboard" data-i18n="nav_dashboard">Dashboard</button>
+    <button data-view="maand" data-i18n="nav_month">Deze maand</button>
+    <button data-view="budget" data-i18n="nav_budget">Budget</button>
+    <button data-view="vaste" data-i18n="nav_recurring">Vaste lasten</button>
+
+    <button data-view="transacties" data-i18n="nav_tx">Transacties</button>
+    <button data-view="kas" data-i18n="nav_cash">Kas</button>
+    <button data-view="leningen" data-i18n="nav_loans">Leningen</button>
+    <button data-view="investeringen" data-i18n="nav_invest">Investeringen</button>
+    <button data-view="import" data-i18n="nav_import">Import</button>
+    <button data-view="over" data-i18n="nav_about">Over</button>
+  </nav>
+  <div class="ctrls">
+    <span id="flash" class="pill" style="opacity:0;transition:opacity .3s"></span>
+    <button class="btn hide" id="btn-update" data-i18n="lic_update">Tabellen bijwerken</button>
+    <label class="btn hide" id="lic-file-label" for="lic-file" data-i18n="lic_file">Bestand inlezen</label>
+    <input type="file" id="lic-file" accept=".txt,.json" class="hide">
+    <select id="sel-lang" class="btn" aria-label="Taal / Language"></select>
+    <select id="sel-cur" class="btn" aria-label="Valuta / Currency"></select>
+    <button class="btn" id="btn-theme">◐ Auto</button>
+  </div>
+</header>
+
+<main>
+  <!-- ================================================= Dashboard -->
+  <section class="view" id="view-dashboard">
+    <div class="card" id="dash-nu">
+      <div class="rowflex" style="justify-content:space-between">
+        <h2 data-i18n="nav_month" style="margin-bottom:0">Deze maand</h2>
+        <span class="muted" id="dash-nu-naam"></span>
+      </div>
+      <div class="grid g-kpi mt" id="kpis-nu"></div>
+    </div>
+    <div class="filters mt">
+      <label for="sel-jaar" data-i18n="year">Jaar</label>
+      <select id="sel-jaar"></select>
+      <span class="muted" data-i18n="dash_hint">Kerncijfers gelden voor het gekozen jaar; de grafieken tonen de hele periode.</span>
+    </div>
+    <div class="grid g-kpi" id="kpis"></div>
+    <div class="grid g-2 mt">
+      <div class="card">
+        <h2 data-i18n="ch_inc_exp">Inkomsten en uitgaven per maand</h2>
+        <div class="legend" id="lg1"></div>
+        <div id="ch1"></div>
+      </div>
+      <div class="card">
+        <h2 data-i18n="ch_balance">Saldo per maand</h2>
+        <p><small data-i18n="ch_balance_hint">Blauw is een overschot, rood een tekort.</small></p>
+        <div id="ch2"></div>
+      </div>
+    </div>
+    <div class="grid g-2 mt">
+      <div class="card">
+        <h2 data-i18n="ch_top">Grootste uitgavenposten</h2>
+        <div id="ch3"></div>
+      </div>
+      <div class="card">
+        <h2 data-i18n="ch_groups">Uitgaven per hoofdgroep per maand</h2>
+        <div class="legend" id="lg4"></div>
+        <div id="ch4"></div>
+      </div>
+    </div>
+    <div class="card mt">
+      <h2 data-i18n="tbl_month">Kosten van de komende 30 dagen</h2>
+      <p><small class="muted" data-i18n="dash_costs_hint"></small></p>
+      <div class="scroll"><table id="tbl-maand"></table></div>
+    </div>
+    <div class="card mt hide" id="pro-slot">
+      <h2 data-i18n="slot_title">Meer uit je cijfers halen</h2>
+      <p data-i18n="slot_p"></p>
+      <ul>
+        <li data-i18n="slot_li1"></li>
+        <li data-i18n="slot_li2"></li>
+        <li data-i18n="slot_li3"></li>
+        <li data-i18n="slot_li4"></li>
+      </ul>
+      <p><a class="btn primary" id="slot-link" href="https://yourpersonalbudget.app" target="_blank" rel="noopener" data-i18n="slot_btn">Bekijk de mogelijkheden</a></p>
+    </div>
+  </section>
+
+  <!-- ================================================= Deze maand -->
+  <section class="view" id="view-maand">
+    <div class="filters">
+      <strong id="m-kop"></strong>
+      <span class="muted" id="m-dag"></span>
+      <span class="spacer"></span>
+      <label class="muted" data-i18n="m_basis">Rekenen met</label>
+      <select id="m-basis">
+        <option value="hist" data-i18n="m_basis_hist">verwacht inkomen</option>
+        <option value="act" data-i18n="m_basis_act">werkelijk ontvangen</option>
+      </select>
+    </div>
+    <div class="grid g-kpi" id="m-kpis"></div>
+    <div class="card mt">
+      <div class="rowflex" id="m-uitleg"></div>
+    </div>
+    <div class="card mt">
+      <h2 data-i18n="m_title">Ruimte deze maand</h2>
+      <p data-i18n="m_hint"></p>
+      <div class="scroll"><table id="m-body"></table></div>
+    </div>
+  </section>
+
+  <!-- ================================================= Budget -->
+  <section class="view" id="view-budget">
+    <div class="filters">
+      <strong><span data-i18n="budget_title">Budget</span> <span id="bud-jaar"></span></strong>
+      <button class="btn" id="btn-budget-hist" data-i18n="budget_fill">Vul met historisch gemiddelde</button>
+      <label class="rowflex" style="gap:5px"><input type="checkbox" id="chk-alle-maanden">
+        <span data-i18n="budget_alle_maanden">Toon alle maanden</span></label>
+      <span class="muted" data-i18n="budget_hint">Vul per categorie een bedrag per maand in. Rode cijfers zijn maanden boven budget.</span>
+    </div>
+    <div class="card">
+      <div class="scroll"><table id="budget-body"></table></div>
+    </div>
+    <div class="note mt" data-i18n="kind_hint"></div>
+    <div class="note mt" data-i18n="budget_note"></div>
+  </section>
+
+
+  <!-- ================================================= Vaste lasten -->
+  <section class="view" id="view-vaste">
+    <div class="grid g-kpi" id="rec-kpis"></div>
+
+    <div class="card mt">
+      <h2 data-i18n="rec_title">Vaste lasten en abonnementen</h2>
+      <p data-i18n="rec_intro"></p>
+      <div class="scroll"><table id="rec-body"></table></div>
+    </div>
+  </section>
+
+
+  <!-- ================================================= Transacties -->
+  <section class="view" id="view-transacties">
+    <div class="filters">
+      <input type="search" id="f-q" data-i18n-ph="tx_search" placeholder="Zoek in omschrijving…" style="min-width:240px">
+      <select id="f-cat"></select>
+      <select id="f-jaar"></select>
+      <select id="f-rek"></select>
+      <button class="btn" id="btn-export-csv" data-i18n="export_csv">Exporteer als csv</button>
+      <span class="muted" id="tx-count"></span>
+    </div>
+    <div id="rule-offer" class="hide"></div>
+    <div class="card"><div class="scroll"><table id="tx-body"></table></div></div>
+    <div class="note mt" data-i18n="tx_note"></div>
+    <div class="card mt">
+      <h2 data-i18n="rules_title">Automatische regels</h2>
+      <p data-i18n="rules_intro"></p>
+      <table id="rules-body"></table>
+    </div>
+  </section>
+
+  <!-- ================================================= Kas -->
+  <section class="view" id="view-kas">
+    <div class="card">
+      <h2 data-i18n="cash_add_title">Contante of handmatige boeking toevoegen</h2>
+      <p data-i18n="cash_add_p"></p>
+      <div class="rowflex">
+        <input type="date" id="kas-datum">
+        <select id="kas-soort"><option value="uit" data-i18n="expense">Uitgave</option><option value="in" data-i18n="income">Inkomst</option></select>
+        <input type="number" id="kas-bedrag" data-i18n-ph="amount" placeholder="Bedrag" step="0.01" style="width:120px">
+        <input type="text" id="kas-oms" data-i18n-ph="description" placeholder="Omschrijving" style="min-width:240px">
+        <select id="kas-cat"></select>
+        <button class="btn primary" id="btn-kas-add" data-i18n="add">Toevoegen</button>
+      </div>
+    </div>
+    <div class="card mt">
+      <h2 data-i18n="cash_list">Handmatige boekingen</h2>
+      <div class="scroll"><table id="kas-body"></table></div>
+    </div>
+  </section>
+
+  <!-- ================================================= Leningen -->
+  <section class="view" id="view-leningen">
+    <div class="card">
+      <h2 data-i18n="loans_title">Openstaande leningen</h2>
+      <p><span data-i18n="loans_p"></span> <strong id="len-totaal"></strong></p>
+    </div>
+    <div id="len-body"></div>
+    <div class="card mt">
+      <h2 data-i18n="scenario_title">Scenario: verkoop van het huis</h2>
+      <div class="rowflex">
+        <label><span data-i18n="sale_price">Verkoopprijs</span> <input type="number" id="sc-prijs" value="475000" step="1000" style="width:130px"></label>
+        <label><span data-i18n="mortgage">Hypotheek</span> <input type="number" id="sc-hyp" value="85500" step="500" style="width:120px"></label>
+        <label><span data-i18n="your_share">Jouw aandeel %</span> <input type="number" id="sc-deel" value="50" step="5" style="width:80px"></label>
+        <label><span data-i18n="inh_tax">Erfbelasting</span> <input type="number" id="sc-belasting" value="0" step="1000" style="width:120px"></label>
+      </div>
+      <div class="note warn mt" data-i18n="tax_warning"></div>
+      <div class="mt" id="sc-uit"></div>
+    </div>
+  </section>
+
+  <!-- ================================================= Investeringen -->
+  <section class="view" id="view-investeringen">
+    <div class="card">
+      <h1 data-i18n="inv_title">Investeringen</h1>
+      <p data-i18n="inv_intro"></p>
+    </div>
+    <div class="grid g-kpi mt" id="inv-kpis"></div>
+    <div class="card mt">
+      <h2 data-i18n="inv_add_title">Positie toevoegen</h2>
+      <p data-i18n="inv_add_p"></p>
+      <div class="rowflex">
+        <select id="inv-type" style="width:150px"></select>
+        <input type="text" id="inv-naam" data-i18n-ph="inv_naam_ph" placeholder="Naam" style="min-width:220px">
+        <input type="text" id="inv-aantal" data-i18n-ph="inv_qty" placeholder="Aantal" style="width:100px">
+        <input type="number" id="inv-inleg" data-i18n-ph="inv_cost" placeholder="Inleg" step="0.01" style="width:120px">
+        <input type="number" id="inv-waarde" data-i18n-ph="inv_value" placeholder="Huidige waarde" step="0.01" style="width:140px">
+        <input type="date" id="inv-datum">
+        <input type="text" id="inv-notitie" data-i18n-ph="inv_notitie_ph" placeholder="Notitie" style="min-width:180px">
+        <button class="btn primary" id="btn-inv-add" data-i18n="add">Toevoegen</button>
+      </div>
+    </div>
+    <div class="card mt">
+      <div class="scroll"><table id="inv-body"></table></div>
+    </div>
+    <div class="note mt" data-i18n="inv_hint"></div>
+  </section>
+
+  <!-- ================================================= Import -->
+  <section class="view" id="view-import">
+    <div class="grid g-2">
+      <div class="card">
+        <h2 data-i18n="import_files">Bestanden inlezen</h2>
+        <p data-i18n="import_files_p"></p>
+        <div class="drop" id="drop">
+          <div data-i18n="drop_here">Sleep bestanden hierheen, of</div>
+          <div class="mt"><label class="btn primary" for="file" data-i18n="choose_files">Kies bestanden</label>
+            <input type="file" id="file" multiple accept=".pdf,.csv,.tsv,.txt,.xml,.xlsx,.xls,.xlsm,.json" class="hide"></div>
+          <div class="mt"><small data-i18n="formats"></small></div>
+          <div class="mt hide" id="demo-wrap">
+            <button class="btn" id="btn-demo" data-i18n="demo_load">Voorbeelddata laden</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h2 data-i18n="paste_title">Regels plakken</h2>
+        <p data-i18n="paste_p"></p>
+        <textarea id="paste" placeholder="Datum;Omschrijving;Bedrag&#10;05-08-2026;Albert Heijn;-42,15"></textarea>
+        <div class="mt"><button class="btn primary" id="btn-paste" data-i18n="paste_btn">Regels inlezen</button></div>
+      </div>
+    </div>
+    <div class="mt" id="preview"></div>
+    <div class="mt"><button class="btn primary hide" id="btn-commit" data-i18n="commit_btn">Deze regels toevoegen</button></div>
+
+    <div class="card mt">
+      <h2 data-i18n="check_title">Volledigheid van je gegevens</h2>
+      <p data-i18n="check_intro"></p>
+      <div class="scroll"><table id="check-body"></table></div>
+    </div>
+
+    <div class="card mt">
+      <h2 data-i18n="backup_title">Back-up en herstel</h2>
+      <p data-i18n="backup_p"></p>
+      <div class="rowflex">
+        <button class="btn" id="btn-export" data-i18n="export_backup">Exporteer back-up (json)</button>
+        <label class="btn" for="file-json" data-i18n="import_backup">Back-up inlezen</label>
+        <input type="file" id="file-json" accept=".json" class="hide">
+        <button class="btn danger" id="btn-wipe" data-i18n="wipe">Alles wissen</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================= Over -->
+  <section class="view" id="view-over">
+    <div class="card">
+      <h1 data-i18n="about_title"></h1>
+      <p data-i18n="about_1"></p>
+      <h2 class="mt" data-i18n="about_h1"></h2>
+      <p data-i18n="about_2"></p>
+      <h2 class="mt" data-i18n="about_h2"></h2>
+      <ul>
+        <li data-i18n="about_li1"></li>
+        <li data-i18n="about_li2"></li>
+        <li data-i18n="about_li3"></li>
+        <li data-i18n="about_li4"></li>
+      </ul>
+      <p data-i18n="about_3"></p>
+      <h2 class="mt" data-i18n="about_h3"></h2>
+      <p data-i18n="about_4"></p>
+      <h2 class="mt" data-i18n="about_h4"></h2>
+      <p data-i18n="about_6"></p>
+      <p><small data-i18n="about_5"></small></p>
+    </div>
+
+    <div class="card mt" id="lic-card">
+      <h2 data-i18n="lic_title">Licentie en tabellen</h2>
+      <p id="lic-status"></p>
+      <div class="rowflex">
+        <input type="text" id="lic-code" data-i18n-ph="lic_code" placeholder="Licentiecode" style="min-width:320px">
+        <button class="btn primary" id="btn-lic" data-i18n="lic_save">Bewaren</button>
+      </div>
+      <div class="note mt" data-i18n="lic_update_moved">De knop om de tabellen bij te werken staat, zodra je licentie actief is, rechtsboven in de menubalk.</div>
+      <div class="rowflex mt">
+        <label for="lic-url" data-i18n="lic_url">Adres voor bijwerken</label>
+        <input type="text" id="lic-url" style="min-width:420px" spellcheck="false">
+        <button class="btn ghost" id="btn-url-open" data-i18n="lic_url_open">Openen in browser</button>
+      </div>
+      <div id="lic-nieuw"></div>
+      <div class="note mt" data-i18n="lic_note"></div>
+      <div class="note mt" data-i18n="lic_url_note"></div>
+    </div>
+  </section>
+</main>
+
+<!-- pdf.js en SheetJS staan volledig in dit bestand: geen internet nodig, niets verlaat je computer -->
+<script>/*__PDFJS__*/</script>
+<script id="pdfworker" type="text/plain">/*__PDFWORKER__*/</script>
+<script>
+(function () {
+  if (!window.pdfjsLib) return;
+  try {
+    var src = document.getElementById('pdfworker').textContent;
+    var blob = new Blob([atob(src)], { type: 'text/javascript' });
+    pdfjsLib.GlobalWorkerOptions.workerSrc = URL.createObjectURL(blob);
+  } catch (e) { console.warn('pdf-worker niet geladen', e); }
+})();
+</script>
+<script>/*__XLSX__*/</script>
+<script>/*__DATA__*/</script>
+<script>/*__FISCAAL__*/</script>
+<script>/*__I18N__*/</script>
+<script>/*__PARSERS__*/</script>
+<script>/*__APP__*/</script>
+<script>/*__LICENTIE__*/</script>
+<script>/*__PRO__*/</script>
+</body>
+</html>
