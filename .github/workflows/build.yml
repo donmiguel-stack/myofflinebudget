@@ -4,8 +4,11 @@ name: Bouwen en publiceren
 # aan de release gehangen en naar GitHub Pages gezet.
 
 on:
-  push:
-    tags: ['v*']
+  # Uitgezet op 17 augustus: build.py kan hier niet slagen, want de kern-checkout
+  # mist bewust pro.js/licentie.js/de sleutel/persoonlijke databestanden (die horen
+  # niet in de publieke repo). Zie de commit-boodschap voor de reden. Handmatig
+  # starten kan nog wel (Actions-tab -> "Bouwen en publiceren" -> Run workflow),
+  # maar loopt op dit moment nog steeds vast op build.py zelf.
   workflow_dispatch:
 
 permissions:
