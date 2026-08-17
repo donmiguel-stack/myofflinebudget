@@ -19,7 +19,7 @@ Dat kun je zelf controleren met het netwerktabblad van je browser.
 
 Er zijn twee manieren, met hetzelfde bestand erachter.
 
-**In je browser:** ga naar [yourpersonalbudget.app](https://yourpersonalbudget.app) en klik op
+**In je browser:** ga naar [myofflinebudget.app](https://myofflinebudget.app) en klik op
 openen. Niets te installeren; na de eerste keer werkt hij ook zonder internet en kun je hem
 als app naast je andere programma's zetten.
 
