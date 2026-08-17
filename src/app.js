@@ -39,9 +39,10 @@
     overrides: {},     // txid -> {cat,group}
     manual: [],        // handmatige/kasregels
     userRules: [],     // eigen categorieregels: {pat, cat, group}
-    catType: {},       // categorie -> 'vast' | 'vrij' | 'opname'
+    catType: {},       // categorie -> 'vast' | 'vrij' | 'opname' | 'sparen'
     potjes: [],        // reserveringen: {naam, doel, datum, stand}
     investeringen: [], // {id,type,naam,aantal,inleg,waarde,datum,notitie}
+    splits: {},        // txid -> [{cat,group,amount,desc}, ...] (som moet bedrag van de boeking zijn)
     leningen: [],      // {id,naam,hoofdsom,pct,maanden,start,renteCum,toelichting}
     settings: { theme: 'auto', hideZak: true, jaar: null, lang: null, cur: 'EUR',
                 maandBasis: 'hist', inkomenOverride: null, budgetAlleMaanden: false }
@@ -78,6 +79,7 @@
         S.catType = d.catType || {};
         S.potjes = d.potjes || [];
         S.investeringen = d.investeringen || [];
+        S.splits = d.splits || {};
         S.settings = Object.assign(S.settings, d.settings || {});
         if (d.imported) S.imported = d.imported;
         if (Object.prototype.hasOwnProperty.call(d, 'leningen')) { S.leningen = d.leningen || []; eigenLeningen = true; }
@@ -105,7 +107,7 @@
       localStorage.setItem(STORE, JSON.stringify({
         budget: S.budget, overrides: S.overrides, manual: S.manual, userRules: S.userRules,
         catType: S.catType, potjes: S.potjes || [], investeringen: S.investeringen || [], settings: S.settings,
-        imported: S.imported || [], leningen: S.leningen || []
+        imported: S.imported || [], splits: S.splits || {}, leningen: S.leningen || []
       }));
       flash(T('saved'));
     } catch (e) { flash(T('save_failed', { e: e.message }), true); }
@@ -172,14 +174,37 @@
     return t;
   }
 
+  function rawTx(id) {
+    return S.tx.concat(S.imported || [], S.manual).filter(function (t) { return t.id === id; })[0];
+  }
+
   function allTx() {
-    return S.tx.concat(S.imported || [], S.manual).map(applyUserRules);
+    var basis = S.tx.concat(S.imported || [], S.manual).map(applyUserRules);
+    var uit = [];
+    basis.forEach(function (t) {
+      var sp = S.splits[t.id];
+      if (sp && sp.length) {
+        sp.forEach(function (p, i) {
+          uit.push(Object.assign({}, t, {
+            id: t.id + '#' + i, cat: p.cat, group: p.group, amount: p.amount,
+            desc: '\u21b3 ' + (p.desc ? p.desc + ': ' : '') + t.desc,
+            splitParent: t.id, splitPart: true, byRule: false
+          }));
+        });
+      } else {
+        uit.push(t);
+      }
+    });
+    return uit;
   }
 
   var VAST_GROEPEN = ['Wonen', 'Verzekeringen', 'Boodschappen'];
   // noodzakelijke posten die je hoe dan ook begroot, ook als het bedrag schommelt
   var VAST_CAT = /BRANDSTOF|FUEL|LADEN|CHARGING|KINDEREN|OPVANG|CHILDCARE|CRECHE|KITA|GUARDER|MOTORRIJTUIG|ROAD TAX|WEGENBELASTING|ONDERHOUD|STUDIESCHULD|STUDENT LOAN|AFLOSSING|REPAYMENT/i;
   var OPNAME_RE = /CONTANT|GELDOPNAME|GELDMAAT|CASH WITHDRAW|BARGELD|RETIRADA|ESPECES|取现/i;
+  // Sparen en beleggen zijn geen uitgave maar een verplaatsing binnen je eigen
+  // vermogen: ze blijven buiten het budget en komen terug op Investeringen.
+  var SPAAR_RE = /SPAREN|BELEGG/i;
   var _recSet = null;
 
   function recurringCats() {
@@ -196,6 +221,7 @@
     if (S.catType[cat]) return S.catType[cat];
     if (window.HB_CATTYPE && window.HB_CATTYPE[cat]) return window.HB_CATTYPE[cat];
     if (OPNAME_RE.test(cat)) return 'opname';
+    if (SPAAR_RE.test(cat)) return 'sparen';
     if (groep === 'Inkomen') return 'vast';
     if (VAST_GROEPEN.indexOf(groep) >= 0) return 'vast';
     if (VAST_CAT.test(cat)) return 'vast';
@@ -210,7 +236,8 @@
 
   function budgetTx() {   // wat meetelt in het huishoudbudget
     return allTx().filter(function (t) {
-      return !t.zak && t.group !== 'Interne overboeking' && catSoort(t.cat, t.group) !== 'opname';
+      var s = catSoort(t.cat, t.group);
+      return !t.zak && t.group !== 'Interne overboeking' && s !== 'opname' && s !== 'sparen';
     });
   }
 
@@ -218,6 +245,28 @@
     return allTx().filter(function (t) {
       return !t.zak && t.group !== 'Interne overboeking' && catSoort(t.cat, t.group) === 'opname';
     });
+  }
+
+  // Geld naar je eigen spaar- of beleggingsrekening. Geen uitgave: het verlaat je
+  // huishoudboekje niet, het verhuist naar een andere kolom van je vermogen.
+  function spaarTx() {
+    return allTx().filter(function (t) {
+      return !t.zak && t.group !== 'Interne overboeking' && catSoort(t.cat, t.group) === 'sparen';
+    });
+  }
+
+  // Per spaar- of beleggingscategorie: netto opzij gezet (opnames gaan er weer af).
+  function spaarPerCat(jaar) {
+    var per = {};
+    spaarTx().forEach(function (t) {
+      var r = per[t.cat] || (per[t.cat] = { cat: t.cat, tot: 0, jaar: 0, n: 0, laatste: '' });
+      r.tot -= t.amount;
+      if (jaar && t.year === jaar) r.jaar -= t.amount;
+      if (t.amount < 0) r.n++;
+      if (t.date > r.laatste) r.laatste = t.date;
+    });
+    return Object.keys(per).map(function (c) { return per[c]; })
+      .sort(function (a, b) { return b.tot - a.tot; });
   }
 
   // ---------------------------------------------------------------- formatteren
@@ -483,15 +532,73 @@
   // ---------------------------------------------------------------- Dashboard
   function renderDashboard() {
     renderDashboardNu();
+    renderDashboardPotjes();
+    if (!months().length) {
+      document.getElementById('tbl-maand').innerHTML =
+        '<tbody><tr><td class="muted">' + esc(T('import_files_p')) + '</td></tr></tbody>';
+      return;
+    }
+    renderDashboardKosten();
+  }
+
+  // Hoeveel per maand nodig is om een potje op tijd te halen. Kopie van de
+  // gelijknamige functie in de pro-module: die draait in haar eigen closure
+  // en is van hieruit niet aanspreekbaar, dus het dashboard rekent dit zelf na.
+  function dashPotMaand(p) {
+    var doel = +p.doel || 0, stand = +p.stand || 0;
+    if (!p.datum) return Math.round((doel - stand) / 12);
+    var mnd = Math.max(1, Math.round((new Date(p.datum) - new Date()) / 86400000 / 30.4));
+    return Math.max(0, Math.round((doel - stand) / mnd));
+  }
+
+  // Compact potjes-overzicht op het dashboard: dezelfde drie kerncijfers
+  // (samen per maand / al gespaard / nog te gaan) als op het tabblad Potjes,
+  // plus hoeveel er per potje nog te gaan is. Alleen zichtbaar met een
+  // geldige licentie én minstens één potje.
+  function renderDashboardPotjes() {
+    var card = document.getElementById('dash-potjes');
+    if (!card) return;
+    var lijst = S.potjes || [];
+    if (!proActief() || !lijst.length) { card.classList.add('hide'); return; }
+    card.classList.remove('hide');
+    var pm = lijst.reduce(function (a, p) { return a + dashPotMaand(p); }, 0);
+    var gespaard = lijst.reduce(function (a, p) { return a + (+p.stand || 0); }, 0);
+    var doel = lijst.reduce(function (a, p) { return a + (+p.doel || 0); }, 0);
+    document.getElementById('dash-potjes-kpis').innerHTML = [
+      { label: T('j_permonth'), v: eur0(pm), sub: T('j_permonth_sub', { n: lijst.length }) },
+      { label: T('j_saved'), v: eur0(gespaard), sub: T('j_of', { v: eur0(doel) }) },
+      { label: T('j_gap'), v: eur0(Math.max(0, doel - gespaard)), sub: T('j_gap_sub') }
+    ].map(function (k) {
+      return '<div class="card kpi"><div class="label">' + esc(k.label) + '</div><div class="value">' +
+        k.v + '</div><div class="sub">' + esc(k.sub) + '</div></div>';
+    }).join('');
+    document.getElementById('dash-potjes-body').innerHTML = lijst.map(function (p) {
+      var doel = +p.doel || 0, stand = +p.stand || 0;
+      var pct = doel > 0 ? Math.min(100, stand / doel * 100) : 0;
+      var rest = Math.max(0, doel - stand);
+      var rechts = (doel > 0 && rest <= 0)
+        ? '<span class="pill ok">' + T('potje_gehaald') + '</span>'
+        : '<span class="nowrap"><b>' + eur0(rest) + '</b> <small class="muted">' + T('potje_te_gaan') + '</small></span>';
+      return '<div class="rowflex" style="justify-content:space-between; margin:6px 0">' +
+        '<span style="min-width:130px">' + esc(p.naam) + '</span>' +
+        '<span class="bar-track" style="flex:1; max-width:340px"><span class="bar-fill" style="display:block; width:' +
+        pct.toFixed(0) + '%; background:var(--series-1)"></span></span>' +
+        '<small class="muted nowrap">' + eur0(stand) + ' / ' + eur0(doel) + '</small>' +
+        rechts + '</div>';
+    }).join('');
+  }
+
+  // Jaarcijfers en jaargrafieken: sinds de herindeling niet meer op het dashboard,
+  // maar onderaan het tabblad "Deze maand" onder het kopje "Verloop dit jaar".
+  function renderVerloop() {
     var ms = months();
     if (!ms.length) {
       document.getElementById('kpis').innerHTML =
         '<div class="card"><div class="label">' + T('import_files') + '</div><div class="sub">' +
         esc(T('import_files_p')) + '</div></div>';
-      ['ch1', 'ch2', 'ch3', 'ch4', 'lg1', 'lg4'].forEach(function (id) {
+      ['ch1', 'ch2', 'ch4', 'lg1', 'lg4'].forEach(function (id) {
         var el = document.getElementById(id); if (el) el.innerHTML = '';
       });
-      document.getElementById('tbl-maand').innerHTML = '';
       return;
     }
     var jaar = S.settings.jaar || years()[years().length - 1];
@@ -538,16 +645,6 @@
       { name: T('kpi_income'), data: inkomsten }, { name: T('kpi_expenses'), data: uitgaven }]);
     barChart(document.getElementById('ch2'), labs, saldo, { diverging: true, name: T('kpi_balance') });
 
-    // uitgaven per categorie in het gekozen jaar
-    var per = {};
-    budgetTx().forEach(function (t) {
-      if (t.year !== jaar || t.amount >= 0 || t.group === 'Inkomen') return;
-      per[t.cat] = (per[t.cat] || 0) - t.amount;
-    });
-    var items = Object.keys(per).map(function (c) { return { label: TC(c), value: per[c] }; })
-      .sort(function (a, b) { return b.value - a.value; }).slice(0, 14);
-    hbarChart(document.getElementById('ch3'), items, { name: T('kpi_expenses') + ' ' + jaar });
-
     // per hoofdgroep gestapeld, top 7 + overig
     var gsum = {};
     budgetTx().forEach(function (t) {
@@ -565,8 +662,6 @@
           ? -t.amount : 0); }, 0); }) });
     legend(document.getElementById('lg4'), series.map(function (s) { return s.name; }));
     stackChart(document.getElementById('ch4'), labs, series);
-
-    renderDashboardKosten();
   }
 
   // Bovenaan het dashboard: inkomsten, uitgaven en vrije ruimte van de lopende maand.
@@ -583,6 +678,11 @@
       { label: T('kpi_expenses'), v: r.uitgegeven, plain: true, sub: T('m_day', { d: r.dagNu, n: r.dagenInMaand }) },
       { label: T('m_free_left'), v: r.vrijOver, sub: T('m_free_sub'), help: 'm_hint' }
     ];
+    // Sparen staat er alleen bij als er ook echt gespaard is; anders vier kaarten
+    // waarvan er één altijd nul is.
+    if (r.opzij > 0) {
+      kpis.push({ label: T('kpi_aside'), v: r.opzij, plain: true, sub: T('kpi_aside_sub'), help: 'kind_hint' });
+    }
     host.innerHTML = kpis.map(function (k) {
       var cls = k.plain ? '' : (k.v >= 0 ? 'pos' : 'neg');
       var help = k.help ? ' data-help="' + esc(k.help) + '"' : '';
@@ -670,12 +770,16 @@
       .reduce(function (a, t) { return a - t.amount; }, 0);
     var opnOpen = Math.max(0, opn - kasGeboekt);
 
+    // wat er deze maand naar sparen of beleggen ging: geen uitgave, wel geld dat weg is
+    var opzij = spaarTx().filter(function (t) { return t.month === m && t.amount < 0; })
+      .reduce(function (a, t) { return a - t.amount; }, 0);
+
     var cats = catList().filter(function (c) { return c.group !== 'Inkomen'; });
     var begroot = 0, binnenRest = 0, over = 0, vrijUit = 0;
     var vast = [], vrij = [];
     cats.forEach(function (c) {
       var soort = catSoort(c.cat, c.group);
-      if (soort === 'opname') return;
+      if (soort === 'opname' || soort === 'sparen') return;
       var u = perCat[c.cat] || 0;
       if (soort === 'vast') {
         var b = +S.budget[c.cat] || 0;
@@ -694,7 +798,7 @@
     var nogTeBesteden = basis - uitgegeven;
 
     return { m: m, dagNu: dagNu, dagenInMaand: dagenInMaand, ontvangen: ontvangen, uitgegeven: uitgegeven,
-      verwacht: verwacht, basis: basis, opn: opn, kasGeboekt: kasGeboekt, opnOpen: opnOpen,
+      verwacht: verwacht, basis: basis, opn: opn, kasGeboekt: kasGeboekt, opnOpen: opnOpen, opzij: opzij,
       begroot: begroot, binnenRest: binnenRest, over: over, vrijUit: vrijUit,
       vrijeRuimte: vrijeRuimte, vrijOver: vrijOver, nogTeBesteden: nogTeBesteden, vast: vast, vrij: vrij };
   }
@@ -780,6 +884,8 @@
       '</th><th class="num">' + T('m_cat_spent') + '</th><th class="num">' + T('m_cat_left') +
       '</th><th></th></tr></thead><tbody>' +
       (body || '<tr><td colspan="5" class="muted">' + T('m_none') + '</td></tr>') + '</tbody>';
+
+    renderVerloop();
   }
 
   // ---------------------------------------------------------------- Budget
@@ -824,9 +930,10 @@
         var soort = sign < 0 ? catSoort(r.c.cat, r.c.group) : 'vast';
         var soortSel = sign < 0
           ? '<select class="soort" data-cat="' + esc(r.c.cat) + '" style="font-size:12px;padding:3px 5px">' +
-            ['vast', 'vrij', 'opname'].map(function (k) {
+            ['vast', 'vrij', 'opname', 'sparen'].map(function (k) {
+              var lbl = { vast: 'kind_fixed', vrij: 'kind_free', opname: 'kind_cash', sparen: 'kind_save' }[k];
               return '<option value="' + k + '"' + (k === soort ? ' selected' : '') + '>' +
-                T(k === 'vast' ? 'kind_fixed' : (k === 'vrij' ? 'kind_free' : 'kind_cash')) + '</option>';
+                T(lbl) + '</option>';
             }).join('') + '</select>'
           : '';
         return '<tr data-cat="' + esc(r.c.cat) + '"' + (soort === 'vast' ? '' : ' style="opacity:.7"') + '>' +
@@ -922,9 +1029,12 @@
     return b.length % 2 ? b[m] : (b[m - 1] + b[m]) / 2;
   }
 
-  function detectRecurring() {
+  // metSparen: ook de vaste overboekingen naar spaar- en beleggingsrekeningen
+  // meenemen. Die zijn geen uitgave, maar ze gaan wél van je rekening af — voor
+  // een saldoprognose moeten ze dus mee.
+  function detectRecurring(metSparen) {
     var groepen = {};
-    budgetTx().forEach(function (t) {
+    (metSparen ? budgetTx().concat(spaarTx()) : budgetTx()).forEach(function (t) {
       if (t.amount >= 0) return;                  // alleen uitgaven
       var k = payeeKey(t.desc);
       if (k.length < 4) return;
@@ -1122,12 +1232,16 @@
     var slice = list.slice(0, 600);
     document.getElementById('tx-body').innerHTML =
       '<thead><tr><th>' + T('th_date') + '</th><th>' + T('th_account') + '</th><th>' + T('th_desc') +
-      '</th><th class="num">' + T('th_amount') + '</th><th>' + T('th_category') + '</th></tr></thead><tbody>' +
+      '</th><th class="num">' + T('th_amount') + '</th><th>' + T('th_category') + '</th><th></th></tr></thead><tbody>' +
       slice.map(function (t) {
-        return '<tr><td class="nowrap">' + dmy(t.date) + '</td><td class="nowrap"><small>' + esc(t.account) + '</small></td>' +
+        var actie = t.splitPart
+          ? '<button class="btn ghost split-open" data-id="' + esc(t.splitParent) + '">' + T('split_edit_btn') + '</button>'
+          : '<button class="btn ghost split-open" data-id="' + esc(t.id) + '">' + T('split_btn') + '</button>';
+        return '<tr data-txrow="' + esc(t.id) + '"><td class="nowrap">' + dmy(t.date) + '</td><td class="nowrap"><small>' + esc(t.account) + '</small></td>' +
           '<td>' + esc(t.desc.slice(0, 90)) + (t.zak ? ' <span class="pill">' + T('business') + '</span>' : '') + '</td>' +
           '<td class="num ' + (t.amount < 0 ? 'neg' : 'pos') + '">' + eur(t.amount) + '</td>' +
-          '<td><select class="catsel" data-id="' + esc(t.id) + '">' + catOptionsHtml(t.cat) + '</select></td></tr>';
+          '<td><select class="catsel" data-id="' + esc(t.id) + '"' + (t.splitPart ? ' disabled' : '') + '>' + catOptionsHtml(t.cat) + '</select></td>' +
+          '<td class="right">' + actie + '</td></tr>';
       }).join('') + '</tbody>';
     if (list.length > 600) {
       document.getElementById('tx-count').textContent += T('tx_first', { n: 600 });
@@ -1143,6 +1257,160 @@
         if (tx) offerRule(tx.desc, sel.value, grp);
       });
     });
+    document.querySelectorAll('.split-open').forEach(function (b) {
+      b.addEventListener('click', function () { openSplitEditor(b.dataset.id); });
+    });
+
+    // Grootste uitgavenposten, berekend over precies de rijen die de filters
+    // hierboven overlaten. Zelfde uitsluitingen als budgetTx(): geen zakelijk,
+    // geen interne overboekingen, geen contante opnames, geen inkomsten.
+    var ch3 = document.getElementById('ch3');
+    if (ch3) {
+      var per = {};
+      list.forEach(function (t) {
+        if (t.amount >= 0 || t.group === 'Inkomen' || t.zak ||
+            t.group === 'Interne overboeking' || catSoort(t.cat, t.group) === 'opname' ||
+            catSoort(t.cat, t.group) === 'sparen') return;
+        per[t.cat] = (per[t.cat] || 0) - t.amount;
+      });
+      var items = Object.keys(per).map(function (c) { return { label: TC(c), value: per[c] }; })
+        .sort(function (a, b) { return b.value - a.value; }).slice(0, 14);
+      if (items.length) hbarChart(ch3, items, { name: T('kpi_expenses') });
+      else ch3.innerHTML = '';
+    }
+  }
+
+  // ---------------------------------------------------------------- boeking splitsen
+  // Eén boeking (bv. een boodschappenbon) verdelen over meerdere categorieën, zonder
+  // dat er iets herkend hoeft te worden: de gebruiker vult zelf de bedragen in. Het
+  // resultaat wordt in allTx() uitgeklapt naar losse deelboekingen; verder werkt alles
+  // (dashboard, budget, prognose, analyse) hier vanzelf mee omdat die allemaal op
+  // dezelfde allTx()/budgetTx() lijst rekenen.
+  var splitState = {};
+
+  function closeSplitEditor() {
+    document.querySelectorAll('tr.split-editor').forEach(function (r) { r.remove(); });
+  }
+
+  function openSplitEditor(id) {
+    var t = rawTx(id);
+    if (!t) return;
+    var already = document.querySelector('tr.split-editor[data-for="' + id + '"]');
+    closeSplitEditor();
+    if (already) return;                              // nogmaals klikken sluit hem weer
+    // is deze boeking al gesplitst, dan bestaat de oorspronkelijke rij niet meer in de
+    // tabel (die is vervangen door de deelboekingen) — pak dan de laatste deelrij, zodat
+    // de editor na de hele groep verschijnt in plaats van nergens.
+    var rijen = document.querySelectorAll('tr[data-txrow="' + id + '"], tr[data-txrow^="' + id + '#"]');
+    var row = rijen.length ? rijen[rijen.length - 1] : null;
+    if (!row) return;
+    var bestaand = S.splits[id];
+    splitState[id] = bestaand
+      ? bestaand.map(function (l) { return Object.assign({}, l); })
+      : [{ cat: t.cat, group: t.group, amount: t.amount, desc: '' },
+         { cat: t.cat, group: t.group, amount: 0, desc: '' }];
+    var tr = document.createElement('tr');
+    tr.className = 'split-editor';
+    tr.setAttribute('data-for', id);
+    tr.innerHTML = '<td colspan="6"></td>';
+    row.parentNode.insertBefore(tr, row.nextSibling);
+    renderSplitEditor(t);
+  }
+
+  function renderSplitEditor(t) {
+    var tr = document.querySelector('tr.split-editor[data-for="' + t.id + '"]');
+    if (!tr) return;
+    var lines = splitState[t.id];
+    var som = lines.reduce(function (a, l) { return a + (+l.amount || 0); }, 0);
+    var rest = Math.round((t.amount - som) * 100) / 100;
+    var klopt = Math.abs(rest) < 0.005;
+    tr.querySelector('td').innerHTML =
+      '<div class="card mt">' +
+        '<div class="rowflex" style="justify-content:space-between">' +
+          '<strong>' + T('split_title') + '</strong>' +
+          '<span class="muted">' + esc(t.desc.slice(0, 70)) + ' &middot; ' + dmy(t.date) + ' &middot; ' + eur(t.amount) + '</span>' +
+        '</div>' +
+        '<div id="split-lines">' +
+          lines.map(function (l, i) {
+            return '<div class="rowflex mt split-line">' +
+              '<select class="split-cat" data-i="' + i + '">' + catOptionsHtml(l.cat) + '</select>' +
+              '<input type="number" class="split-amt" data-i="' + i + '" step="0.01" value="' + l.amount + '" style="width:110px">' +
+              '<input type="text" class="split-desc" data-i="' + i + '" placeholder="' + esc(T('split_desc_ph')) + '" value="' + esc(l.desc || '') + '" style="min-width:160px">' +
+              (lines.length > 1 ? '<button class="btn ghost danger split-del-line" data-i="' + i + '">&times;</button>' : '') +
+            '</div>';
+          }).join('') +
+        '</div>' +
+        '<div class="rowflex mt">' +
+          '<button class="btn" id="split-add">+ ' + T('split_add_line') + '</button>' +
+          '<span class="muted' + (klopt ? '' : ' neg') + '" id="split-rest">' + T('split_remaining', { v: eur(rest) }) + '</span>' +
+        '</div>' +
+        '<div class="rowflex mt">' +
+          '<button class="btn primary" id="split-save"' + (klopt ? '' : ' disabled') + '>' + T('split_save') + '</button>' +
+          '<button class="btn ghost" id="split-cancel">' + T('split_cancel') + '</button>' +
+          (S.splits[t.id] ? '<button class="btn ghost danger" id="split-remove">' + T('split_remove') + '</button>' : '') +
+        '</div>' +
+      '</div>';
+
+    tr.querySelectorAll('.split-cat').forEach(function (sel) {
+      sel.addEventListener('change', function () {
+        var c = catList().filter(function (x) { return x.cat === sel.value; })[0];
+        splitState[t.id][+sel.dataset.i].cat = sel.value;
+        splitState[t.id][+sel.dataset.i].group = c ? c.group : 'Overig';
+      });
+    });
+    tr.querySelectorAll('.split-desc').forEach(function (inp) {
+      inp.addEventListener('change', function () { splitState[t.id][+inp.dataset.i].desc = inp.value; });
+    });
+    tr.querySelectorAll('.split-amt').forEach(function (inp) {
+      inp.addEventListener('input', function () {
+        splitState[t.id][+inp.dataset.i].amount = parseFloat(String(inp.value).replace(',', '.')) || 0;
+        var s2 = splitState[t.id].reduce(function (a, l) { return a + (+l.amount || 0); }, 0);
+        var r2 = Math.round((t.amount - s2) * 100) / 100;
+        var ok2 = Math.abs(r2) < 0.005;
+        var restEl = tr.querySelector('#split-rest');
+        restEl.textContent = T('split_remaining', { v: eur(r2) });
+        restEl.className = 'muted' + (ok2 ? '' : ' neg');
+        tr.querySelector('#split-save').disabled = !ok2;
+      });
+    });
+    var addBtn = tr.querySelector('#split-add');
+    if (addBtn) addBtn.addEventListener('click', function () {
+      splitState[t.id].push({ cat: t.cat, group: t.group, amount: 0, desc: '' });
+      renderSplitEditor(t);
+    });
+    tr.querySelectorAll('.split-del-line').forEach(function (b) {
+      b.addEventListener('click', function () {
+        splitState[t.id].splice(+b.dataset.i, 1);
+        renderSplitEditor(t);
+      });
+    });
+    var saveBtn = tr.querySelector('#split-save');
+    if (saveBtn) saveBtn.addEventListener('click', function () { splitOpslaan(t); });
+    var cancelBtn = tr.querySelector('#split-cancel');
+    if (cancelBtn) cancelBtn.addEventListener('click', function () { delete splitState[t.id]; closeSplitEditor(); });
+    var removeBtn = tr.querySelector('#split-remove');
+    if (removeBtn) removeBtn.addEventListener('click', function () { splitVerwijderen(t.id); });
+  }
+
+  function splitOpslaan(t) {
+    var lines = splitState[t.id]
+      .map(function (l) { return { cat: l.cat, group: l.group, amount: Math.round((+l.amount || 0) * 100) / 100, desc: (l.desc || '').trim() }; })
+      .filter(function (l) { return l.amount !== 0; });
+    if (!lines.length) { flash(T('split_need'), true); return; }
+    S.splits[t.id] = lines;
+    delete S.overrides[t.id];       // de splitsing vervangt een eventuele eerdere categorie-override
+    delete splitState[t.id];
+    save(); closeSplitEditor();
+    renderTx(); renderDashboard(); renderBudget(); renderRecurring();
+    flash(T('split_saved'));
+  }
+
+  function splitVerwijderen(id) {
+    delete S.splits[id];
+    delete splitState[id];
+    save(); closeSplitEditor();
+    renderTx(); renderDashboard(); renderBudget(); renderRecurring();
+    flash(T('split_removed'));
   }
 
   function fillFilters() {
@@ -1185,14 +1453,22 @@
     var huidCat = sel.value;
     sel.innerHTML = catOptionsHtml(huidCat);
     if (huidCat) sel.value = huidCat;
+    var dsel = document.getElementById('d-cat');
+    if (dsel) {
+      var huidD = dsel.value;
+      dsel.innerHTML = catOptionsHtml(huidD);
+      if (huidD) dsel.value = huidD;
+    }
   }
 
-  function addKas() {
-    var d = document.getElementById('kas-datum').value;
-    var o = document.getElementById('kas-oms').value.trim();
-    var b = parseFloat(String(document.getElementById('kas-bedrag').value).replace(',', '.'));
-    var c = document.getElementById('kas-cat').value;
-    var soort = document.getElementById('kas-soort').value;
+  // Gedeeld door het Kas-tabblad ('kas-') en de Snel invoeren-kaart op het
+  // dashboard ('d-'): zelfde velden, zelfde controle, zelfde opslag.
+  function voegBoekingToe(p) {
+    var d = document.getElementById(p + 'datum').value;
+    var o = document.getElementById(p + 'oms').value.trim();
+    var b = parseFloat(String(document.getElementById(p + 'bedrag').value).replace(',', '.'));
+    var c = document.getElementById(p + 'cat').value;
+    var soort = document.getElementById(p + 'soort').value;
     if (!d || isNaN(b)) { flash(T('cash_need'), true); return; }
     b = Math.abs(b) * (soort === 'uit' ? -1 : 1);
     var g = (catList().filter(function (x) { return x.cat === c; })[0] || {}).group || 'Overig';
@@ -1201,10 +1477,12 @@
       desc: o || T('cash_add_title'), amount: Math.round(b * 100) / 100, group: g, cat: c,
       zak: false, src: 'kas' });
     save();
-    document.getElementById('kas-oms').value = ''; document.getElementById('kas-bedrag').value = '';
+    document.getElementById(p + 'oms').value = ''; document.getElementById(p + 'bedrag').value = '';
     renderKas(); renderDashboard(); renderBudget();
     flash(T('cash_added'));
   }
+
+  function addKas() { voegBoekingToe('kas-'); }
 
   // ---------------------------------------------------------------- Import
   function categorize(desc) {
@@ -1378,7 +1656,7 @@
       versie: 1, gemaakt: new Date().toISOString(),
       budget: S.budget, overrides: S.overrides, manual: S.manual, userRules: S.userRules,
       catType: S.catType, potjes: S.potjes || [], investeringen: S.investeringen || [],
-      imported: S.imported || [], settings: S.settings,
+      imported: S.imported || [], settings: S.settings, splits: S.splits || {},
       leningen: S.leningen || []
     }, null, 1)], { type: 'application/json' });
     var a = document.createElement('a');
@@ -1409,6 +1687,7 @@
       try {
         var d = JSON.parse(fr.result);
         S.budget = d.budget || S.budget; S.overrides = d.overrides || {};
+        S.splits = d.splits || {};
         S.manual = d.manual || []; S.imported = d.imported || [];
         S.userRules = d.userRules || [];
         S.catType = d.catType || {};
@@ -1528,9 +1807,33 @@
   // de leningen hierboven; zie het als een momentopname die je af en toe bijwerkt.
   var INVEST_TYPES = ['aandelen', 'goud', 'zilver', 'crypto', 'overig'];
 
+  // Wat je opzij zet staat niet als uitgave in je cijfers, maar het is er wel.
+  // Hier komt het terug, naast je beleggingen, zodat je je hele vermogen ziet.
+  function renderInvestSparen() {
+    var card = document.getElementById('inv-auto');
+    if (!card) return;
+    var jaar = +(S.settings.jaar || new Date().getFullYear());
+    var rijen = spaarPerCat(jaar);
+    if (!rijen.length) { card.classList.add('hide'); return 0; }
+    card.classList.remove('hide');
+    document.getElementById('inv-auto-body').innerHTML =
+      '<thead><tr><th>' + T('th_category') + '</th><th class="num">' + T('inv_auto_total') +
+      '</th><th class="num">' + T('inv_auto_year') + '</th><th class="num">' + T('inv_auto_count') +
+      '</th><th>' + T('inv_auto_last') + '</th></tr></thead><tbody>' +
+      rijen.map(function (r) {
+        return '<tr><td>' + esc(TC(r.cat)) + '</td>' +
+          '<td class="num" style="font-weight:600">' + eur0(r.tot) + '</td>' +
+          '<td class="num">' + (r.jaar ? eur0(r.jaar) : '<span class="muted">–</span>') + '</td>' +
+          '<td class="num">' + r.n + '</td>' +
+          '<td class="nowrap">' + (r.laatste ? dmy(r.laatste) : '<span class="muted">–</span>') + '</td></tr>';
+      }).join('') + '</tbody>';
+    return rijen.reduce(function (a, r) { return a + r.tot; }, 0);
+  }
+
   function renderInvesteringen() {
     var host = document.getElementById('inv-body');
     if (!host) return;
+    var opzij = renderInvestSparen() || 0;
     var lijst = (S.investeringen || []).slice().sort(function (a, b) { return (b.waarde || 0) - (a.waarde || 0); });
     var totWaarde = lijst.reduce(function (a, i) { return a + (+i.waarde || 0); }, 0);
     var totInleg = lijst.reduce(function (a, i) { return a + (+i.inleg || 0); }, 0);
@@ -1539,7 +1842,7 @@
       { l: T('inv_total_value'), v: totWaarde, plain: true },
       { l: T('inv_total_cost'), v: totInleg, plain: true },
       { l: T('inv_result'), v: resultaat, sub: totInleg ? (Math.round(resultaat / totInleg * 1000) / 10) + '%' : '' }
-    ].map(function (k) {
+    ].concat(opzij > 0 ? [{ l: T('inv_saved'), v: opzij, plain: true, sub: T('inv_saved_sub') }] : []).map(function (k) {
       var cls = k.plain ? '' : (k.v >= 0 ? 'pos' : 'neg');
       return '<div class="card kpi"><div class="label">' + esc(k.l) + '</div><div class="value ' + cls + '">' +
         eur0(k.v) + '</div><div class="sub">' + esc(k.sub || '') + '</div></div>';
@@ -1635,7 +1938,8 @@
   var HBCore = {
     S: S, MONTHS: MONTHS,
     T: T, TC: TC, TG: TG,
-    budgetTx: budgetTx, opnameTx: opnameTx, catSoort: catSoort, catGroep: catGroep,
+    budgetTx: budgetTx, opnameTx: opnameTx, spaarTx: spaarTx, spaarPerCat: spaarPerCat,
+    catSoort: catSoort, catGroep: catGroep,
     detectRecurring: detectRecurring, histInkomen: histInkomen, mediaan: mediaan,
     months: months, maandLabel: maandLabel, payeeKey: payeeKey,
     eur: eur, eur0: eur0, dmy: dmy, esc: esc, flash: flash, save: save,
@@ -1668,15 +1972,27 @@
       var knop = document.querySelector('nav.tabs button[data-view="' + v + '"]');
       if (knop) knop.classList.toggle('hide', !aan);
     });
+    var proLabel = document.getElementById('nav-pro-label');
+    if (proLabel) proLabel.classList.toggle('hide', !aan);
     var audit = document.getElementById('audit-card');
     if (audit) audit.classList.toggle('hide', !aan);
     var slot = document.getElementById('pro-slot');
     if (slot) slot.classList.toggle('hide', aan);
     // bijwerken kan alleen als er tabellen zijn om bij te werken
-    ['btn-update', 'lic-file-label'].forEach(function (id) {
+    ['btn-update', 'lic-drop'].forEach(function (id) {
       var e = document.getElementById(id);
       if (e) e.classList.toggle('hide', !aan);
     });
+    // De licentie wordt async gecontroleerd (HBLicentie.init()); als renderAll()
+    // al draaide vóórdat die controle klaar was, sloeg pro() de pro-tabbladen
+    // over omdat proActief() toen nog false was. Zodra de licentie alsnog geldig
+    // blijkt, hier alsnog bijwerken — anders blijven tabbladen als Potjes leeg
+    // tot de gebruiker er handmatig naartoe klikt.
+    if (aan) {
+      ['renderAudit', 'renderPrognose', 'renderPotjes', 'renderAnalyse', 'renderBelasting']
+        .forEach(pro);
+    }
+    renderDashboardPotjes();
   }
 
   function renderAll() {
@@ -1701,6 +2017,7 @@
     if (view === 'budget') renderBudget();
     if (view === 'vaste') { renderRecurring(); pro('renderAudit'); }
     if (view === 'maand') renderMaand();
+    if (view === 'transacties') renderTx();
     if (view === 'import') renderCheck();
     if (view === 'prognose') pro('renderPrognose');
     if (view === 'potjes') pro('renderPotjes');
@@ -1716,6 +2033,8 @@
     document.getElementById('btn-theme').textContent =
       t === 'dark' ? '☀︎ ' + T('theme_light') : (t === 'light' ? '☾ ' + T('theme_dark') : '◐ ' + T('theme_auto'));
     if (document.getElementById('view-dashboard').classList.contains('active')) renderDashboard();
+    if (document.getElementById('view-maand').classList.contains('active')) renderMaand();
+    if (document.getElementById('view-transacties').classList.contains('active')) renderTx();
   }
 
   // ---------------------------------------------------------------- licentie en tabellen
@@ -1815,22 +2134,41 @@
           return;
         }
         toonLicentie();
-        flash(T(m === 'geen-url' ? 'lic_no_url' : 'lic_fail'), true);
+        if (m === 'dekking') flash(T('lic_dekking', { jaar: e.jaar || '' }), true);
+        else flash(T(m === 'geen-url' ? 'lic_no_url' : 'lic_fail'), true);
       });
     });
 
-    var best = document.getElementById('lic-file');
-    if (best) best.addEventListener('change', function () {
-      var f = this.files[0]; this.value = '';
+    function verwerkTabellenBestand(f) {
       if (!f) return;
       var fr = new FileReader();
       fr.onload = function () {
         L.leesTabellen(fr.result).then(function (data) {
           pasTabellenToe(data); toonLicentie();
-        }).catch(function () { flash(T('lic_fail'), true); });
+        }).catch(function (e) {
+          if (e && e.message === 'dekking') flash(T('lic_dekking', { jaar: e.jaar || '' }), true);
+          else flash(T('lic_fail'), true);
+        });
       };
       fr.readAsText(f);
+    }
+
+    var best = document.getElementById('lic-file');
+    if (best) best.addEventListener('change', function () {
+      verwerkTabellenBestand(this.files[0]); this.value = '';
     });
+
+    // hetzelfde bestand mag je ook naar het vakje slepen, net als bij Import
+    var licDrop = document.getElementById('lic-drop');
+    if (licDrop) {
+      ['dragenter', 'dragover'].forEach(function (ev) {
+        licDrop.addEventListener(ev, function (e) { e.preventDefault(); licDrop.classList.add('over'); });
+      });
+      ['dragleave', 'drop'].forEach(function (ev) {
+        licDrop.addEventListener(ev, function (e) { e.preventDefault(); licDrop.classList.remove('over'); });
+      });
+      licDrop.addEventListener('drop', function (e) { verwerkTabellenBestand(e.dataTransfer.files[0]); });
+    }
   }
 
   function koppelPro() {
@@ -1929,7 +2267,7 @@
       save(); applyTheme();
     });
     document.getElementById('sel-jaar').addEventListener('change', function () {
-      S.settings.jaar = +this.value; save(); renderDashboard(); renderBudget();
+      S.settings.jaar = +this.value; save(); renderMaand(); renderBudget();
     });
     ['q', 'cat', 'jaar', 'rek'].forEach(function (k) {
       document.getElementById('f-' + k).addEventListener('input', function () {
@@ -1945,6 +2283,8 @@
     if (bLenAdd) bLenAdd.addEventListener('click', addLening);
     var lenStart = document.getElementById('len-start');
     if (lenStart && !lenStart.value) lenStart.value = new Date().toISOString().slice(0, 10);
+    var bDashAdd = document.getElementById('btn-dash-add');
+    if (bDashAdd) bDashAdd.addEventListener('click', function () { voegBoekingToe('d-'); });
     var chkAlle = document.getElementById('chk-alle-maanden');
     if (chkAlle) chkAlle.addEventListener('change', function () {
       S.settings.budgetAlleMaanden = this.checked; save(); renderBudget();
@@ -1966,6 +2306,8 @@
     }
     document.getElementById('btn-budget-hist').addEventListener('click', vulBudgetUitHistorie);
     document.getElementById('btn-export').addEventListener('click', exportJson);
+    var bBackupHeader = document.getElementById('btn-backup-header');
+    if (bBackupHeader) bBackupHeader.addEventListener('click', exportJson);
     document.getElementById('btn-export-csv').addEventListener('click', exportCsv);
     document.getElementById('btn-commit').addEventListener('click', commit);
     document.getElementById('btn-wipe').addEventListener('click', function () {
@@ -2013,10 +2355,14 @@
       else stage(r.rows, 'Geplakt');
     });
     document.getElementById('kas-datum').value = new Date().toISOString().slice(0, 10);
+    var dDatum = document.getElementById('d-datum');
+    if (dDatum) dDatum.value = new Date().toISOString().slice(0, 10);
     addEventListener('resize', function () {
       clearTimeout(window._rz);
       window._rz = setTimeout(function () {
         if (document.getElementById('view-dashboard').classList.contains('active')) renderDashboard();
+        if (document.getElementById('view-maand').classList.contains('active')) renderMaand();
+        if (document.getElementById('view-transacties').classList.contains('active')) renderTx();
       }, 200);
     });
   }

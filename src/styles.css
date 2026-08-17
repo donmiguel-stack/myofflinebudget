@@ -202,6 +202,11 @@ tbody tr:hover { background: var(--plane); }
 
 .hide { display: none !important; }
 .nav-divider { display: flex; align-items: center; padding: 0 4px 0 10px; margin-left: 4px; border-left: 1px solid var(--border); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); white-space: nowrap; }
+#faq-card details{border-bottom:1px solid var(--line);padding:10px 0}
+#faq-card details:last-of-type{border-bottom:0}
+#faq-card summary{cursor:pointer;font-weight:600}
+#faq-card summary::marker{color:var(--muted)}
+#faq-card details p{color:var(--muted);margin:8px 0 0;max-width:70ch}
 .lic-drop { display: inline-flex; align-items: center; gap: 8px; border: 1px dashed var(--axis); border-radius: 8px; padding: 5px 12px; transition: .15s; }
 .lic-drop.over { border-color: var(--series-1); background: var(--accent-soft); }
 .rowflex { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }

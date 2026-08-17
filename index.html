@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Huishoudboekje</title>
+<title>My Offline Budget</title>
 <meta name="description" content="Lokale budget-app. Alle gegevens blijven in je eigen browser.">
 
 <style>/* Huishoudboekje — lokale budget-app.
@@ -210,6 +210,11 @@ tbody tr:hover { background: var(--plane); }
 
 .hide { display: none !important; }
 .nav-divider { display: flex; align-items: center; padding: 0 4px 0 10px; margin-left: 4px; border-left: 1px solid var(--border); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); white-space: nowrap; }
+#faq-card details{border-bottom:1px solid var(--line);padding:10px 0}
+#faq-card details:last-of-type{border-bottom:0}
+#faq-card summary{cursor:pointer;font-weight:600}
+#faq-card summary::marker{color:var(--muted)}
+#faq-card details p{color:var(--muted);margin:8px 0 0;max-width:70ch}
 .lic-drop { display: inline-flex; align-items: center; gap: 8px; border: 1px dashed var(--axis); border-radius: 8px; padding: 5px 12px; transition: .15s; }
 .lic-drop.over { border-color: var(--series-1); background: var(--accent-soft); }
 .rowflex { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
@@ -228,7 +233,7 @@ tbody tr:hover { background: var(--plane); }
 </head>
 <body>
 <header class="top">
-  <div class="brand"><span data-i18n="brand">Huishoudboekje</span><span class="tag" data-i18n="brand_tag">lokaal · geen server</span></div>
+  <div class="brand"><span data-i18n="brand">Huishoudboekje</span><span class="tag" data-i18n="brand_tag">lokaal · geen server</span><span class="tag ver">v1.0.0</span></div>
   <nav class="tabs">
     <button data-view="dashboard" data-i18n="nav_dashboard">Dashboard</button>
     <button data-view="maand" data-i18n="nav_month">Deze maand</button>
@@ -241,15 +246,15 @@ tbody tr:hover { background: var(--plane); }
     <button data-view="investeringen" data-i18n="nav_invest">Investeringen</button>
     <button data-view="import" data-i18n="nav_import">Import</button>
     <button data-view="over" data-i18n="nav_about">Over</button>
+
   </nav>
   <div class="ctrls">
     <span id="flash" class="pill" style="opacity:0;transition:opacity .3s"></span>
-    <button class="btn hide" id="btn-update" data-i18n="lic_update">Tabellen bijwerken</button>
-    <label class="btn hide" id="lic-file-label" for="lic-file" data-i18n="lic_file">Bestand inlezen</label>
-    <input type="file" id="lic-file" accept=".txt,.json" class="hide">
+    <button class="btn primary" id="btn-backup-header" data-i18n="backup_header_btn">Back-up maken</button>
     <select id="sel-lang" class="btn" aria-label="Taal / Language"></select>
     <select id="sel-cur" class="btn" aria-label="Valuta / Currency"></select>
     <button class="btn" id="btn-theme">◐ Auto</button>
+    <a class="icon-btn" id="link-github" href="https://github.com/donmiguel-stack/myofflinebudget" target="_blank" rel="noopener" aria-label="GitHub" title="Broncode op GitHub"><svg viewBox="0 0 16 16" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path></svg></a>
   </div>
 </header>
 
@@ -263,34 +268,22 @@ tbody tr:hover { background: var(--plane); }
       </div>
       <div class="grid g-kpi mt" id="kpis-nu"></div>
     </div>
-    <div class="filters mt">
-      <label for="sel-jaar" data-i18n="year">Jaar</label>
-      <select id="sel-jaar"></select>
-      <span class="muted" data-i18n="dash_hint">Kerncijfers gelden voor het gekozen jaar; de grafieken tonen de hele periode.</span>
-    </div>
-    <div class="grid g-kpi" id="kpis"></div>
-    <div class="grid g-2 mt">
-      <div class="card">
-        <h2 data-i18n="ch_inc_exp">Inkomsten en uitgaven per maand</h2>
-        <div class="legend" id="lg1"></div>
-        <div id="ch1"></div>
-      </div>
-      <div class="card">
-        <h2 data-i18n="ch_balance">Saldo per maand</h2>
-        <p><small data-i18n="ch_balance_hint">Blauw is een overschot, rood een tekort.</small></p>
-        <div id="ch2"></div>
+    <div class="card mt">
+      <h2 data-i18n="quick_add_title">Snel invoeren</h2>
+      <p><small class="muted" data-i18n="quick_add_hint">Zet een uitgave of inkomst er direct in — hij komt bij je handmatige boekingen.</small></p>
+      <div class="rowflex">
+        <input type="date" id="d-datum">
+        <select id="d-soort"><option value="uit" data-i18n="expense">Uitgave</option><option value="in" data-i18n="income">Inkomst</option></select>
+        <input type="number" id="d-bedrag" data-i18n-ph="amount" placeholder="Bedrag" step="0.01" style="width:120px">
+        <input type="text" id="d-oms" data-i18n-ph="description" placeholder="Omschrijving" style="min-width:200px">
+        <select id="d-cat"></select>
+        <button class="btn primary" id="btn-dash-add" data-i18n="add">Toevoegen</button>
       </div>
     </div>
-    <div class="grid g-2 mt">
-      <div class="card">
-        <h2 data-i18n="ch_top">Grootste uitgavenposten</h2>
-        <div id="ch3"></div>
-      </div>
-      <div class="card">
-        <h2 data-i18n="ch_groups">Uitgaven per hoofdgroep per maand</h2>
-        <div class="legend" id="lg4"></div>
-        <div id="ch4"></div>
-      </div>
+    <div class="card mt hide" id="dash-potjes">
+      <h2 data-i18n="dash_potjes_title">Potjes — nog te gaan</h2>
+      <div class="grid g-kpi" id="dash-potjes-kpis"></div>
+      <div id="dash-potjes-body" class="mt"></div>
     </div>
     <div class="card mt">
       <h2 data-i18n="tbl_month">Kosten van de komende 30 dagen</h2>
@@ -306,7 +299,7 @@ tbody tr:hover { background: var(--plane); }
         <li data-i18n="slot_li3"></li>
         <li data-i18n="slot_li4"></li>
       </ul>
-      <p><a class="btn primary" id="slot-link" href="https://yourpersonalbudget.app" target="_blank" rel="noopener" data-i18n="slot_btn">Bekijk de mogelijkheden</a></p>
+      <p><a class="btn primary" id="slot-link" href="https://myofflinebudget.app" target="_blank" rel="noopener" data-i18n="slot_btn">Bekijk de mogelijkheden</a></p>
     </div>
   </section>
 
@@ -330,6 +323,31 @@ tbody tr:hover { background: var(--plane); }
       <h2 data-i18n="m_title">Ruimte deze maand</h2>
       <p data-i18n="m_hint"></p>
       <div class="scroll"><table id="m-body"></table></div>
+    </div>
+    <div class="filters mt">
+      <strong data-i18n="year_overview">Verloop dit jaar</strong>
+      <span class="spacer"></span>
+      <label for="sel-jaar" data-i18n="year">Jaar</label>
+      <select id="sel-jaar"></select>
+      <span class="muted" data-i18n="dash_hint">Kerncijfers gelden voor het gekozen jaar; de grafieken tonen de hele periode.</span>
+    </div>
+    <div class="grid g-kpi" id="kpis"></div>
+    <div class="grid g-2 mt">
+      <div class="card">
+        <h2 data-i18n="ch_inc_exp">Inkomsten en uitgaven per maand</h2>
+        <div class="legend" id="lg1"></div>
+        <div id="ch1"></div>
+      </div>
+      <div class="card">
+        <h2 data-i18n="ch_balance">Saldo per maand</h2>
+        <p><small data-i18n="ch_balance_hint">Blauw is een overschot, rood een tekort.</small></p>
+        <div id="ch2"></div>
+      </div>
+    </div>
+    <div class="card mt">
+      <h2 data-i18n="ch_groups">Uitgaven per hoofdgroep per maand</h2>
+      <div class="legend" id="lg4"></div>
+      <div id="ch4"></div>
     </div>
   </section>
 
@@ -374,6 +392,11 @@ tbody tr:hover { background: var(--plane); }
     </div>
     <div id="rule-offer" class="hide"></div>
     <div class="card"><div class="scroll"><table id="tx-body"></table></div></div>
+    <div class="card mt">
+      <h2 data-i18n="ch_top">Grootste uitgavenposten</h2>
+      <p><small class="muted" data-i18n="ch_top_hint">Volgt de filters hierboven.</small></p>
+      <div id="ch3"></div>
+    </div>
     <div class="note mt" data-i18n="tx_note"></div>
     <div class="card mt">
       <h2 data-i18n="rules_title">Automatische regels</h2>
@@ -431,6 +454,11 @@ tbody tr:hover { background: var(--plane); }
       <p data-i18n="inv_intro"></p>
     </div>
     <div class="grid g-kpi mt" id="inv-kpis"></div>
+    <div class="card mt hide" id="inv-auto">
+      <h2 data-i18n="inv_auto_title">Sparen uit je boekingen</h2>
+      <p><small class="muted" data-i18n="inv_auto_hint"></small></p>
+      <div class="scroll"><table id="inv-auto-body"></table></div>
+    </div>
     <div class="card mt">
       <h2 data-i18n="inv_add_title">Positie toevoegen</h2>
       <p data-i18n="inv_add_p"></p>
@@ -460,7 +488,7 @@ tbody tr:hover { background: var(--plane); }
         <div class="drop" id="drop">
           <div data-i18n="drop_here">Sleep bestanden hierheen, of</div>
           <div class="mt"><label class="btn primary" for="file" data-i18n="choose_files">Kies bestanden</label>
-            <input type="file" id="file" multiple accept=".pdf,.csv,.tsv,.txt,.xlsx,.xls,.xlsm,.json" class="hide"></div>
+            <input type="file" id="file" multiple accept=".pdf,.csv,.tsv,.txt,.xml,.xlsx,.xls,.xlsm,.json" class="hide"></div>
           <div class="mt"><small data-i18n="formats"></small></div>
           <div class="mt hide" id="demo-wrap">
             <button class="btn" id="btn-demo" data-i18n="demo_load">Voorbeelddata laden</button>
@@ -518,6 +546,20 @@ tbody tr:hover { background: var(--plane); }
       <p><small data-i18n="about_5"></small></p>
     </div>
 
+    <div class="card mt" id="faq-card">
+      <h2 data-i18n="faq_title">Vragen</h2>
+      <details><summary data-i18n="faq_q_imp"></summary><p data-i18n="faq_a_imp"></p></details>
+      <details><summary data-i18n="faq_q_dub"></summary><p data-i18n="faq_a_dub"></p></details>
+      <details><summary data-i18n="faq_q_hand"></summary><p data-i18n="faq_a_hand"></p></details>
+      <details><summary data-i18n="faq_q_cat"></summary><p data-i18n="faq_a_cat"></p></details>
+      <details><summary data-i18n="faq_q_eigen"></summary><p data-i18n="faq_a_eigen"></p></details>
+      <details><summary data-i18n="faq_q_regels"></summary><p data-i18n="faq_a_regels"></p></details>
+      <details><summary data-i18n="faq_q_rest"></summary><p data-i18n="faq_a_rest"></p></details>
+      <details><summary data-i18n="faq_q_split"></summary><p data-i18n="faq_a_split"></p></details>
+      <details><summary data-i18n="faq_q_sparen"></summary><p data-i18n="faq_a_sparen"></p></details>
+      <details><summary data-i18n="faq_q_backup"></summary><p data-i18n="faq_a_backup"></p></details>
+      <details><summary data-i18n="faq_q_leeg"></summary><p data-i18n="faq_a_leeg"></p></details>
+    </div>
     <div class="card mt" id="lic-card">
       <h2 data-i18n="lic_title">Licentie en tabellen</h2>
       <p id="lic-status"></p>
@@ -525,7 +567,8 @@ tbody tr:hover { background: var(--plane); }
         <input type="text" id="lic-code" data-i18n-ph="lic_code" placeholder="Licentiecode" style="min-width:320px">
         <button class="btn primary" id="btn-lic" data-i18n="lic_save">Bewaren</button>
       </div>
-      <div class="note mt" data-i18n="lic_update_moved">De knop om de tabellen bij te werken staat, zodra je licentie actief is, rechtsboven in de menubalk.</div>
+      <p><small data-i18n="lic_contact"></small></p>
+      <div class="note mt" data-i18n="lic_update_moved">De knop om de tabellen bij te werken vind je, zodra je licentie actief is, op het tabblad Belasting.</div>
       <div class="rowflex mt">
         <label for="lic-url" data-i18n="lic_url">Adres voor bijwerken</label>
         <input type="text" id="lic-url" style="min-width:420px" spellcheck="false">
@@ -537,6 +580,9 @@ tbody tr:hover { background: var(--plane); }
     </div>
   </section>
 </main>
+
+<!-- pdf.js en SheetJS staan volledig in dit bestand: geen internet nodig, niets verlaat je computer -->
+
 
 <!-- pdf.js en SheetJS staan volledig in dit bestand: geen internet nodig, niets verlaat je computer -->
 <script>/**
@@ -1466,8 +1512,8 @@ window.HB_LENINGEN=[];</script>
 
   var UI = {
     nl: {
-      _name: 'Nederlands', _flag: '🇳🇱', _locale: 'nl-NL', _title: 'Huishoudboekje',
-      brand: 'Huishoudboekje', brand_tag: 'lokaal · geen server',
+      _name: 'Nederlands', _flag: '🇳🇱', _locale: 'nl-NL', _title: 'My Offline Budget',
+      brand: 'My Offline Budget', brand_tag: 'lokaal · geen server',
       nav_dashboard: 'Dashboard', nav_budget: 'Budget', nav_tx: 'Transacties', nav_cash: 'Kas',
       nav_loans: 'Leningen', nav_import: 'Import', nav_about: 'Over',
       theme_auto: 'Auto', theme_light: 'Licht', theme_dark: 'Donker',
@@ -1549,8 +1595,8 @@ window.HB_LENINGEN=[];</script>
     },
 
     en: {
-      _name: 'English', _flag: '🇬🇧', _locale: 'en-GB', _title: 'Household budget',
-      brand: 'Household budget', brand_tag: 'local · no server',
+      _name: 'English', _flag: '🇬🇧', _locale: 'en-GB', _title: 'My Offline Budget',
+      brand: 'My Offline Budget', brand_tag: 'local · no server',
       nav_dashboard: 'Dashboard', nav_budget: 'Budget', nav_tx: 'Transactions', nav_cash: 'Cash',
       nav_loans: 'Loans', nav_import: 'Import', nav_about: 'About',
       theme_auto: 'Auto', theme_light: 'Light', theme_dark: 'Dark',
@@ -1632,8 +1678,8 @@ window.HB_LENINGEN=[];</script>
     },
 
     fr: {
-      _name: 'Français', _flag: '🇫🇷', _locale: 'fr-FR', _title: 'Budget familial',
-      brand: 'Budget familial', brand_tag: 'local · sans serveur',
+      _name: 'Français', _flag: '🇫🇷', _locale: 'fr-FR', _title: 'My Offline Budget',
+      brand: 'My Offline Budget', brand_tag: 'local · sans serveur',
       nav_dashboard: 'Tableau de bord', nav_budget: 'Budget', nav_tx: 'Transactions', nav_cash: 'Espèces',
       nav_loans: 'Prêts', nav_import: 'Import', nav_about: 'À propos',
       theme_auto: 'Auto', theme_light: 'Clair', theme_dark: 'Sombre',
@@ -1715,8 +1761,8 @@ window.HB_LENINGEN=[];</script>
     },
 
     de: {
-      _name: 'Deutsch', _flag: '🇩🇪', _locale: 'de-DE', _title: 'Haushaltsbuch',
-      brand: 'Haushaltsbuch', brand_tag: 'lokal · ohne Server',
+      _name: 'Deutsch', _flag: '🇩🇪', _locale: 'de-DE', _title: 'My Offline Budget',
+      brand: 'My Offline Budget', brand_tag: 'lokal · ohne Server',
       nav_dashboard: 'Übersicht', nav_budget: 'Budget', nav_tx: 'Buchungen', nav_cash: 'Bargeld',
       nav_loans: 'Darlehen', nav_import: 'Import', nav_about: 'Über',
       theme_auto: 'Auto', theme_light: 'Hell', theme_dark: 'Dunkel',
@@ -1798,8 +1844,8 @@ window.HB_LENINGEN=[];</script>
     },
 
     es: {
-      _name: 'Español', _flag: '🇪🇸', _locale: 'es-ES', _title: 'Presupuesto doméstico',
-      brand: 'Presupuesto doméstico', brand_tag: 'local · sin servidor',
+      _name: 'Español', _flag: '🇪🇸', _locale: 'es-ES', _title: 'My Offline Budget',
+      brand: 'My Offline Budget', brand_tag: 'local · sin servidor',
       nav_dashboard: 'Panel', nav_budget: 'Presupuesto', nav_tx: 'Movimientos', nav_cash: 'Efectivo',
       nav_loans: 'Préstamos', nav_import: 'Importar', nav_about: 'Acerca de',
       theme_auto: 'Auto', theme_light: 'Claro', theme_dark: 'Oscuro',
@@ -1881,8 +1927,8 @@ window.HB_LENINGEN=[];</script>
     },
 
     zh: {
-      _name: '中文', _flag: '🇨🇳', _locale: 'zh-CN', _title: '家庭账本',
-      brand: '家庭账本', brand_tag: '本地运行 · 无服务器',
+      _name: '中文', _flag: '🇨🇳', _locale: 'zh-CN', _title: 'My Offline Budget',
+      brand: 'My Offline Budget', brand_tag: '本地运行 · 无服务器',
       nav_dashboard: '总览', nav_budget: '预算', nav_tx: '交易', nav_cash: '现金',
       nav_loans: '借款', nav_import: '导入', nav_about: '关于',
       theme_auto: '自动', theme_light: '浅色', theme_dark: '深色',
@@ -3717,7 +3763,7 @@ window.HB_LENINGEN=[];</script>
       "inv_hint": "Waardes vul je zelf in, op het moment dat het jou uitkomt. De app legt geen verbinding om koersen op te halen — dat past niet bij een programma zonder internet.",
       "inv_naam_ph": "Naam (bv. Shell, Krugerrand 1oz, Bitcoin)",
       "inv_notitie_ph": "Notitie (optioneel)",
-      "lic_update_moved": "De knop om de tabellen bij te werken staat, zodra je licentie actief is, rechtsboven in de menubalk."
+      "lic_update_moved": "De knop om de tabellen bij te werken vind je, zodra je licentie actief is, op het tabblad Belasting."
     },
     "en": {
       "nav_invest": "Investments",
@@ -3749,7 +3795,7 @@ window.HB_LENINGEN=[];</script>
       "inv_hint": "You enter the values yourself, whenever it suits you. The app makes no connection to fetch prices — that would not fit a program with no internet.",
       "inv_naam_ph": "Name (e.g. Shell, 1oz Krugerrand, Bitcoin)",
       "inv_notitie_ph": "Note (optional)",
-      "lic_update_moved": "Once your licence is active, the button to update the tables is at the top right of the menu bar."
+      "lic_update_moved": "Once your licence is active, the button to update the tables is on the Tax tab."
     },
     "fr": {
       "nav_invest": "Investissements",
@@ -3781,7 +3827,7 @@ window.HB_LENINGEN=[];</script>
       "inv_hint": "Vous saisissez vous-même les valeurs, quand cela vous arrange. L’application n’établit aucune connexion pour récupérer des cours — cela ne conviendrait pas à un programme sans internet.",
       "inv_naam_ph": "Nom (ex. Shell, Krugerrand 1oz, Bitcoin)",
       "inv_notitie_ph": "Note (facultatif)",
-      "lic_update_moved": "Une fois votre licence active, le bouton de mise à jour des tables se trouve en haut à droite de la barre de menu."
+      "lic_update_moved": "Une fois votre licence active, le bouton de mise à jour des tables se trouve dans l'onglet Impôts."
     },
     "de": {
       "nav_invest": "Anlagen",
@@ -3813,7 +3859,7 @@ window.HB_LENINGEN=[];</script>
       "inv_hint": "Sie tragen die Werte selbst ein, wann immer es Ihnen passt. Die App baut keine Verbindung auf, um Kurse abzurufen — das würde nicht zu einem Programm ohne Internet passen.",
       "inv_naam_ph": "Name (z. B. Shell, 1oz Krügerrand, Bitcoin)",
       "inv_notitie_ph": "Notiz (optional)",
-      "lic_update_moved": "Sobald Ihre Lizenz aktiv ist, finden Sie die Schaltfläche zum Aktualisieren der Tabellen oben rechts in der Menüleiste."
+      "lic_update_moved": "Sobald Ihre Lizenz aktiv ist, finden Sie die Schaltfläche zum Aktualisieren der Tabellen im Reiter Steuer."
     },
     "es": {
       "nav_invest": "Inversiones",
@@ -3845,7 +3891,7 @@ window.HB_LENINGEN=[];</script>
       "inv_hint": "Introduces los valores tú mismo, cuando te convenga. La aplicación no establece ninguna conexión para consultar cotizaciones — eso no encajaría con un programa sin internet.",
       "inv_naam_ph": "Nombre (p. ej. Shell, Krugerrand 1oz, Bitcoin)",
       "inv_notitie_ph": "Nota (opcional)",
-      "lic_update_moved": "En cuanto tu licencia esté activa, el botón para actualizar las tablas estará arriba a la derecha, en la barra de menú."
+      "lic_update_moved": "En cuanto tu licencia esté activa, el botón para actualizar las tablas estará en la pestaña Impuestos."
     },
     "zh": {
       "nav_invest": "投资",
@@ -3877,10 +3923,220 @@ window.HB_LENINGEN=[];</script>
       "inv_hint": "价值由你自行填写，方便时更新即可。应用不会联网获取行情——这不符合一个不联网程序的原则。",
       "inv_naam_ph": "名称（如 Shell、1盎司克鲁格金币、Bitcoin）",
       "inv_notitie_ph": "备注（可选）",
-      "lic_update_moved": "许可激活后，更新税表的按钮会出现在菜单栏右上角。"
+      "lic_update_moved": "许可激活后，更新税表的按钮会出现在「税务」标签页中。"
     }
   };
   Object.keys(EXTRA7).forEach(function (k) { Object.assign(UI[k], EXTRA7[k]); });
+
+  var EXTRA8 = {
+    "nl": { "nav_pro_label": "Uitgebreid", "backup_header_btn": "Back-up maken" },
+    "en": { "nav_pro_label": "Extended", "backup_header_btn": "Make a backup" },
+    "fr": { "nav_pro_label": "Étendu", "backup_header_btn": "Faire une sauvegarde" },
+    "de": { "nav_pro_label": "Erweitert", "backup_header_btn": "Sicherung erstellen" },
+    "es": { "nav_pro_label": "Ampliado", "backup_header_btn": "Hacer una copia de seguridad" },
+    "zh": { "nav_pro_label": "扩展", "backup_header_btn": "创建备份" }
+  };
+  Object.keys(EXTRA8).forEach(function (k) { Object.assign(UI[k], EXTRA8[k]); });
+
+  var EXTRA9 = {
+    "nl": {
+      "split_btn": "Splits", "split_edit_btn": "Bewerk splitsing", "split_title": "Boeking splitsen",
+      "split_add_line": "regel", "split_remaining": "Resterend: {v}", "split_save": "Opslaan",
+      "split_cancel": "Annuleren", "split_remove": "Splitsing verwijderen",
+      "split_desc_ph": "Notitie (optioneel)", "split_need": "Vul minstens één bedrag in.",
+      "split_saved": "Splitsing opgeslagen", "split_removed": "Splitsing verwijderd"
+    },
+    "en": {
+      "split_btn": "Split", "split_edit_btn": "Edit split", "split_title": "Split this transaction",
+      "split_add_line": "line", "split_remaining": "Remaining: {v}", "split_save": "Save",
+      "split_cancel": "Cancel", "split_remove": "Remove split",
+      "split_desc_ph": "Note (optional)", "split_need": "Enter at least one amount.",
+      "split_saved": "Split saved", "split_removed": "Split removed"
+    },
+    "fr": {
+      "split_btn": "Diviser", "split_edit_btn": "Modifier la répartition", "split_title": "Diviser cette opération",
+      "split_add_line": "ligne", "split_remaining": "Restant : {v}", "split_save": "Enregistrer",
+      "split_cancel": "Annuler", "split_remove": "Supprimer la répartition",
+      "split_desc_ph": "Note (facultatif)", "split_need": "Indiquez au moins un montant.",
+      "split_saved": "Répartition enregistrée", "split_removed": "Répartition supprimée"
+    },
+    "de": {
+      "split_btn": "Aufteilen", "split_edit_btn": "Aufteilung bearbeiten", "split_title": "Buchung aufteilen",
+      "split_add_line": "Zeile", "split_remaining": "Verbleibend: {v}", "split_save": "Speichern",
+      "split_cancel": "Abbrechen", "split_remove": "Aufteilung entfernen",
+      "split_desc_ph": "Notiz (optional)", "split_need": "Mindestens einen Betrag eingeben.",
+      "split_saved": "Aufteilung gespeichert", "split_removed": "Aufteilung entfernt"
+    },
+    "es": {
+      "split_btn": "Dividir", "split_edit_btn": "Editar división", "split_title": "Dividir este movimiento",
+      "split_add_line": "línea", "split_remaining": "Restante: {v}", "split_save": "Guardar",
+      "split_cancel": "Cancelar", "split_remove": "Quitar división",
+      "split_desc_ph": "Nota (opcional)", "split_need": "Introduce al menos un importe.",
+      "split_saved": "División guardada", "split_removed": "División eliminada"
+    },
+    "zh": {
+      "split_btn": "拆分", "split_edit_btn": "编辑拆分", "split_title": "拆分这笔交易",
+      "split_add_line": "添加一行", "split_remaining": "剩余：{v}", "split_save": "保存",
+      "split_cancel": "取消", "split_remove": "删除拆分",
+      "split_desc_ph": "备注（可选）", "split_need": "请至少填写一个金额。",
+      "split_saved": "拆分已保存", "split_removed": "拆分已删除"
+    }
+  };
+  Object.keys(EXTRA9).forEach(function (k) { Object.assign(UI[k], EXTRA9[k]); });
+
+  var EXTRA10 = {
+    "nl": { "lic_drop_hint": "of sleep het bestand hierheen" },
+    "en": { "lic_drop_hint": "or drag the file here" },
+    "fr": { "lic_drop_hint": "ou glissez le fichier ici" },
+    "de": { "lic_drop_hint": "oder Datei hierher ziehen" },
+    "es": { "lic_drop_hint": "o arrastra el archivo aquí" },
+    "zh": { "lic_drop_hint": "或将文件拖到这里" }
+  };
+  Object.keys(EXTRA10).forEach(function (k) { Object.assign(UI[k], EXTRA10[k]); });
+
+  var EXTRA11 = {
+    "nl": { "year_overview": "Verloop dit jaar", "ch_top_hint": "Volgt de filters hierboven." },
+    "en": { "year_overview": "Year overview", "ch_top_hint": "Follows the filters above." },
+    "fr": { "year_overview": "Aperçu de l'année", "ch_top_hint": "Suit les filtres ci-dessus." },
+    "de": { "year_overview": "Jahresverlauf", "ch_top_hint": "Folgt den Filtern oben." },
+    "es": { "year_overview": "Evolución del año", "ch_top_hint": "Sigue los filtros de arriba." },
+    "zh": { "year_overview": "全年走势", "ch_top_hint": "跟随上方的筛选条件。" }
+  };
+  Object.keys(EXTRA11).forEach(function (k) { Object.assign(UI[k], EXTRA11[k]); });
+
+  var EXTRA12 = {
+    "nl": { "xml_failed": "Dit XML-bestand is niet herkend als CAMT-bankexport (camt.052/053/054)." },
+    "en": { "xml_failed": "This XML file was not recognised as a CAMT bank export (camt.052/053/054)." },
+    "fr": { "xml_failed": "Ce fichier XML n'a pas été reconnu comme export bancaire CAMT (camt.052/053/054)." },
+    "de": { "xml_failed": "Diese XML-Datei wurde nicht als CAMT-Bankexport erkannt (camt.052/053/054)." },
+    "es": { "xml_failed": "Este archivo XML no se reconoció como exportación bancaria CAMT (camt.052/053/054)." },
+    "zh": { "xml_failed": "该XML文件未被识别为CAMT银行导出文件（camt.052/053/054）。" }
+  };
+  Object.keys(EXTRA12).forEach(function (k) { Object.assign(UI[k], EXTRA12[k]); });
+
+  var EXTRA13 = {
+    "nl": { "lic_dekking": "Deze tabellen zijn van {jaar}, maar je tabellen-abonnement dekt dat jaar nog niet. Verleng het abonnement voor de nieuwste tabellen — je huidige tabellen blijven gewoon werken." },
+    "en": { "lic_dekking": "These tables are for {jaar}, but your table subscription doesn't cover that year yet. Renew it to use the newest tables — your current tables keep working." },
+    "fr": { "lic_dekking": "Ces barèmes concernent {jaar}, mais votre abonnement ne couvre pas encore cette année. Renouvelez-le pour les barèmes les plus récents — vos barèmes actuels restent utilisables." },
+    "de": { "lic_dekking": "Diese Tabellen gelten für {jaar}, dein Tabellen-Abo deckt dieses Jahr noch nicht ab. Verlängere es für die neuesten Tabellen — deine aktuellen Tabellen funktionieren weiter." },
+    "es": { "lic_dekking": "Estas tablas son de {jaar}, pero tu suscripción de tablas aún no cubre ese año. Renuévala para usar las tablas más recientes — tus tablas actuales siguen funcionando." },
+    "zh": { "lic_dekking": "这些税表适用于{jaar}年，但你的税表订阅尚未覆盖该年份。续订即可使用最新税表——当前税表仍可继续使用。" }
+  };
+  Object.keys(EXTRA13).forEach(function (k) { Object.assign(UI[k], EXTRA13[k]); });
+
+  var EXTRA14 = {
+    "nl": { "quick_add_title": "Snel invoeren",
+            "quick_add_hint": "Zet een uitgave of inkomst er direct in — hij komt bij je handmatige boekingen.",
+            "dash_potjes_title": "Potjes — nog te gaan",
+            "potje_te_gaan": "nog te gaan", "potje_gehaald": "gehaald" },
+    "en": { "quick_add_title": "Quick add",
+            "quick_add_hint": "Add an expense or income right away — it's stored with your manual entries.",
+            "dash_potjes_title": "Funds — still to go",
+            "potje_te_gaan": "to go", "potje_gehaald": "reached" },
+    "fr": { "quick_add_title": "Saisie rapide",
+            "quick_add_hint": "Ajoutez une dépense ou un revenu tout de suite — enregistré avec vos saisies manuelles.",
+            "dash_potjes_title": "Cagnottes — reste à épargner",
+            "potje_te_gaan": "restant", "potje_gehaald": "atteint" },
+    "de": { "quick_add_title": "Schnell erfassen",
+            "quick_add_hint": "Ausgabe oder Einnahme direkt erfassen — landet bei den manuellen Buchungen.",
+            "dash_potjes_title": "Töpfe — noch offen",
+            "potje_te_gaan": "noch offen", "potje_gehaald": "erreicht" },
+    "es": { "quick_add_title": "Registro rápido",
+            "quick_add_hint": "Añade un gasto o ingreso al momento — se guarda con tus registros manuales.",
+            "dash_potjes_title": "Fondos — aún por ahorrar",
+            "potje_te_gaan": "por ahorrar", "potje_gehaald": "conseguido" },
+    "zh": { "quick_add_title": "快速记一笔",
+            "quick_add_hint": "立即记录一笔支出或收入——保存在手动记录中。",
+            "dash_potjes_title": "储蓄罐——还差多少",
+            "potje_te_gaan": "还差", "potje_gehaald": "已达成" }
+  };
+  Object.keys(EXTRA14).forEach(function (k) { Object.assign(UI[k], EXTRA14[k]); });
+  // Sparen als vierde soort: geen uitgave, maar geld dat je opzij zet.
+  var EXTRA15 = {
+    "nl": {
+      "kind_save": "Sparen",
+      "kind_hint": "Vast = hoort in het budget. Vrij = betaal je uit de vrije ruimte, geen budget nodig. Opname = geld van de rekening halen, geen uitgave. Sparen = naar je eigen spaar- of beleggingsrekening: geen uitgave, en je vindt het terug op Investeringen.",
+      "kpi_aside": "Opzij gezet", "kpi_aside_sub": "naar sparen of beleggen",
+      "inv_saved": "Opzij gezet", "inv_saved_sub": "uit je boekingen",
+      "inv_auto_title": "Sparen uit je boekingen",
+      "inv_auto_hint": "Categorieën met soort ‘sparen’ zijn geen uitgave. Wat je daarheen overmaakt staat hier bij elkaar; opnames gaan er weer af. De soort stel je in op het tabblad Budget, in de kolom naast de categorie.",
+      "inv_auto_total": "Totaal opzij gezet", "inv_auto_year": "Dit jaar",
+      "inv_auto_count": "Boekingen", "inv_auto_last": "Laatste"
+    },
+    "en": {
+      "kind_save": "Saving",
+      "kind_hint": "Fixed = belongs in the budget. Free = paid from your free room, no budget needed. Withdrawal = moving money off the account, not spending. Saving = to your own savings or investment account: not spending, and you find it back under Investments.",
+      "kpi_aside": "Set aside", "kpi_aside_sub": "to savings or investments",
+      "inv_saved": "Set aside", "inv_saved_sub": "from your transactions",
+      "inv_auto_title": "Savings from your transactions",
+      "inv_auto_hint": "Categories of kind ‘saving’ are not spending. What you transfer there is collected here; withdrawals are deducted again. You set the kind on the Budget tab, in the column next to the category.",
+      "inv_auto_total": "Total set aside", "inv_auto_year": "This year",
+      "inv_auto_count": "Transactions", "inv_auto_last": "Last"
+    },
+    "fr": {
+      "kind_save": "Épargne",
+      "kind_hint": "Fixe = doit figurer au budget. Libre = payé sur la marge libre, sans budget. Retrait = déplacement d’argent, pas une dépense. Épargne = vers votre propre compte d’épargne ou de placement : pas une dépense, et vous le retrouvez dans Placements.",
+      "kpi_aside": "Mis de côté", "kpi_aside_sub": "vers épargne ou placements",
+      "inv_saved": "Mis de côté", "inv_saved_sub": "d’après vos opérations",
+      "inv_auto_title": "Épargne issue de vos opérations",
+      "inv_auto_hint": "Les catégories de type « épargne » ne sont pas des dépenses. Ce que vous y virez est regroupé ici ; les retraits sont déduits. Le type se règle dans l’onglet Budget, dans la colonne à côté de la catégorie.",
+      "inv_auto_total": "Total mis de côté", "inv_auto_year": "Cette année",
+      "inv_auto_count": "Opérations", "inv_auto_last": "Dernière"
+    },
+    "de": {
+      "kind_save": "Sparen",
+      "kind_hint": "Fix = gehört ins Budget. Frei = wird aus dem freien Spielraum bezahlt, kein Budget nötig. Abhebung = Geld vom Konto holen, keine Ausgabe. Sparen = auf Ihr eigenes Spar- oder Anlagekonto: keine Ausgabe, und Sie finden es unter Anlagen wieder.",
+      "kpi_aside": "Zur Seite gelegt", "kpi_aside_sub": "auf Sparen oder Anlagen",
+      "inv_saved": "Zur Seite gelegt", "inv_saved_sub": "aus Ihren Buchungen",
+      "inv_auto_title": "Sparen aus Ihren Buchungen",
+      "inv_auto_hint": "Kategorien der Art „Sparen“ sind keine Ausgabe. Was Sie dorthin überweisen, steht hier zusammen; Abhebungen werden wieder abgezogen. Die Art stellen Sie im Reiter Budget ein, in der Spalte neben der Kategorie.",
+      "inv_auto_total": "Insgesamt zur Seite gelegt", "inv_auto_year": "Dieses Jahr",
+      "inv_auto_count": "Buchungen", "inv_auto_last": "Letzte"
+    },
+    "es": {
+      "kind_save": "Ahorro",
+      "kind_hint": "Fijo = debe estar en el presupuesto. Libre = se paga con el margen libre, sin presupuesto. Retirada = sacar dinero de la cuenta, no es un gasto. Ahorro = a tu propia cuenta de ahorro o inversión: no es un gasto, y lo encuentras en Inversiones.",
+      "kpi_aside": "Apartado", "kpi_aside_sub": "a ahorro o inversión",
+      "inv_saved": "Apartado", "inv_saved_sub": "de tus operaciones",
+      "inv_auto_title": "Ahorro a partir de tus operaciones",
+      "inv_auto_hint": "Las categorías de tipo «ahorro» no son un gasto. Lo que transfieres allí se agrupa aquí; las retiradas se descuentan. El tipo se ajusta en la pestaña Presupuesto, en la columna junto a la categoría.",
+      "inv_auto_total": "Total apartado", "inv_auto_year": "Este año",
+      "inv_auto_count": "Operaciones", "inv_auto_last": "Última"
+    },
+    "zh": {
+      "kind_save": "储蓄",
+      "kind_hint": "固定＝应列入预算。自由＝从自由空间中支付，无需预算。取现＝把钱从账户取出，并非支出。储蓄＝转入你自己的储蓄或投资账户：不算支出，可在「投资」中看到。",
+      "kpi_aside": "已存起", "kpi_aside_sub": "转入储蓄或投资",
+      "inv_saved": "已存起", "inv_saved_sub": "来自你的记账",
+      "inv_auto_title": "来自记账的储蓄",
+      "inv_auto_hint": "「储蓄」类别不算支出。你转入的金额会汇总在这里，取出的部分会相应扣减。类别种类可在「预算」标签页中类别旁的一栏设置。",
+      "inv_auto_total": "累计存入", "inv_auto_year": "本年",
+      "inv_auto_count": "笔数", "inv_auto_last": "最近"
+    }
+  };
+  Object.keys(EXTRA15).forEach(function (k) { Object.assign(UI[k], EXTRA15[k]); });
+
+  // Contact: in de app staat nergens hoe je aan een licentie komt.
+  var EXTRA16 = {
+    "nl": { "lic_contact": "Vragen, of een licentie voor de uitgebreide versie? Mail me@myofflinebudget.app." },
+    "en": { "lic_contact": "Questions, or a licence for the extended version? Email me@myofflinebudget.app." },
+    "fr": { "lic_contact": "Une question, ou une licence pour la version étendue ? Écrivez à me@myofflinebudget.app." },
+    "de": { "lic_contact": "Fragen oder eine Lizenz für die erweiterte Version? Schreiben Sie an me@myofflinebudget.app." },
+    "es": { "lic_contact": "¿Preguntas o una licencia para la versión ampliada? Escribe a me@myofflinebudget.app." },
+    "zh": { "lic_contact": "有疑问，或想购买扩展版许可？请发邮件至 me@myofflinebudget.app。" }
+  };
+  Object.keys(EXTRA16).forEach(function (k) { Object.assign(UI[k], EXTRA16[k]); });
+
+  // De vragenlijst onder Over: dezelfde vragen als op de site, korter.
+  var EXTRA17 = {
+    "nl": { "faq_title": "Vragen", "faq_q_imp": "Hoe lees ik mijn bankafschriften in?", "faq_a_imp": "Tabblad Import: sleep het bestand op het vak of kies het. Je ziet eerst een voorbeeld; pas met “Deze regels toevoegen” staat het erin. Het liefst camt.053 van je bank, maar pdf, csv en Excel werken ook.", "faq_q_dub": "Wat als ik hetzelfde afschrift twee keer inlees?", "faq_a_dub": "Dan slaat de app de boekingen over die hij al heeft; in het voorbeeld staat hoeveel er al bekend waren. Overlappende periodes zijn dus veilig.", "faq_q_hand": "Kan ik zelf een boeking toevoegen?", "faq_a_hand": "Ja: “Snel invoeren” op het dashboard, of het tabblad Kas. Ze tellen overal mee en je kunt ze daar ook weer verwijderen.", "faq_q_cat": "Hoe wijzig ik een categorie?", "faq_a_cat": "Op Transacties staat achter elke boeking een keuzelijst. De wijziging geldt voor die ene boeking; daarna biedt de app aan er een regel van te maken voor alle boekingen van die tegenpartij.", "faq_q_eigen": "Kan ik zelf categorieën toevoegen?", "faq_a_eigen": "Nee, je kiest uit de vaste lijst van 45 categorieën. Wat er ín een categorie valt bepaal je wel zelf, met regels.", "faq_q_regels": "Wat zijn regels?", "faq_a_regels": "Staan deze woorden in de omschrijving, dan deze categorie. Hoofdletters en volgorde maken niet uit, en een regel werkt ook terug in de tijd. Ze staan onderaan Transacties.", "faq_q_rest": "Wat is “Nog te categoriseren”?", "faq_a_rest": "De restcategorie: die tegenpartij kende de app niet. Filter er op Transacties op, wijzig de bovenste en maak er een regel van — dan verdwijnen ze met tientallen tegelijk.", "faq_q_split": "Kan ik een boeking splitsen?", "faq_a_split": "Ja, met de knop “Splits” op Transacties. Je verdeelt het bedrag over meerdere categorieën; je totaal blijft gelijk.", "faq_q_sparen": "Waarom telt sparen niet als uitgave?", "faq_a_sparen": "Omdat je dat geld niet weggeeft maar opzij zet. Je ziet het op het dashboard als “Opzij gezet” en op Investeringen per categorie. Klopt de soort van een categorie niet, pas hem dan aan op Budget.", "faq_q_backup": "Waar staan mijn gegevens, en hoe maak ik een back-up?", "faq_a_backup": "In de opslag van je browser, op deze computer; er gaat niets naar een server. Maak zelf een back-up met de blauwe knop rechtsboven, of op Import onder “Back-up en herstel”. Doe dat vóórdat je dit bestand verplaatst of in een andere browser opent.", "faq_q_leeg": "Hoe begin ik opnieuw?", "faq_a_leeg": "Onderaan Import staat “Alles wissen”. Dat leegt na een bevestiging alles: boekingen, budget, regels, potjes en leningen. Maak eerst een back-up." },
+    "en": { "faq_title": "Questions", "faq_q_imp": "How do I load my bank statements?", "faq_a_imp": "Import tab: drop the file on the box or pick it. You get a preview first; only “Add these rows” puts it in. camt.053 from your bank is best, but pdf, csv and Excel work too.", "faq_q_dub": "What if I load the same statement twice?", "faq_a_dub": "The app skips the transactions it already has; the preview tells you how many were already known. Overlapping periods are safe.", "faq_q_hand": "Can I add a transaction myself?", "faq_a_hand": "Yes: “Quick entry” on the dashboard, or the Cash tab. They count everywhere and you can delete them there as well.", "faq_q_cat": "How do I change a category?", "faq_a_cat": "On Transactions every row ends with a dropdown. The change applies to that one transaction; the app then offers to turn it into a rule for every transaction from that payee.", "faq_q_eigen": "Can I add my own categories?", "faq_a_eigen": "No, you pick from the fixed list of 45 categories. What goes into a category is up to you, using rules.", "faq_q_regels": "What are rules?", "faq_a_regels": "If these words appear in the description, use this category. Case and order do not matter, and a rule also works backwards in time. You find them at the bottom of Transactions.", "faq_q_rest": "What is “To be categorised”?", "faq_a_rest": "The leftover category: the app did not know that payee. Filter on it in Transactions, change the top one and turn it into a rule — they disappear dozens at a time.", "faq_q_split": "Can I split a transaction?", "faq_a_split": "Yes, with the “Split” button on Transactions. You divide the amount over several categories; your total stays the same.", "faq_q_sparen": "Why does saving not count as spending?", "faq_a_sparen": "Because you are not giving that money away, you are setting it aside. You see it on the dashboard as “Set aside” and per category on Investments. If a category’s kind is wrong, change it on the Budget tab.", "faq_q_backup": "Where is my data, and how do I back it up?", "faq_a_backup": "In your browser’s storage, on this computer; nothing goes to a server. Make a backup yourself with the blue button top right, or under “Backup and restore” on the Import tab. Do that before you move this file or open it in another browser.", "faq_q_leeg": "How do I start over?", "faq_a_leeg": "At the bottom of Import there is “Erase everything”. After a confirmation it clears the lot: transactions, budget, rules, funds and loans. Make a backup first." },
+    "fr": { "faq_title": "Questions", "faq_q_imp": "Comment charger mes relevés bancaires ?", "faq_a_imp": "Onglet Import : déposez le fichier sur la zone ou choisissez-le. Un aperçu s’affiche d’abord ; seul « Ajouter ces lignes » l’enregistre. Le camt.053 de votre banque est idéal, mais pdf, csv et Excel fonctionnent aussi.", "faq_q_dub": "Et si je charge deux fois le même relevé ?", "faq_a_dub": "L’application ignore les opérations qu’elle possède déjà ; l’aperçu indique combien étaient connues. Les périodes qui se recoupent ne posent pas de problème.", "faq_q_hand": "Puis-je ajouter une opération moi-même ?", "faq_a_hand": "Oui : « Saisie rapide » sur le tableau de bord, ou l’onglet Caisse. Elles comptent partout et vous pouvez les y supprimer.", "faq_q_cat": "Comment changer une catégorie ?", "faq_a_cat": "Dans Opérations, chaque ligne se termine par une liste déroulante. Le changement vaut pour cette opération ; l’application propose ensuite d’en faire une règle pour toutes les opérations de ce bénéficiaire.", "faq_q_eigen": "Puis-je créer mes propres catégories ?", "faq_a_eigen": "Non, vous choisissez dans la liste fixe de 45 catégories. Ce qui entre dans une catégorie, en revanche, c’est vous qui le décidez, avec les règles.", "faq_q_regels": "Que sont les règles ?", "faq_a_regels": "Si ces mots figurent dans le libellé, alors cette catégorie. La casse et l’ordre n’importent pas, et une règle s’applique aussi au passé. Elles sont en bas de l’onglet Opérations.", "faq_q_rest": "Qu’est-ce que « À catégoriser » ?", "faq_a_rest": "La catégorie restante : l’application ne connaissait pas ce bénéficiaire. Filtrez dessus dans Opérations, corrigez la première et créez une règle — elles disparaissent par dizaines.", "faq_q_split": "Puis-je diviser une opération ?", "faq_a_split": "Oui, avec le bouton « Diviser » dans Opérations. Vous répartissez le montant sur plusieurs catégories ; votre total ne change pas.", "faq_q_sparen": "Pourquoi l’épargne n’est-elle pas une dépense ?", "faq_a_sparen": "Parce que vous ne donnez pas cet argent : vous le mettez de côté. Vous le voyez sur le tableau de bord sous « Mis de côté » et par catégorie dans Placements. Si le type d’une catégorie est faux, changez-le dans Budget.", "faq_q_backup": "Où sont mes données, et comment les sauvegarder ?", "faq_a_backup": "Dans le stockage de votre navigateur, sur cet ordinateur ; rien ne part vers un serveur. Faites une sauvegarde avec le bouton bleu en haut à droite, ou dans « Sauvegarde et restauration » de l’onglet Import. Faites-le avant de déplacer ce fichier ou de l’ouvrir dans un autre navigateur.", "faq_q_leeg": "Comment repartir de zéro ?", "faq_a_leeg": "En bas de l’onglet Import : « Tout effacer ». Après confirmation, tout est vidé : opérations, budget, règles, enveloppes et prêts. Faites d’abord une sauvegarde." },
+    "de": { "faq_title": "Fragen", "faq_q_imp": "Wie lese ich meine Kontoauszüge ein?", "faq_a_imp": "Reiter Import: Datei auf das Feld ziehen oder auswählen. Sie sehen zuerst eine Vorschau; erst „Diese Zeilen hinzufügen“ übernimmt sie. Am besten camt.053 von Ihrer Bank, aber pdf, csv und Excel gehen auch.", "faq_q_dub": "Was, wenn ich denselben Auszug zweimal einlese?", "faq_a_dub": "Die App überspringt Buchungen, die sie schon hat; die Vorschau nennt die Zahl der bekannten. Überlappende Zeiträume sind unproblematisch.", "faq_q_hand": "Kann ich selbst eine Buchung eintragen?", "faq_a_hand": "Ja: „Schnelleingabe“ auf dem Dashboard oder der Reiter Kasse. Sie zählen überall mit und lassen sich dort auch löschen.", "faq_q_cat": "Wie ändere ich eine Kategorie?", "faq_a_cat": "Im Reiter Buchungen steht hinter jeder Zeile eine Auswahlliste. Die Änderung gilt für diese Buchung; danach bietet die App an, daraus eine Regel für alle Buchungen dieses Empfängers zu machen.", "faq_q_eigen": "Kann ich eigene Kategorien anlegen?", "faq_a_eigen": "Nein, Sie wählen aus der festen Liste von 45 Kategorien. Was in eine Kategorie fällt, bestimmen Sie aber selbst — mit Regeln.", "faq_q_regels": "Was sind Regeln?", "faq_a_regels": "Stehen diese Wörter in der Beschreibung, dann diese Kategorie. Groß-/Kleinschreibung und Reihenfolge sind egal, und eine Regel wirkt auch rückwirkend. Sie stehen unten im Reiter Buchungen.", "faq_q_rest": "Was ist „Noch zuzuordnen“?", "faq_a_rest": "Die Restkategorie: diesen Empfänger kannte die App nicht. Filtern Sie im Reiter Buchungen darauf, ändern Sie die oberste und machen Sie eine Regel daraus — dann verschwinden sie zu Dutzenden.", "faq_q_split": "Kann ich eine Buchung aufteilen?", "faq_a_split": "Ja, mit der Taste „Aufteilen“ im Reiter Buchungen. Sie verteilen den Betrag auf mehrere Kategorien; die Summe bleibt gleich.", "faq_q_sparen": "Warum zählt Sparen nicht als Ausgabe?", "faq_a_sparen": "Weil Sie das Geld nicht weggeben, sondern zur Seite legen. Sie sehen es auf dem Dashboard als „Zur Seite gelegt“ und pro Kategorie unter Anlagen. Stimmt die Art einer Kategorie nicht, ändern Sie sie im Reiter Budget.", "faq_q_backup": "Wo liegen meine Daten, und wie sichere ich sie?", "faq_a_backup": "Im Speicher Ihres Browsers, auf diesem Rechner; nichts geht an einen Server. Erstellen Sie selbst eine Sicherung mit der blauen Taste oben rechts oder unter „Sicherung und Wiederherstellung“ im Reiter Import — bevor Sie diese Datei verschieben oder in einem anderen Browser öffnen.", "faq_q_leeg": "Wie fange ich neu an?", "faq_a_leeg": "Unten im Reiter Import steht „Alles löschen“. Nach einer Bestätigung wird alles geleert: Buchungen, Budget, Regeln, Töpfe und Darlehen. Erstellen Sie vorher eine Sicherung." },
+    "es": { "faq_title": "Preguntas", "faq_q_imp": "¿Cómo cargo mis extractos bancarios?", "faq_a_imp": "Pestaña Importar: arrastra el archivo al recuadro o elígelo. Primero ves una vista previa; solo «Añadir estas filas» lo guarda. Lo mejor es camt.053 de tu banco, pero pdf, csv y Excel también valen.", "faq_q_dub": "¿Y si cargo el mismo extracto dos veces?", "faq_a_dub": "La aplicación omite las operaciones que ya tiene; la vista previa indica cuántas eran conocidas. Los periodos solapados no son problema.", "faq_q_hand": "¿Puedo añadir una operación yo mismo?", "faq_a_hand": "Sí: «Entrada rápida» en el panel, o la pestaña Caja. Cuentan en todas partes y ahí también las puedes borrar.", "faq_q_cat": "¿Cómo cambio una categoría?", "faq_a_cat": "En Operaciones cada fila termina con un desplegable. El cambio vale para esa operación; después la aplicación ofrece convertirlo en una regla para todas las operaciones de ese beneficiario.", "faq_q_eigen": "¿Puedo añadir categorías propias?", "faq_a_eigen": "No, eliges de la lista fija de 45 categorías. Lo que entra en cada categoría sí lo decides tú, con reglas.", "faq_q_regels": "¿Qué son las reglas?", "faq_a_regels": "Si estas palabras aparecen en la descripción, esta categoría. Mayúsculas y orden no importan, y una regla también actúa hacia atrás. Están al final de Operaciones.", "faq_q_rest": "¿Qué es «Por categorizar»?", "faq_a_rest": "La categoría sobrante: la aplicación no conocía a ese beneficiario. Filtra por ella en Operaciones, corrige la primera y crea una regla: desaparecen por decenas.", "faq_q_split": "¿Puedo dividir una operación?", "faq_a_split": "Sí, con el botón «Dividir» en Operaciones. Repartes el importe entre varias categorías; tu total no cambia.", "faq_q_sparen": "¿Por qué el ahorro no cuenta como gasto?", "faq_a_sparen": "Porque no regalas ese dinero, lo apartas. Lo ves en el panel como «Apartado» y por categoría en Inversiones. Si el tipo de una categoría no encaja, cámbialo en Presupuesto.", "faq_q_backup": "¿Dónde están mis datos y cómo hago una copia?", "faq_a_backup": "En el almacenamiento de tu navegador, en este ordenador; nada va a un servidor. Haz tú la copia con el botón azul de arriba a la derecha, o en «Copia de seguridad y restauración» de Importar. Hazlo antes de mover este archivo o abrirlo en otro navegador.", "faq_q_leeg": "¿Cómo empiezo de cero?", "faq_a_leeg": "Al final de Importar está «Borrar todo». Tras confirmar se vacía todo: operaciones, presupuesto, reglas, sobres y préstamos. Haz una copia primero." },
+    "zh": { "faq_title": "常见问题", "faq_q_imp": "如何导入银行流水？", "faq_a_imp": "在「导入」标签页把文件拖到方框里，或选择文件。先看到预览，只有点「添加这些记录」才会真正写入。最好用银行的 camt.053，pdf、csv 和 Excel 也可以。", "faq_q_dub": "同一份流水导入两次会怎样？", "faq_a_dub": "应用会跳过已有的记录，预览里会写明有多少条是已知的。所以时间段重叠没有关系。", "faq_q_hand": "我可以自己添加一笔记录吗？", "faq_a_hand": "可以：仪表板上的「快速录入」，或「现金」标签页。它们在各处都计入，也能在那里删除。", "faq_q_cat": "怎么修改类别？", "faq_a_cat": "在「交易」标签页，每一行末尾都有一个下拉框。修改只作用于该笔记录；随后应用会询问是否为该收款方的所有记录建立规则。", "faq_q_eigen": "我可以自己添加类别吗？", "faq_a_eigen": "不可以，只能从固定的 45 个类别中选择。但哪些记录归入哪个类别，可以由你用规则来决定。", "faq_q_regels": "什么是规则？", "faq_a_regels": "描述里出现这些词，就归入这个类别。大小写和顺序都不影响，规则也会追溯到过去的记录。规则列在「交易」标签页下方。", "faq_q_rest": "「待分类」是什么意思？", "faq_a_rest": "这是兜底类别：应用不认识该收款方。在「交易」里按它筛选，改好第一条并建立规则，就能一次清掉几十条。", "faq_q_split": "可以拆分一笔记录吗？", "faq_a_split": "可以，在「交易」里点「拆分」。把金额分到多个类别，总额保持不变。", "faq_q_sparen": "为什么储蓄不算支出？", "faq_a_sparen": "因为这笔钱没有花掉，只是存起来了。仪表板上显示为「已存起」，在「投资」里按类别列出。若某类别的种类不对，可在「预算」里修改。", "faq_q_backup": "我的数据在哪里，怎么备份？", "faq_a_backup": "在这台电脑上、你浏览器的存储里，不会发往任何服务器。请自己备份：右上角的蓝色按钮，或「导入」标签页的「备份与恢复」。在移动此文件或换浏览器打开之前先备份。", "faq_q_leeg": "怎么从头开始？", "faq_a_leeg": "「导入」标签页底部有「清除全部」。确认后会清空所有内容：记录、预算、规则、储蓄罐和借款。请先备份。" }
+  };
+  Object.keys(EXTRA17).forEach(function (k) { Object.assign(UI[k], EXTRA17[k]); });
 
   var CATS = {
     'Salaris & inkomen': { en: 'Salary & income', fr: 'Salaire et revenus', de: 'Gehalt und Einkommen', es: 'Salario e ingresos', zh: '工资与收入' },
@@ -4501,9 +4757,10 @@ window.HB_LENINGEN=[];</script>
     overrides: {},     // txid -> {cat,group}
     manual: [],        // handmatige/kasregels
     userRules: [],     // eigen categorieregels: {pat, cat, group}
-    catType: {},       // categorie -> 'vast' | 'vrij' | 'opname'
+    catType: {},       // categorie -> 'vast' | 'vrij' | 'opname' | 'sparen'
     potjes: [],        // reserveringen: {naam, doel, datum, stand}
     investeringen: [], // {id,type,naam,aantal,inleg,waarde,datum,notitie}
+    splits: {},        // txid -> [{cat,group,amount,desc}, ...] (som moet bedrag van de boeking zijn)
     leningen: [],      // {id,naam,hoofdsom,pct,maanden,start,renteCum,toelichting}
     settings: { theme: 'auto', hideZak: true, jaar: null, lang: null, cur: 'EUR',
                 maandBasis: 'hist', inkomenOverride: null, budgetAlleMaanden: false }
@@ -4540,6 +4797,7 @@ window.HB_LENINGEN=[];</script>
         S.catType = d.catType || {};
         S.potjes = d.potjes || [];
         S.investeringen = d.investeringen || [];
+        S.splits = d.splits || {};
         S.settings = Object.assign(S.settings, d.settings || {});
         if (d.imported) S.imported = d.imported;
         if (Object.prototype.hasOwnProperty.call(d, 'leningen')) { S.leningen = d.leningen || []; eigenLeningen = true; }
@@ -4567,7 +4825,7 @@ window.HB_LENINGEN=[];</script>
       localStorage.setItem(STORE, JSON.stringify({
         budget: S.budget, overrides: S.overrides, manual: S.manual, userRules: S.userRules,
         catType: S.catType, potjes: S.potjes || [], investeringen: S.investeringen || [], settings: S.settings,
-        imported: S.imported || [], leningen: S.leningen || []
+        imported: S.imported || [], splits: S.splits || {}, leningen: S.leningen || []
       }));
       flash(T('saved'));
     } catch (e) { flash(T('save_failed', { e: e.message }), true); }
@@ -4634,14 +4892,37 @@ window.HB_LENINGEN=[];</script>
     return t;
   }
 
+  function rawTx(id) {
+    return S.tx.concat(S.imported || [], S.manual).filter(function (t) { return t.id === id; })[0];
+  }
+
   function allTx() {
-    return S.tx.concat(S.imported || [], S.manual).map(applyUserRules);
+    var basis = S.tx.concat(S.imported || [], S.manual).map(applyUserRules);
+    var uit = [];
+    basis.forEach(function (t) {
+      var sp = S.splits[t.id];
+      if (sp && sp.length) {
+        sp.forEach(function (p, i) {
+          uit.push(Object.assign({}, t, {
+            id: t.id + '#' + i, cat: p.cat, group: p.group, amount: p.amount,
+            desc: '\u21b3 ' + (p.desc ? p.desc + ': ' : '') + t.desc,
+            splitParent: t.id, splitPart: true, byRule: false
+          }));
+        });
+      } else {
+        uit.push(t);
+      }
+    });
+    return uit;
   }
 
   var VAST_GROEPEN = ['Wonen', 'Verzekeringen', 'Boodschappen'];
   // noodzakelijke posten die je hoe dan ook begroot, ook als het bedrag schommelt
   var VAST_CAT = /BRANDSTOF|FUEL|LADEN|CHARGING|KINDEREN|OPVANG|CHILDCARE|CRECHE|KITA|GUARDER|MOTORRIJTUIG|ROAD TAX|WEGENBELASTING|ONDERHOUD|STUDIESCHULD|STUDENT LOAN|AFLOSSING|REPAYMENT/i;
   var OPNAME_RE = /CONTANT|GELDOPNAME|GELDMAAT|CASH WITHDRAW|BARGELD|RETIRADA|ESPECES|取现/i;
+  // Sparen en beleggen zijn geen uitgave maar een verplaatsing binnen je eigen
+  // vermogen: ze blijven buiten het budget en komen terug op Investeringen.
+  var SPAAR_RE = /SPAREN|BELEGG/i;
   var _recSet = null;
 
   function recurringCats() {
@@ -4658,6 +4939,7 @@ window.HB_LENINGEN=[];</script>
     if (S.catType[cat]) return S.catType[cat];
     if (window.HB_CATTYPE && window.HB_CATTYPE[cat]) return window.HB_CATTYPE[cat];
     if (OPNAME_RE.test(cat)) return 'opname';
+    if (SPAAR_RE.test(cat)) return 'sparen';
     if (groep === 'Inkomen') return 'vast';
     if (VAST_GROEPEN.indexOf(groep) >= 0) return 'vast';
     if (VAST_CAT.test(cat)) return 'vast';
@@ -4672,7 +4954,8 @@ window.HB_LENINGEN=[];</script>
 
   function budgetTx() {   // wat meetelt in het huishoudbudget
     return allTx().filter(function (t) {
-      return !t.zak && t.group !== 'Interne overboeking' && catSoort(t.cat, t.group) !== 'opname';
+      var s = catSoort(t.cat, t.group);
+      return !t.zak && t.group !== 'Interne overboeking' && s !== 'opname' && s !== 'sparen';
     });
   }
 
@@ -4680,6 +4963,28 @@ window.HB_LENINGEN=[];</script>
     return allTx().filter(function (t) {
       return !t.zak && t.group !== 'Interne overboeking' && catSoort(t.cat, t.group) === 'opname';
     });
+  }
+
+  // Geld naar je eigen spaar- of beleggingsrekening. Geen uitgave: het verlaat je
+  // huishoudboekje niet, het verhuist naar een andere kolom van je vermogen.
+  function spaarTx() {
+    return allTx().filter(function (t) {
+      return !t.zak && t.group !== 'Interne overboeking' && catSoort(t.cat, t.group) === 'sparen';
+    });
+  }
+
+  // Per spaar- of beleggingscategorie: netto opzij gezet (opnames gaan er weer af).
+  function spaarPerCat(jaar) {
+    var per = {};
+    spaarTx().forEach(function (t) {
+      var r = per[t.cat] || (per[t.cat] = { cat: t.cat, tot: 0, jaar: 0, n: 0, laatste: '' });
+      r.tot -= t.amount;
+      if (jaar && t.year === jaar) r.jaar -= t.amount;
+      if (t.amount < 0) r.n++;
+      if (t.date > r.laatste) r.laatste = t.date;
+    });
+    return Object.keys(per).map(function (c) { return per[c]; })
+      .sort(function (a, b) { return b.tot - a.tot; });
   }
 
   // ---------------------------------------------------------------- formatteren
@@ -4945,15 +5250,73 @@ window.HB_LENINGEN=[];</script>
   // ---------------------------------------------------------------- Dashboard
   function renderDashboard() {
     renderDashboardNu();
+    renderDashboardPotjes();
+    if (!months().length) {
+      document.getElementById('tbl-maand').innerHTML =
+        '<tbody><tr><td class="muted">' + esc(T('import_files_p')) + '</td></tr></tbody>';
+      return;
+    }
+    renderDashboardKosten();
+  }
+
+  // Hoeveel per maand nodig is om een potje op tijd te halen. Kopie van de
+  // gelijknamige functie in de pro-module: die draait in haar eigen closure
+  // en is van hieruit niet aanspreekbaar, dus het dashboard rekent dit zelf na.
+  function dashPotMaand(p) {
+    var doel = +p.doel || 0, stand = +p.stand || 0;
+    if (!p.datum) return Math.round((doel - stand) / 12);
+    var mnd = Math.max(1, Math.round((new Date(p.datum) - new Date()) / 86400000 / 30.4));
+    return Math.max(0, Math.round((doel - stand) / mnd));
+  }
+
+  // Compact potjes-overzicht op het dashboard: dezelfde drie kerncijfers
+  // (samen per maand / al gespaard / nog te gaan) als op het tabblad Potjes,
+  // plus hoeveel er per potje nog te gaan is. Alleen zichtbaar met een
+  // geldige licentie én minstens één potje.
+  function renderDashboardPotjes() {
+    var card = document.getElementById('dash-potjes');
+    if (!card) return;
+    var lijst = S.potjes || [];
+    if (!proActief() || !lijst.length) { card.classList.add('hide'); return; }
+    card.classList.remove('hide');
+    var pm = lijst.reduce(function (a, p) { return a + dashPotMaand(p); }, 0);
+    var gespaard = lijst.reduce(function (a, p) { return a + (+p.stand || 0); }, 0);
+    var doel = lijst.reduce(function (a, p) { return a + (+p.doel || 0); }, 0);
+    document.getElementById('dash-potjes-kpis').innerHTML = [
+      { label: T('j_permonth'), v: eur0(pm), sub: T('j_permonth_sub', { n: lijst.length }) },
+      { label: T('j_saved'), v: eur0(gespaard), sub: T('j_of', { v: eur0(doel) }) },
+      { label: T('j_gap'), v: eur0(Math.max(0, doel - gespaard)), sub: T('j_gap_sub') }
+    ].map(function (k) {
+      return '<div class="card kpi"><div class="label">' + esc(k.label) + '</div><div class="value">' +
+        k.v + '</div><div class="sub">' + esc(k.sub) + '</div></div>';
+    }).join('');
+    document.getElementById('dash-potjes-body').innerHTML = lijst.map(function (p) {
+      var doel = +p.doel || 0, stand = +p.stand || 0;
+      var pct = doel > 0 ? Math.min(100, stand / doel * 100) : 0;
+      var rest = Math.max(0, doel - stand);
+      var rechts = (doel > 0 && rest <= 0)
+        ? '<span class="pill ok">' + T('potje_gehaald') + '</span>'
+        : '<span class="nowrap"><b>' + eur0(rest) + '</b> <small class="muted">' + T('potje_te_gaan') + '</small></span>';
+      return '<div class="rowflex" style="justify-content:space-between; margin:6px 0">' +
+        '<span style="min-width:130px">' + esc(p.naam) + '</span>' +
+        '<span class="bar-track" style="flex:1; max-width:340px"><span class="bar-fill" style="display:block; width:' +
+        pct.toFixed(0) + '%; background:var(--series-1)"></span></span>' +
+        '<small class="muted nowrap">' + eur0(stand) + ' / ' + eur0(doel) + '</small>' +
+        rechts + '</div>';
+    }).join('');
+  }
+
+  // Jaarcijfers en jaargrafieken: sinds de herindeling niet meer op het dashboard,
+  // maar onderaan het tabblad "Deze maand" onder het kopje "Verloop dit jaar".
+  function renderVerloop() {
     var ms = months();
     if (!ms.length) {
       document.getElementById('kpis').innerHTML =
         '<div class="card"><div class="label">' + T('import_files') + '</div><div class="sub">' +
         esc(T('import_files_p')) + '</div></div>';
-      ['ch1', 'ch2', 'ch3', 'ch4', 'lg1', 'lg4'].forEach(function (id) {
+      ['ch1', 'ch2', 'ch4', 'lg1', 'lg4'].forEach(function (id) {
         var el = document.getElementById(id); if (el) el.innerHTML = '';
       });
-      document.getElementById('tbl-maand').innerHTML = '';
       return;
     }
     var jaar = S.settings.jaar || years()[years().length - 1];
@@ -5000,16 +5363,6 @@ window.HB_LENINGEN=[];</script>
       { name: T('kpi_income'), data: inkomsten }, { name: T('kpi_expenses'), data: uitgaven }]);
     barChart(document.getElementById('ch2'), labs, saldo, { diverging: true, name: T('kpi_balance') });
 
-    // uitgaven per categorie in het gekozen jaar
-    var per = {};
-    budgetTx().forEach(function (t) {
-      if (t.year !== jaar || t.amount >= 0 || t.group === 'Inkomen') return;
-      per[t.cat] = (per[t.cat] || 0) - t.amount;
-    });
-    var items = Object.keys(per).map(function (c) { return { label: TC(c), value: per[c] }; })
-      .sort(function (a, b) { return b.value - a.value; }).slice(0, 14);
-    hbarChart(document.getElementById('ch3'), items, { name: T('kpi_expenses') + ' ' + jaar });
-
     // per hoofdgroep gestapeld, top 7 + overig
     var gsum = {};
     budgetTx().forEach(function (t) {
@@ -5027,8 +5380,6 @@ window.HB_LENINGEN=[];</script>
           ? -t.amount : 0); }, 0); }) });
     legend(document.getElementById('lg4'), series.map(function (s) { return s.name; }));
     stackChart(document.getElementById('ch4'), labs, series);
-
-    renderDashboardKosten();
   }
 
   // Bovenaan het dashboard: inkomsten, uitgaven en vrije ruimte van de lopende maand.
@@ -5045,6 +5396,11 @@ window.HB_LENINGEN=[];</script>
       { label: T('kpi_expenses'), v: r.uitgegeven, plain: true, sub: T('m_day', { d: r.dagNu, n: r.dagenInMaand }) },
       { label: T('m_free_left'), v: r.vrijOver, sub: T('m_free_sub'), help: 'm_hint' }
     ];
+    // Sparen staat er alleen bij als er ook echt gespaard is; anders vier kaarten
+    // waarvan er één altijd nul is.
+    if (r.opzij > 0) {
+      kpis.push({ label: T('kpi_aside'), v: r.opzij, plain: true, sub: T('kpi_aside_sub'), help: 'kind_hint' });
+    }
     host.innerHTML = kpis.map(function (k) {
       var cls = k.plain ? '' : (k.v >= 0 ? 'pos' : 'neg');
       var help = k.help ? ' data-help="' + esc(k.help) + '"' : '';
@@ -5132,12 +5488,16 @@ window.HB_LENINGEN=[];</script>
       .reduce(function (a, t) { return a - t.amount; }, 0);
     var opnOpen = Math.max(0, opn - kasGeboekt);
 
+    // wat er deze maand naar sparen of beleggen ging: geen uitgave, wel geld dat weg is
+    var opzij = spaarTx().filter(function (t) { return t.month === m && t.amount < 0; })
+      .reduce(function (a, t) { return a - t.amount; }, 0);
+
     var cats = catList().filter(function (c) { return c.group !== 'Inkomen'; });
     var begroot = 0, binnenRest = 0, over = 0, vrijUit = 0;
     var vast = [], vrij = [];
     cats.forEach(function (c) {
       var soort = catSoort(c.cat, c.group);
-      if (soort === 'opname') return;
+      if (soort === 'opname' || soort === 'sparen') return;
       var u = perCat[c.cat] || 0;
       if (soort === 'vast') {
         var b = +S.budget[c.cat] || 0;
@@ -5156,7 +5516,7 @@ window.HB_LENINGEN=[];</script>
     var nogTeBesteden = basis - uitgegeven;
 
     return { m: m, dagNu: dagNu, dagenInMaand: dagenInMaand, ontvangen: ontvangen, uitgegeven: uitgegeven,
-      verwacht: verwacht, basis: basis, opn: opn, kasGeboekt: kasGeboekt, opnOpen: opnOpen,
+      verwacht: verwacht, basis: basis, opn: opn, kasGeboekt: kasGeboekt, opnOpen: opnOpen, opzij: opzij,
       begroot: begroot, binnenRest: binnenRest, over: over, vrijUit: vrijUit,
       vrijeRuimte: vrijeRuimte, vrijOver: vrijOver, nogTeBesteden: nogTeBesteden, vast: vast, vrij: vrij };
   }
@@ -5242,6 +5602,8 @@ window.HB_LENINGEN=[];</script>
       '</th><th class="num">' + T('m_cat_spent') + '</th><th class="num">' + T('m_cat_left') +
       '</th><th></th></tr></thead><tbody>' +
       (body || '<tr><td colspan="5" class="muted">' + T('m_none') + '</td></tr>') + '</tbody>';
+
+    renderVerloop();
   }
 
   // ---------------------------------------------------------------- Budget
@@ -5286,9 +5648,10 @@ window.HB_LENINGEN=[];</script>
         var soort = sign < 0 ? catSoort(r.c.cat, r.c.group) : 'vast';
         var soortSel = sign < 0
           ? '<select class="soort" data-cat="' + esc(r.c.cat) + '" style="font-size:12px;padding:3px 5px">' +
-            ['vast', 'vrij', 'opname'].map(function (k) {
+            ['vast', 'vrij', 'opname', 'sparen'].map(function (k) {
+              var lbl = { vast: 'kind_fixed', vrij: 'kind_free', opname: 'kind_cash', sparen: 'kind_save' }[k];
               return '<option value="' + k + '"' + (k === soort ? ' selected' : '') + '>' +
-                T(k === 'vast' ? 'kind_fixed' : (k === 'vrij' ? 'kind_free' : 'kind_cash')) + '</option>';
+                T(lbl) + '</option>';
             }).join('') + '</select>'
           : '';
         return '<tr data-cat="' + esc(r.c.cat) + '"' + (soort === 'vast' ? '' : ' style="opacity:.7"') + '>' +
@@ -5384,9 +5747,12 @@ window.HB_LENINGEN=[];</script>
     return b.length % 2 ? b[m] : (b[m - 1] + b[m]) / 2;
   }
 
-  function detectRecurring() {
+  // metSparen: ook de vaste overboekingen naar spaar- en beleggingsrekeningen
+  // meenemen. Die zijn geen uitgave, maar ze gaan wél van je rekening af — voor
+  // een saldoprognose moeten ze dus mee.
+  function detectRecurring(metSparen) {
     var groepen = {};
-    budgetTx().forEach(function (t) {
+    (metSparen ? budgetTx().concat(spaarTx()) : budgetTx()).forEach(function (t) {
       if (t.amount >= 0) return;                  // alleen uitgaven
       var k = payeeKey(t.desc);
       if (k.length < 4) return;
@@ -5584,12 +5950,16 @@ window.HB_LENINGEN=[];</script>
     var slice = list.slice(0, 600);
     document.getElementById('tx-body').innerHTML =
       '<thead><tr><th>' + T('th_date') + '</th><th>' + T('th_account') + '</th><th>' + T('th_desc') +
-      '</th><th class="num">' + T('th_amount') + '</th><th>' + T('th_category') + '</th></tr></thead><tbody>' +
+      '</th><th class="num">' + T('th_amount') + '</th><th>' + T('th_category') + '</th><th></th></tr></thead><tbody>' +
       slice.map(function (t) {
-        return '<tr><td class="nowrap">' + dmy(t.date) + '</td><td class="nowrap"><small>' + esc(t.account) + '</small></td>' +
+        var actie = t.splitPart
+          ? '<button class="btn ghost split-open" data-id="' + esc(t.splitParent) + '">' + T('split_edit_btn') + '</button>'
+          : '<button class="btn ghost split-open" data-id="' + esc(t.id) + '">' + T('split_btn') + '</button>';
+        return '<tr data-txrow="' + esc(t.id) + '"><td class="nowrap">' + dmy(t.date) + '</td><td class="nowrap"><small>' + esc(t.account) + '</small></td>' +
           '<td>' + esc(t.desc.slice(0, 90)) + (t.zak ? ' <span class="pill">' + T('business') + '</span>' : '') + '</td>' +
           '<td class="num ' + (t.amount < 0 ? 'neg' : 'pos') + '">' + eur(t.amount) + '</td>' +
-          '<td><select class="catsel" data-id="' + esc(t.id) + '">' + catOptionsHtml(t.cat) + '</select></td></tr>';
+          '<td><select class="catsel" data-id="' + esc(t.id) + '"' + (t.splitPart ? ' disabled' : '') + '>' + catOptionsHtml(t.cat) + '</select></td>' +
+          '<td class="right">' + actie + '</td></tr>';
       }).join('') + '</tbody>';
     if (list.length > 600) {
       document.getElementById('tx-count').textContent += T('tx_first', { n: 600 });
@@ -5605,6 +5975,157 @@ window.HB_LENINGEN=[];</script>
         if (tx) offerRule(tx.desc, sel.value, grp);
       });
     });
+    document.querySelectorAll('.split-open').forEach(function (b) {
+      b.addEventListener('click', function () { openSplitEditor(b.dataset.id); });
+    });
+
+    // Grootste uitgavenposten, berekend over precies de rijen die de filters
+    // hierboven overlaten. Zelfde uitsluitingen als budgetTx(): geen zakelijk,
+    // geen interne overboekingen, geen contante opnames, geen inkomsten.
+    var ch3 = document.getElementById('ch3');
+    if (ch3) {
+      var per = {};
+      list.forEach(function (t) {
+        if (t.amount >= 0 || t.group === 'Inkomen' || t.zak ||
+            t.group === 'Interne overboeking' || catSoort(t.cat, t.group) === 'opname' ||
+            catSoort(t.cat, t.group) === 'sparen') return;
+        per[t.cat] = (per[t.cat] || 0) - t.amount;
+      });
+      var items = Object.keys(per).map(function (c) { return { label: TC(c), value: per[c] }; })
+        .sort(function (a, b) { return b.value - a.value; }).slice(0, 14);
+      if (items.length) hbarChart(ch3, items, { name: T('kpi_expenses') });
+      else ch3.innerHTML = '';
+    }
+  }
+
+  // ---------------------------------------------------------------- boeking splitsen
+  // Eén boeking (bv. een boodschappenbon) verdelen over meerdere categorieën, zonder
+  // dat er iets herkend hoeft te worden: de gebruiker vult zelf de bedragen in. Het
+  // resultaat wordt in allTx() uitgeklapt naar losse deelboekingen; verder werkt alles
+  // (dashboard, budget, prognose, analyse) hier vanzelf mee omdat die allemaal op
+  // dezelfde allTx()/budgetTx() lijst rekenen.
+  var splitState = {};
+
+  function closeSplitEditor() {
+    document.querySelectorAll('tr.split-editor').forEach(function (r) { r.remove(); });
+  }
+
+  function openSplitEditor(id) {
+    var t = rawTx(id);
+    if (!t) return;
+    var already = document.querySelector('tr.split-editor[data-for="' + id + '"]');
+    closeSplitEditor();
+    if (already) return;                              // nogmaals klikken sluit hem weer
+    var rijen = document.querySelectorAll('tr[data-txrow="' + id + '"], tr[data-txrow^="' + id + '#"]');
+    var row = rijen.length ? rijen[rijen.length - 1] : null;
+    if (!row) return;
+    var bestaand = S.splits[id];
+    splitState[id] = bestaand
+      ? bestaand.map(function (l) { return Object.assign({}, l); })
+      : [{ cat: t.cat, group: t.group, amount: t.amount, desc: '' },
+         { cat: t.cat, group: t.group, amount: 0, desc: '' }];
+    var tr = document.createElement('tr');
+    tr.className = 'split-editor';
+    tr.setAttribute('data-for', id);
+    tr.innerHTML = '<td colspan="6"></td>';
+    row.parentNode.insertBefore(tr, row.nextSibling);
+    renderSplitEditor(t);
+  }
+
+  function renderSplitEditor(t) {
+    var tr = document.querySelector('tr.split-editor[data-for="' + t.id + '"]');
+    if (!tr) return;
+    var lines = splitState[t.id];
+    var som = lines.reduce(function (a, l) { return a + (+l.amount || 0); }, 0);
+    var rest = Math.round((t.amount - som) * 100) / 100;
+    var klopt = Math.abs(rest) < 0.005;
+    tr.querySelector('td').innerHTML =
+      '<div class="card mt">' +
+        '<div class="rowflex" style="justify-content:space-between">' +
+          '<strong>' + T('split_title') + '</strong>' +
+          '<span class="muted">' + esc(t.desc.slice(0, 70)) + ' &middot; ' + dmy(t.date) + ' &middot; ' + eur(t.amount) + '</span>' +
+        '</div>' +
+        '<div id="split-lines">' +
+          lines.map(function (l, i) {
+            return '<div class="rowflex mt split-line">' +
+              '<select class="split-cat" data-i="' + i + '">' + catOptionsHtml(l.cat) + '</select>' +
+              '<input type="number" class="split-amt" data-i="' + i + '" step="0.01" value="' + l.amount + '" style="width:110px">' +
+              '<input type="text" class="split-desc" data-i="' + i + '" placeholder="' + esc(T('split_desc_ph')) + '" value="' + esc(l.desc || '') + '" style="min-width:160px">' +
+              (lines.length > 1 ? '<button class="btn ghost danger split-del-line" data-i="' + i + '">&times;</button>' : '') +
+            '</div>';
+          }).join('') +
+        '</div>' +
+        '<div class="rowflex mt">' +
+          '<button class="btn" id="split-add">+ ' + T('split_add_line') + '</button>' +
+          '<span class="muted' + (klopt ? '' : ' neg') + '" id="split-rest">' + T('split_remaining', { v: eur(rest) }) + '</span>' +
+        '</div>' +
+        '<div class="rowflex mt">' +
+          '<button class="btn primary" id="split-save"' + (klopt ? '' : ' disabled') + '>' + T('split_save') + '</button>' +
+          '<button class="btn ghost" id="split-cancel">' + T('split_cancel') + '</button>' +
+          (S.splits[t.id] ? '<button class="btn ghost danger" id="split-remove">' + T('split_remove') + '</button>' : '') +
+        '</div>' +
+      '</div>';
+
+    tr.querySelectorAll('.split-cat').forEach(function (sel) {
+      sel.addEventListener('change', function () {
+        var c = catList().filter(function (x) { return x.cat === sel.value; })[0];
+        splitState[t.id][+sel.dataset.i].cat = sel.value;
+        splitState[t.id][+sel.dataset.i].group = c ? c.group : 'Overig';
+      });
+    });
+    tr.querySelectorAll('.split-desc').forEach(function (inp) {
+      inp.addEventListener('change', function () { splitState[t.id][+inp.dataset.i].desc = inp.value; });
+    });
+    tr.querySelectorAll('.split-amt').forEach(function (inp) {
+      inp.addEventListener('input', function () {
+        splitState[t.id][+inp.dataset.i].amount = parseFloat(String(inp.value).replace(',', '.')) || 0;
+        var s2 = splitState[t.id].reduce(function (a, l) { return a + (+l.amount || 0); }, 0);
+        var r2 = Math.round((t.amount - s2) * 100) / 100;
+        var ok2 = Math.abs(r2) < 0.005;
+        var restEl = tr.querySelector('#split-rest');
+        restEl.textContent = T('split_remaining', { v: eur(r2) });
+        restEl.className = 'muted' + (ok2 ? '' : ' neg');
+        tr.querySelector('#split-save').disabled = !ok2;
+      });
+    });
+    var addBtn = tr.querySelector('#split-add');
+    if (addBtn) addBtn.addEventListener('click', function () {
+      splitState[t.id].push({ cat: t.cat, group: t.group, amount: 0, desc: '' });
+      renderSplitEditor(t);
+    });
+    tr.querySelectorAll('.split-del-line').forEach(function (b) {
+      b.addEventListener('click', function () {
+        splitState[t.id].splice(+b.dataset.i, 1);
+        renderSplitEditor(t);
+      });
+    });
+    var saveBtn = tr.querySelector('#split-save');
+    if (saveBtn) saveBtn.addEventListener('click', function () { splitOpslaan(t); });
+    var cancelBtn = tr.querySelector('#split-cancel');
+    if (cancelBtn) cancelBtn.addEventListener('click', function () { delete splitState[t.id]; closeSplitEditor(); });
+    var removeBtn = tr.querySelector('#split-remove');
+    if (removeBtn) removeBtn.addEventListener('click', function () { splitVerwijderen(t.id); });
+  }
+
+  function splitOpslaan(t) {
+    var lines = splitState[t.id]
+      .map(function (l) { return { cat: l.cat, group: l.group, amount: Math.round((+l.amount || 0) * 100) / 100, desc: (l.desc || '').trim() }; })
+      .filter(function (l) { return l.amount !== 0; });
+    if (!lines.length) { flash(T('split_need'), true); return; }
+    S.splits[t.id] = lines;
+    delete S.overrides[t.id];       // de splitsing vervangt een eventuele eerdere categorie-override
+    delete splitState[t.id];
+    save(); closeSplitEditor();
+    renderTx(); renderDashboard(); renderBudget(); renderRecurring();
+    flash(T('split_saved'));
+  }
+
+  function splitVerwijderen(id) {
+    delete S.splits[id];
+    delete splitState[id];
+    save(); closeSplitEditor();
+    renderTx(); renderDashboard(); renderBudget(); renderRecurring();
+    flash(T('split_removed'));
   }
 
   function fillFilters() {
@@ -5647,14 +6168,22 @@ window.HB_LENINGEN=[];</script>
     var huidCat = sel.value;
     sel.innerHTML = catOptionsHtml(huidCat);
     if (huidCat) sel.value = huidCat;
+    var dsel = document.getElementById('d-cat');
+    if (dsel) {
+      var huidD = dsel.value;
+      dsel.innerHTML = catOptionsHtml(huidD);
+      if (huidD) dsel.value = huidD;
+    }
   }
 
-  function addKas() {
-    var d = document.getElementById('kas-datum').value;
-    var o = document.getElementById('kas-oms').value.trim();
-    var b = parseFloat(String(document.getElementById('kas-bedrag').value).replace(',', '.'));
-    var c = document.getElementById('kas-cat').value;
-    var soort = document.getElementById('kas-soort').value;
+  // Gedeeld door het Kas-tabblad ('kas-') en de Snel invoeren-kaart op het
+  // dashboard ('d-'): zelfde velden, zelfde controle, zelfde opslag.
+  function voegBoekingToe(p) {
+    var d = document.getElementById(p + 'datum').value;
+    var o = document.getElementById(p + 'oms').value.trim();
+    var b = parseFloat(String(document.getElementById(p + 'bedrag').value).replace(',', '.'));
+    var c = document.getElementById(p + 'cat').value;
+    var soort = document.getElementById(p + 'soort').value;
     if (!d || isNaN(b)) { flash(T('cash_need'), true); return; }
     b = Math.abs(b) * (soort === 'uit' ? -1 : 1);
     var g = (catList().filter(function (x) { return x.cat === c; })[0] || {}).group || 'Overig';
@@ -5663,10 +6192,12 @@ window.HB_LENINGEN=[];</script>
       desc: o || T('cash_add_title'), amount: Math.round(b * 100) / 100, group: g, cat: c,
       zak: false, src: 'kas' });
     save();
-    document.getElementById('kas-oms').value = ''; document.getElementById('kas-bedrag').value = '';
+    document.getElementById(p + 'oms').value = ''; document.getElementById(p + 'bedrag').value = '';
     renderKas(); renderDashboard(); renderBudget();
     flash(T('cash_added'));
   }
+
+  function addKas() { voegBoekingToe('kas-'); }
 
   // ---------------------------------------------------------------- Import
   function categorize(desc) {
@@ -5792,14 +6323,34 @@ window.HB_LENINGEN=[];</script>
   function readCsv(file) {
     var fr = new FileReader();
     fr.onload = function () {
-      var txt = fr.result;
+      // Banken exporteren soms Windows-1252 in plaats van UTF-8. Eerst strikt
+      // UTF-8 proberen; mislukt dat, dan Windows-1252 — zo raken é/ë/ü nooit
+      // verminkt (en blijven automatische regels op namen gewoon werken).
+      var txt;
+      try { txt = new TextDecoder('utf-8', { fatal: true }).decode(fr.result); }
+      catch (e) { txt = new TextDecoder('windows-1252').decode(fr.result); }
       var ing = P.parseIngCsv(txt);
       if (ing) { stage(ing, 'ING'); return; }
+      var abn = P.parseAbnTxt(txt);
+      if (abn) { stage(abn, 'ABN AMRO'); return; }
       var r = P.fromTable(P.splitCSV(txt), {});
       if (r.error) document.getElementById('preview').innerHTML = '<div class="note warn">' + esc(r.error) + '</div>';
       else stage(r.rows, file.name.replace(/\.[^.]+$/, ''));
     };
-    fr.readAsText(file, 'utf-8');
+    fr.readAsArrayBuffer(file);
+  }
+
+  function readXml(file) {
+    var fr = new FileReader();
+    fr.onload = function () {
+      var txt;
+      try { txt = new TextDecoder('utf-8', { fatal: true }).decode(fr.result); }
+      catch (e) { txt = new TextDecoder('windows-1252').decode(fr.result); }
+      var rows = P.parseCamt(txt);
+      if (rows) stage(rows, rows[0].bank || 'CAMT');
+      else document.getElementById('preview').innerHTML = '<div class="note warn">' + esc(T('xml_failed')) + '</div>';
+    };
+    fr.readAsArrayBuffer(file);
   }
 
   function handleFiles(files) {
@@ -5808,6 +6359,7 @@ window.HB_LENINGEN=[];</script>
       if (n.endsWith('.pdf')) readPdf(f);
       else if (/\.(xlsx|xlsm|xls)$/.test(n)) readSheet(f);
       else if (/\.(csv|tsv|txt)$/.test(n)) readCsv(f);
+      else if (n.endsWith('.xml')) readXml(f);
       else if (n.endsWith('.json')) importJson(f);
       else flash(T('unsupported', { f: f.name }), true);
     });
@@ -5819,7 +6371,7 @@ window.HB_LENINGEN=[];</script>
       versie: 1, gemaakt: new Date().toISOString(),
       budget: S.budget, overrides: S.overrides, manual: S.manual, userRules: S.userRules,
       catType: S.catType, potjes: S.potjes || [], investeringen: S.investeringen || [],
-      imported: S.imported || [], settings: S.settings,
+      imported: S.imported || [], settings: S.settings, splits: S.splits || {},
       leningen: S.leningen || []
     }, null, 1)], { type: 'application/json' });
     var a = document.createElement('a');
@@ -5850,6 +6402,7 @@ window.HB_LENINGEN=[];</script>
       try {
         var d = JSON.parse(fr.result);
         S.budget = d.budget || S.budget; S.overrides = d.overrides || {};
+        S.splits = d.splits || {};
         S.manual = d.manual || []; S.imported = d.imported || [];
         S.userRules = d.userRules || [];
         S.catType = d.catType || {};
@@ -5969,9 +6522,33 @@ window.HB_LENINGEN=[];</script>
   // de leningen hierboven; zie het als een momentopname die je af en toe bijwerkt.
   var INVEST_TYPES = ['aandelen', 'goud', 'zilver', 'crypto', 'overig'];
 
+  // Wat je opzij zet staat niet als uitgave in je cijfers, maar het is er wel.
+  // Hier komt het terug, naast je beleggingen, zodat je je hele vermogen ziet.
+  function renderInvestSparen() {
+    var card = document.getElementById('inv-auto');
+    if (!card) return;
+    var jaar = +(S.settings.jaar || new Date().getFullYear());
+    var rijen = spaarPerCat(jaar);
+    if (!rijen.length) { card.classList.add('hide'); return 0; }
+    card.classList.remove('hide');
+    document.getElementById('inv-auto-body').innerHTML =
+      '<thead><tr><th>' + T('th_category') + '</th><th class="num">' + T('inv_auto_total') +
+      '</th><th class="num">' + T('inv_auto_year') + '</th><th class="num">' + T('inv_auto_count') +
+      '</th><th>' + T('inv_auto_last') + '</th></tr></thead><tbody>' +
+      rijen.map(function (r) {
+        return '<tr><td>' + esc(TC(r.cat)) + '</td>' +
+          '<td class="num" style="font-weight:600">' + eur0(r.tot) + '</td>' +
+          '<td class="num">' + (r.jaar ? eur0(r.jaar) : '<span class="muted">–</span>') + '</td>' +
+          '<td class="num">' + r.n + '</td>' +
+          '<td class="nowrap">' + (r.laatste ? dmy(r.laatste) : '<span class="muted">–</span>') + '</td></tr>';
+      }).join('') + '</tbody>';
+    return rijen.reduce(function (a, r) { return a + r.tot; }, 0);
+  }
+
   function renderInvesteringen() {
     var host = document.getElementById('inv-body');
     if (!host) return;
+    var opzij = renderInvestSparen() || 0;
     var lijst = (S.investeringen || []).slice().sort(function (a, b) { return (b.waarde || 0) - (a.waarde || 0); });
     var totWaarde = lijst.reduce(function (a, i) { return a + (+i.waarde || 0); }, 0);
     var totInleg = lijst.reduce(function (a, i) { return a + (+i.inleg || 0); }, 0);
@@ -5980,7 +6557,7 @@ window.HB_LENINGEN=[];</script>
       { l: T('inv_total_value'), v: totWaarde, plain: true },
       { l: T('inv_total_cost'), v: totInleg, plain: true },
       { l: T('inv_result'), v: resultaat, sub: totInleg ? (Math.round(resultaat / totInleg * 1000) / 10) + '%' : '' }
-    ].map(function (k) {
+    ].concat(opzij > 0 ? [{ l: T('inv_saved'), v: opzij, plain: true, sub: T('inv_saved_sub') }] : []).map(function (k) {
       var cls = k.plain ? '' : (k.v >= 0 ? 'pos' : 'neg');
       return '<div class="card kpi"><div class="label">' + esc(k.l) + '</div><div class="value ' + cls + '">' +
         eur0(k.v) + '</div><div class="sub">' + esc(k.sub || '') + '</div></div>';
@@ -6076,7 +6653,8 @@ window.HB_LENINGEN=[];</script>
   var HBCore = {
     S: S, MONTHS: MONTHS,
     T: T, TC: TC, TG: TG,
-    budgetTx: budgetTx, opnameTx: opnameTx, catSoort: catSoort, catGroep: catGroep,
+    budgetTx: budgetTx, opnameTx: opnameTx, spaarTx: spaarTx, spaarPerCat: spaarPerCat,
+    catSoort: catSoort, catGroep: catGroep,
     detectRecurring: detectRecurring, histInkomen: histInkomen, mediaan: mediaan,
     months: months, maandLabel: maandLabel, payeeKey: payeeKey,
     eur: eur, eur0: eur0, dmy: dmy, esc: esc, flash: flash, save: save,
@@ -6109,15 +6687,27 @@ window.HB_LENINGEN=[];</script>
       var knop = document.querySelector('nav.tabs button[data-view="' + v + '"]');
       if (knop) knop.classList.toggle('hide', !aan);
     });
+    var proLabel = document.getElementById('nav-pro-label');
+    if (proLabel) proLabel.classList.toggle('hide', !aan);
     var audit = document.getElementById('audit-card');
     if (audit) audit.classList.toggle('hide', !aan);
     var slot = document.getElementById('pro-slot');
     if (slot) slot.classList.toggle('hide', aan);
     // bijwerken kan alleen als er tabellen zijn om bij te werken
-    ['btn-update', 'lic-file-label'].forEach(function (id) {
+    ['btn-update', 'lic-drop'].forEach(function (id) {
       var e = document.getElementById(id);
       if (e) e.classList.toggle('hide', !aan);
     });
+    // De licentie wordt async gecontroleerd (HBLicentie.init()); als renderAll()
+    // al draaide vóórdat die controle klaar was, sloeg pro() de pro-tabbladen
+    // over omdat proActief() toen nog false was. Zodra de licentie alsnog geldig
+    // blijkt, hier alsnog bijwerken — anders blijven tabbladen als Potjes leeg
+    // tot de gebruiker er handmatig naartoe klikt.
+    if (aan) {
+      ['renderAudit', 'renderPrognose', 'renderPotjes', 'renderAnalyse', 'renderBelasting']
+        .forEach(pro);
+    }
+    renderDashboardPotjes();
   }
 
   function renderAll() {
@@ -6142,6 +6732,7 @@ window.HB_LENINGEN=[];</script>
     if (view === 'budget') renderBudget();
     if (view === 'vaste') { renderRecurring(); pro('renderAudit'); }
     if (view === 'maand') renderMaand();
+    if (view === 'transacties') renderTx();
     if (view === 'import') renderCheck();
     if (view === 'prognose') pro('renderPrognose');
     if (view === 'potjes') pro('renderPotjes');
@@ -6157,6 +6748,8 @@ window.HB_LENINGEN=[];</script>
     document.getElementById('btn-theme').textContent =
       t === 'dark' ? '☀︎ ' + T('theme_light') : (t === 'light' ? '☾ ' + T('theme_dark') : '◐ ' + T('theme_auto'));
     if (document.getElementById('view-dashboard').classList.contains('active')) renderDashboard();
+    if (document.getElementById('view-maand').classList.contains('active')) renderMaand();
+    if (document.getElementById('view-transacties').classList.contains('active')) renderTx();
   }
 
   // ---------------------------------------------------------------- licentie en tabellen
@@ -6256,22 +6849,40 @@ window.HB_LENINGEN=[];</script>
           return;
         }
         toonLicentie();
-        flash(T(m === 'geen-url' ? 'lic_no_url' : 'lic_fail'), true);
+        if (m === 'dekking') flash(T('lic_dekking', { jaar: e.jaar || '' }), true);
+        else flash(T(m === 'geen-url' ? 'lic_no_url' : 'lic_fail'), true);
       });
     });
 
-    var best = document.getElementById('lic-file');
-    if (best) best.addEventListener('change', function () {
-      var f = this.files[0]; this.value = '';
+    function verwerkTabellenBestand(f) {
       if (!f) return;
       var fr = new FileReader();
       fr.onload = function () {
         L.leesTabellen(fr.result).then(function (data) {
           pasTabellenToe(data); toonLicentie();
-        }).catch(function () { flash(T('lic_fail'), true); });
+        }).catch(function (e) {
+          if (e && e.message === 'dekking') flash(T('lic_dekking', { jaar: e.jaar || '' }), true);
+          else flash(T('lic_fail'), true);
+        });
       };
       fr.readAsText(f);
+    }
+
+    var best = document.getElementById('lic-file');
+    if (best) best.addEventListener('change', function () {
+      verwerkTabellenBestand(this.files[0]); this.value = '';
     });
+
+    var licDrop = document.getElementById('lic-drop');
+    if (licDrop) {
+      ['dragenter', 'dragover'].forEach(function (ev) {
+        licDrop.addEventListener(ev, function (e) { e.preventDefault(); licDrop.classList.add('over'); });
+      });
+      ['dragleave', 'drop'].forEach(function (ev) {
+        licDrop.addEventListener(ev, function (e) { e.preventDefault(); licDrop.classList.remove('over'); });
+      });
+      licDrop.addEventListener('drop', function (e) { verwerkTabellenBestand(e.dataTransfer.files[0]); });
+    }
   }
 
   function koppelPro() {
@@ -6370,7 +6981,7 @@ window.HB_LENINGEN=[];</script>
       save(); applyTheme();
     });
     document.getElementById('sel-jaar').addEventListener('change', function () {
-      S.settings.jaar = +this.value; save(); renderDashboard(); renderBudget();
+      S.settings.jaar = +this.value; save(); renderMaand(); renderBudget();
     });
     ['q', 'cat', 'jaar', 'rek'].forEach(function (k) {
       document.getElementById('f-' + k).addEventListener('input', function () {
@@ -6386,6 +6997,8 @@ window.HB_LENINGEN=[];</script>
     if (bLenAdd) bLenAdd.addEventListener('click', addLening);
     var lenStart = document.getElementById('len-start');
     if (lenStart && !lenStart.value) lenStart.value = new Date().toISOString().slice(0, 10);
+    var bDashAdd = document.getElementById('btn-dash-add');
+    if (bDashAdd) bDashAdd.addEventListener('click', function () { voegBoekingToe('d-'); });
     var chkAlle = document.getElementById('chk-alle-maanden');
     if (chkAlle) chkAlle.addEventListener('change', function () {
       S.settings.budgetAlleMaanden = this.checked; save(); renderBudget();
@@ -6407,6 +7020,8 @@ window.HB_LENINGEN=[];</script>
     }
     document.getElementById('btn-budget-hist').addEventListener('click', vulBudgetUitHistorie);
     document.getElementById('btn-export').addEventListener('click', exportJson);
+    var bBackupHeader = document.getElementById('btn-backup-header');
+    if (bBackupHeader) bBackupHeader.addEventListener('click', exportJson);
     document.getElementById('btn-export-csv').addEventListener('click', exportCsv);
     document.getElementById('btn-commit').addEventListener('click', commit);
     document.getElementById('btn-wipe').addEventListener('click', function () {
@@ -6454,10 +7069,14 @@ window.HB_LENINGEN=[];</script>
       else stage(r.rows, 'Geplakt');
     });
     document.getElementById('kas-datum').value = new Date().toISOString().slice(0, 10);
+    var dDatum = document.getElementById('d-datum');
+    if (dDatum) dDatum.value = new Date().toISOString().slice(0, 10);
     addEventListener('resize', function () {
       clearTimeout(window._rz);
       window._rz = setTimeout(function () {
         if (document.getElementById('view-dashboard').classList.contains('active')) renderDashboard();
+        if (document.getElementById('view-maand').classList.contains('active')) renderMaand();
+        if (document.getElementById('view-transacties').classList.contains('active')) renderTx();
       }, 200);
     });
   }

@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Huishoudboekje</title>
+<title>My Offline Budget</title>
 <meta name="description" content="Lokale budget-app. Alle gegevens blijven in je eigen browser.">
 <!--__PWA__-->
 <style>/*__CSS__*/</style>
 </head>
 <body>
 <header class="top">
-  <div class="brand"><span data-i18n="brand">Huishoudboekje</span><span class="tag" data-i18n="brand_tag">lokaal · geen server</span></div>
+  <div class="brand"><span data-i18n="brand">Huishoudboekje</span><span class="tag" data-i18n="brand_tag">lokaal · geen server</span><span class="tag ver">v1.0.0</span></div>
   <nav class="tabs">
     <button data-view="dashboard" data-i18n="nav_dashboard">Dashboard</button>
     <button data-view="maand" data-i18n="nav_month">Deze maand</button>
@@ -23,15 +23,15 @@
     <button data-view="investeringen" data-i18n="nav_invest">Investeringen</button>
     <button data-view="import" data-i18n="nav_import">Import</button>
     <button data-view="over" data-i18n="nav_about">Over</button>
+
   </nav>
   <div class="ctrls">
     <span id="flash" class="pill" style="opacity:0;transition:opacity .3s"></span>
-    <button class="btn hide" id="btn-update" data-i18n="lic_update">Tabellen bijwerken</button>
-    <label class="btn hide" id="lic-file-label" for="lic-file" data-i18n="lic_file">Bestand inlezen</label>
-    <input type="file" id="lic-file" accept=".txt,.json" class="hide">
+    <button class="btn primary" id="btn-backup-header" data-i18n="backup_header_btn">Back-up maken</button>
     <select id="sel-lang" class="btn" aria-label="Taal / Language"></select>
     <select id="sel-cur" class="btn" aria-label="Valuta / Currency"></select>
     <button class="btn" id="btn-theme">◐ Auto</button>
+    <a class="icon-btn" id="link-github" href="https://github.com/donmiguel-stack/myofflinebudget" target="_blank" rel="noopener" aria-label="GitHub" title="Broncode op GitHub"><svg viewBox="0 0 16 16" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path></svg></a>
   </div>
 </header>
 
@@ -45,35 +45,19 @@
       </div>
       <div class="grid g-kpi mt" id="kpis-nu"></div>
     </div>
-    <div class="filters mt">
-      <label for="sel-jaar" data-i18n="year">Jaar</label>
-      <select id="sel-jaar"></select>
-      <span class="muted" data-i18n="dash_hint">Kerncijfers gelden voor het gekozen jaar; de grafieken tonen de hele periode.</span>
-    </div>
-    <div class="grid g-kpi" id="kpis"></div>
-    <div class="grid g-2 mt">
-      <div class="card">
-        <h2 data-i18n="ch_inc_exp">Inkomsten en uitgaven per maand</h2>
-        <div class="legend" id="lg1"></div>
-        <div id="ch1"></div>
-      </div>
-      <div class="card">
-        <h2 data-i18n="ch_balance">Saldo per maand</h2>
-        <p><small data-i18n="ch_balance_hint">Blauw is een overschot, rood een tekort.</small></p>
-        <div id="ch2"></div>
+    <div class="card mt">
+      <h2 data-i18n="quick_add_title">Snel invoeren</h2>
+      <p><small class="muted" data-i18n="quick_add_hint">Zet een uitgave of inkomst er direct in — hij komt bij je handmatige boekingen.</small></p>
+      <div class="rowflex">
+        <input type="date" id="d-datum">
+        <select id="d-soort"><option value="uit" data-i18n="expense">Uitgave</option><option value="in" data-i18n="income">Inkomst</option></select>
+        <input type="number" id="d-bedrag" data-i18n-ph="amount" placeholder="Bedrag" step="0.01" style="width:120px">
+        <input type="text" id="d-oms" data-i18n-ph="description" placeholder="Omschrijving" style="min-width:200px">
+        <select id="d-cat"></select>
+        <button class="btn primary" id="btn-dash-add" data-i18n="add">Toevoegen</button>
       </div>
     </div>
-    <div class="grid g-2 mt">
-      <div class="card">
-        <h2 data-i18n="ch_top">Grootste uitgavenposten</h2>
-        <div id="ch3"></div>
-      </div>
-      <div class="card">
-        <h2 data-i18n="ch_groups">Uitgaven per hoofdgroep per maand</h2>
-        <div class="legend" id="lg4"></div>
-        <div id="ch4"></div>
-      </div>
-    </div>
+    
     <div class="card mt">
       <h2 data-i18n="tbl_month">Kosten van de komende 30 dagen</h2>
       <p><small class="muted" data-i18n="dash_costs_hint"></small></p>
@@ -88,7 +72,7 @@
         <li data-i18n="slot_li3"></li>
         <li data-i18n="slot_li4"></li>
       </ul>
-      <p><a class="btn primary" id="slot-link" href="https://yourpersonalbudget.app" target="_blank" rel="noopener" data-i18n="slot_btn">Bekijk de mogelijkheden</a></p>
+      <p><a class="btn primary" id="slot-link" href="https://myofflinebudget.app" target="_blank" rel="noopener" data-i18n="slot_btn">Bekijk de mogelijkheden</a></p>
     </div>
   </section>
 
@@ -113,6 +97,31 @@
       <p data-i18n="m_hint"></p>
       <div class="scroll"><table id="m-body"></table></div>
     </div>
+    <div class="filters mt">
+      <strong data-i18n="year_overview">Verloop dit jaar</strong>
+      <span class="spacer"></span>
+      <label for="sel-jaar" data-i18n="year">Jaar</label>
+      <select id="sel-jaar"></select>
+      <span class="muted" data-i18n="dash_hint">Kerncijfers gelden voor het gekozen jaar; de grafieken tonen de hele periode.</span>
+    </div>
+    <div class="grid g-kpi" id="kpis"></div>
+    <div class="grid g-2 mt">
+      <div class="card">
+        <h2 data-i18n="ch_inc_exp">Inkomsten en uitgaven per maand</h2>
+        <div class="legend" id="lg1"></div>
+        <div id="ch1"></div>
+      </div>
+      <div class="card">
+        <h2 data-i18n="ch_balance">Saldo per maand</h2>
+        <p><small data-i18n="ch_balance_hint">Blauw is een overschot, rood een tekort.</small></p>
+        <div id="ch2"></div>
+      </div>
+    </div>
+    <div class="card mt">
+      <h2 data-i18n="ch_groups">Uitgaven per hoofdgroep per maand</h2>
+      <div class="legend" id="lg4"></div>
+      <div id="ch4"></div>
+    </div>
   </section>
 
   <!-- ================================================= Budget -->
@@ -132,6 +141,8 @@
   </section>
 
 
+
+
   <!-- ================================================= Vaste lasten -->
   <section class="view" id="view-vaste">
     <div class="grid g-kpi" id="rec-kpis"></div>
@@ -142,6 +153,8 @@
       <div class="scroll"><table id="rec-body"></table></div>
     </div>
   </section>
+
+
 
 
   <!-- ================================================= Transacties -->
@@ -156,6 +169,11 @@
     </div>
     <div id="rule-offer" class="hide"></div>
     <div class="card"><div class="scroll"><table id="tx-body"></table></div></div>
+    <div class="card mt">
+      <h2 data-i18n="ch_top">Grootste uitgavenposten</h2>
+      <p><small class="muted" data-i18n="ch_top_hint">Volgt de filters hierboven.</small></p>
+      <div id="ch3"></div>
+    </div>
     <div class="note mt" data-i18n="tx_note"></div>
     <div class="card mt">
       <h2 data-i18n="rules_title">Automatische regels</h2>
@@ -213,6 +231,11 @@
       <p data-i18n="inv_intro"></p>
     </div>
     <div class="grid g-kpi mt" id="inv-kpis"></div>
+    <div class="card mt hide" id="inv-auto">
+      <h2 data-i18n="inv_auto_title">Sparen uit je boekingen</h2>
+      <p><small class="muted" data-i18n="inv_auto_hint"></small></p>
+      <div class="scroll"><table id="inv-auto-body"></table></div>
+    </div>
     <div class="card mt">
       <h2 data-i18n="inv_add_title">Positie toevoegen</h2>
       <p data-i18n="inv_add_p"></p>
@@ -300,6 +323,20 @@
       <p><small data-i18n="about_5"></small></p>
     </div>
 
+    <div class="card mt" id="faq-card">
+      <h2 data-i18n="faq_title">Vragen</h2>
+      <details><summary data-i18n="faq_q_imp"></summary><p data-i18n="faq_a_imp"></p></details>
+      <details><summary data-i18n="faq_q_dub"></summary><p data-i18n="faq_a_dub"></p></details>
+      <details><summary data-i18n="faq_q_hand"></summary><p data-i18n="faq_a_hand"></p></details>
+      <details><summary data-i18n="faq_q_cat"></summary><p data-i18n="faq_a_cat"></p></details>
+      <details><summary data-i18n="faq_q_eigen"></summary><p data-i18n="faq_a_eigen"></p></details>
+      <details><summary data-i18n="faq_q_regels"></summary><p data-i18n="faq_a_regels"></p></details>
+      <details><summary data-i18n="faq_q_rest"></summary><p data-i18n="faq_a_rest"></p></details>
+      <details><summary data-i18n="faq_q_split"></summary><p data-i18n="faq_a_split"></p></details>
+      <details><summary data-i18n="faq_q_sparen"></summary><p data-i18n="faq_a_sparen"></p></details>
+      <details><summary data-i18n="faq_q_backup"></summary><p data-i18n="faq_a_backup"></p></details>
+      <details><summary data-i18n="faq_q_leeg"></summary><p data-i18n="faq_a_leeg"></p></details>
+    </div>
     <div class="card mt" id="lic-card">
       <h2 data-i18n="lic_title">Licentie en tabellen</h2>
       <p id="lic-status"></p>
@@ -307,7 +344,8 @@
         <input type="text" id="lic-code" data-i18n-ph="lic_code" placeholder="Licentiecode" style="min-width:320px">
         <button class="btn primary" id="btn-lic" data-i18n="lic_save">Bewaren</button>
       </div>
-      <div class="note mt" data-i18n="lic_update_moved">De knop om de tabellen bij te werken staat, zodra je licentie actief is, rechtsboven in de menubalk.</div>
+      <p><small data-i18n="lic_contact"></small></p>
+      <div class="note mt" data-i18n="lic_update_moved">De knop om de tabellen bij te werken vind je, zodra je licentie actief is, op het tabblad Belasting.</div>
       <div class="rowflex mt">
         <label for="lic-url" data-i18n="lic_url">Adres voor bijwerken</label>
         <input type="text" id="lic-url" style="min-width:420px" spellcheck="false">

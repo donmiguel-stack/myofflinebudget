@@ -4,8 +4,8 @@
 
   var UI = {
     nl: {
-      _name: 'Nederlands', _flag: '🇳🇱', _locale: 'nl-NL', _title: 'Huishoudboekje',
-      brand: 'Huishoudboekje', brand_tag: 'lokaal · geen server',
+      _name: 'Nederlands', _flag: '🇳🇱', _locale: 'nl-NL', _title: 'My Offline Budget',
+      brand: 'My Offline Budget', brand_tag: 'lokaal · geen server',
       nav_dashboard: 'Dashboard', nav_budget: 'Budget', nav_tx: 'Transacties', nav_cash: 'Kas',
       nav_loans: 'Leningen', nav_import: 'Import', nav_about: 'Over',
       theme_auto: 'Auto', theme_light: 'Licht', theme_dark: 'Donker',
@@ -87,8 +87,8 @@
     },
 
     en: {
-      _name: 'English', _flag: '🇬🇧', _locale: 'en-GB', _title: 'Household budget',
-      brand: 'Household budget', brand_tag: 'local · no server',
+      _name: 'English', _flag: '🇬🇧', _locale: 'en-GB', _title: 'My Offline Budget',
+      brand: 'My Offline Budget', brand_tag: 'local · no server',
       nav_dashboard: 'Dashboard', nav_budget: 'Budget', nav_tx: 'Transactions', nav_cash: 'Cash',
       nav_loans: 'Loans', nav_import: 'Import', nav_about: 'About',
       theme_auto: 'Auto', theme_light: 'Light', theme_dark: 'Dark',
@@ -170,8 +170,8 @@
     },
 
     fr: {
-      _name: 'Français', _flag: '🇫🇷', _locale: 'fr-FR', _title: 'Budget familial',
-      brand: 'Budget familial', brand_tag: 'local · sans serveur',
+      _name: 'Français', _flag: '🇫🇷', _locale: 'fr-FR', _title: 'My Offline Budget',
+      brand: 'My Offline Budget', brand_tag: 'local · sans serveur',
       nav_dashboard: 'Tableau de bord', nav_budget: 'Budget', nav_tx: 'Transactions', nav_cash: 'Espèces',
       nav_loans: 'Prêts', nav_import: 'Import', nav_about: 'À propos',
       theme_auto: 'Auto', theme_light: 'Clair', theme_dark: 'Sombre',
@@ -253,8 +253,8 @@
     },
 
     de: {
-      _name: 'Deutsch', _flag: '🇩🇪', _locale: 'de-DE', _title: 'Haushaltsbuch',
-      brand: 'Haushaltsbuch', brand_tag: 'lokal · ohne Server',
+      _name: 'Deutsch', _flag: '🇩🇪', _locale: 'de-DE', _title: 'My Offline Budget',
+      brand: 'My Offline Budget', brand_tag: 'lokal · ohne Server',
       nav_dashboard: 'Übersicht', nav_budget: 'Budget', nav_tx: 'Buchungen', nav_cash: 'Bargeld',
       nav_loans: 'Darlehen', nav_import: 'Import', nav_about: 'Über',
       theme_auto: 'Auto', theme_light: 'Hell', theme_dark: 'Dunkel',
@@ -336,8 +336,8 @@
     },
 
     es: {
-      _name: 'Español', _flag: '🇪🇸', _locale: 'es-ES', _title: 'Presupuesto doméstico',
-      brand: 'Presupuesto doméstico', brand_tag: 'local · sin servidor',
+      _name: 'Español', _flag: '🇪🇸', _locale: 'es-ES', _title: 'My Offline Budget',
+      brand: 'My Offline Budget', brand_tag: 'local · sin servidor',
       nav_dashboard: 'Panel', nav_budget: 'Presupuesto', nav_tx: 'Movimientos', nav_cash: 'Efectivo',
       nav_loans: 'Préstamos', nav_import: 'Importar', nav_about: 'Acerca de',
       theme_auto: 'Auto', theme_light: 'Claro', theme_dark: 'Oscuro',
@@ -419,8 +419,8 @@
     },
 
     zh: {
-      _name: '中文', _flag: '🇨🇳', _locale: 'zh-CN', _title: '家庭账本',
-      brand: '家庭账本', brand_tag: '本地运行 · 无服务器',
+      _name: '中文', _flag: '🇨🇳', _locale: 'zh-CN', _title: 'My Offline Budget',
+      brand: 'My Offline Budget', brand_tag: '本地运行 · 无服务器',
       nav_dashboard: '总览', nav_budget: '预算', nav_tx: '交易', nav_cash: '现金',
       nav_loans: '借款', nav_import: '导入', nav_about: '关于',
       theme_auto: '自动', theme_light: '浅色', theme_dark: '深色',
@@ -2255,7 +2255,7 @@
       "inv_hint": "Waardes vul je zelf in, op het moment dat het jou uitkomt. De app legt geen verbinding om koersen op te halen — dat past niet bij een programma zonder internet.",
       "inv_naam_ph": "Naam (bv. Shell, Krugerrand 1oz, Bitcoin)",
       "inv_notitie_ph": "Notitie (optioneel)",
-      "lic_update_moved": "De knop om de tabellen bij te werken staat, zodra je licentie actief is, rechtsboven in de menubalk."
+      "lic_update_moved": "De knop om de tabellen bij te werken vind je, zodra je licentie actief is, op het tabblad Belasting."
     },
     "en": {
       "nav_invest": "Investments",
@@ -2287,7 +2287,7 @@
       "inv_hint": "You enter the values yourself, whenever it suits you. The app makes no connection to fetch prices — that would not fit a program with no internet.",
       "inv_naam_ph": "Name (e.g. Shell, 1oz Krugerrand, Bitcoin)",
       "inv_notitie_ph": "Note (optional)",
-      "lic_update_moved": "Once your licence is active, the button to update the tables is at the top right of the menu bar."
+      "lic_update_moved": "Once your licence is active, the button to update the tables is on the Tax tab."
     },
     "fr": {
       "nav_invest": "Investissements",
@@ -2319,7 +2319,7 @@
       "inv_hint": "Vous saisissez vous-même les valeurs, quand cela vous arrange. L’application n’établit aucune connexion pour récupérer des cours — cela ne conviendrait pas à un programme sans internet.",
       "inv_naam_ph": "Nom (ex. Shell, Krugerrand 1oz, Bitcoin)",
       "inv_notitie_ph": "Note (facultatif)",
-      "lic_update_moved": "Une fois votre licence active, le bouton de mise à jour des tables se trouve en haut à droite de la barre de menu."
+      "lic_update_moved": "Une fois votre licence active, le bouton de mise à jour des tables se trouve dans l'onglet Impôts."
     },
     "de": {
       "nav_invest": "Anlagen",
@@ -2351,7 +2351,7 @@
       "inv_hint": "Sie tragen die Werte selbst ein, wann immer es Ihnen passt. Die App baut keine Verbindung auf, um Kurse abzurufen — das würde nicht zu einem Programm ohne Internet passen.",
       "inv_naam_ph": "Name (z. B. Shell, 1oz Krügerrand, Bitcoin)",
       "inv_notitie_ph": "Notiz (optional)",
-      "lic_update_moved": "Sobald Ihre Lizenz aktiv ist, finden Sie die Schaltfläche zum Aktualisieren der Tabellen oben rechts in der Menüleiste."
+      "lic_update_moved": "Sobald Ihre Lizenz aktiv ist, finden Sie die Schaltfläche zum Aktualisieren der Tabellen im Reiter Steuer."
     },
     "es": {
       "nav_invest": "Inversiones",
@@ -2383,7 +2383,7 @@
       "inv_hint": "Introduces los valores tú mismo, cuando te convenga. La aplicación no establece ninguna conexión para consultar cotizaciones — eso no encajaría con un programa sin internet.",
       "inv_naam_ph": "Nombre (p. ej. Shell, Krugerrand 1oz, Bitcoin)",
       "inv_notitie_ph": "Nota (opcional)",
-      "lic_update_moved": "En cuanto tu licencia esté activa, el botón para actualizar las tablas estará arriba a la derecha, en la barra de menú."
+      "lic_update_moved": "En cuanto tu licencia esté activa, el botón para actualizar las tablas estará en la pestaña Impuestos."
     },
     "zh": {
       "nav_invest": "投资",
@@ -2415,12 +2415,88 @@
       "inv_hint": "价值由你自行填写，方便时更新即可。应用不会联网获取行情——这不符合一个不联网程序的原则。",
       "inv_naam_ph": "名称（如 Shell、1盎司克鲁格金币、Bitcoin）",
       "inv_notitie_ph": "备注（可选）",
-      "lic_update_moved": "许可激活后，更新税表的按钮会出现在菜单栏右上角。"
+      "lic_update_moved": "许可激活后，更新税表的按钮会出现在「税务」标签页中。"
     }
   };
   Object.keys(EXTRA7).forEach(function (k) { Object.assign(UI[k], EXTRA7[k]); });
 
   var EXTRA8 = {
+    "nl": { "nav_pro_label": "Uitgebreid", "backup_header_btn": "Back-up maken" },
+    "en": { "nav_pro_label": "Extended", "backup_header_btn": "Make a backup" },
+    "fr": { "nav_pro_label": "Étendu", "backup_header_btn": "Faire une sauvegarde" },
+    "de": { "nav_pro_label": "Erweitert", "backup_header_btn": "Sicherung erstellen" },
+    "es": { "nav_pro_label": "Ampliado", "backup_header_btn": "Hacer una copia de seguridad" },
+    "zh": { "nav_pro_label": "扩展", "backup_header_btn": "创建备份" }
+  };
+  Object.keys(EXTRA8).forEach(function (k) { Object.assign(UI[k], EXTRA8[k]); });
+
+  var EXTRA9 = {
+    "nl": {
+      "split_btn": "Splits", "split_edit_btn": "Bewerk splitsing", "split_title": "Boeking splitsen",
+      "split_add_line": "regel", "split_remaining": "Resterend: {v}", "split_save": "Opslaan",
+      "split_cancel": "Annuleren", "split_remove": "Splitsing verwijderen",
+      "split_desc_ph": "Notitie (optioneel)", "split_need": "Vul minstens één bedrag in.",
+      "split_saved": "Splitsing opgeslagen", "split_removed": "Splitsing verwijderd"
+    },
+    "en": {
+      "split_btn": "Split", "split_edit_btn": "Edit split", "split_title": "Split this transaction",
+      "split_add_line": "line", "split_remaining": "Remaining: {v}", "split_save": "Save",
+      "split_cancel": "Cancel", "split_remove": "Remove split",
+      "split_desc_ph": "Note (optional)", "split_need": "Enter at least one amount.",
+      "split_saved": "Split saved", "split_removed": "Split removed"
+    },
+    "fr": {
+      "split_btn": "Diviser", "split_edit_btn": "Modifier la répartition", "split_title": "Diviser cette opération",
+      "split_add_line": "ligne", "split_remaining": "Restant : {v}", "split_save": "Enregistrer",
+      "split_cancel": "Annuler", "split_remove": "Supprimer la répartition",
+      "split_desc_ph": "Note (facultatif)", "split_need": "Indiquez au moins un montant.",
+      "split_saved": "Répartition enregistrée", "split_removed": "Répartition supprimée"
+    },
+    "de": {
+      "split_btn": "Aufteilen", "split_edit_btn": "Aufteilung bearbeiten", "split_title": "Buchung aufteilen",
+      "split_add_line": "Zeile", "split_remaining": "Verbleibend: {v}", "split_save": "Speichern",
+      "split_cancel": "Abbrechen", "split_remove": "Aufteilung entfernen",
+      "split_desc_ph": "Notiz (optional)", "split_need": "Mindestens einen Betrag eingeben.",
+      "split_saved": "Aufteilung gespeichert", "split_removed": "Aufteilung entfernt"
+    },
+    "es": {
+      "split_btn": "Dividir", "split_edit_btn": "Editar división", "split_title": "Dividir este movimiento",
+      "split_add_line": "línea", "split_remaining": "Restante: {v}", "split_save": "Guardar",
+      "split_cancel": "Cancelar", "split_remove": "Quitar división",
+      "split_desc_ph": "Nota (opcional)", "split_need": "Introduce al menos un importe.",
+      "split_saved": "División guardada", "split_removed": "División eliminada"
+    },
+    "zh": {
+      "split_btn": "拆分", "split_edit_btn": "编辑拆分", "split_title": "拆分这笔交易",
+      "split_add_line": "添加一行", "split_remaining": "剩余：{v}", "split_save": "保存",
+      "split_cancel": "取消", "split_remove": "删除拆分",
+      "split_desc_ph": "备注（可选）", "split_need": "请至少填写一个金额。",
+      "split_saved": "拆分已保存", "split_removed": "拆分已删除"
+    }
+  };
+  Object.keys(EXTRA9).forEach(function (k) { Object.assign(UI[k], EXTRA9[k]); });
+
+  var EXTRA10 = {
+    "nl": { "lic_drop_hint": "of sleep het bestand hierheen" },
+    "en": { "lic_drop_hint": "or drag the file here" },
+    "fr": { "lic_drop_hint": "ou glissez le fichier ici" },
+    "de": { "lic_drop_hint": "oder Datei hierher ziehen" },
+    "es": { "lic_drop_hint": "o arrastra el archivo aquí" },
+    "zh": { "lic_drop_hint": "或将文件拖到这里" }
+  };
+  Object.keys(EXTRA10).forEach(function (k) { Object.assign(UI[k], EXTRA10[k]); });
+
+  var EXTRA11 = {
+    "nl": { "year_overview": "Verloop dit jaar", "ch_top_hint": "Volgt de filters hierboven." },
+    "en": { "year_overview": "Year overview", "ch_top_hint": "Follows the filters above." },
+    "fr": { "year_overview": "Aperçu de l'année", "ch_top_hint": "Suit les filtres ci-dessus." },
+    "de": { "year_overview": "Jahresverlauf", "ch_top_hint": "Folgt den Filtern oben." },
+    "es": { "year_overview": "Evolución del año", "ch_top_hint": "Sigue los filtros de arriba." },
+    "zh": { "year_overview": "全年走势", "ch_top_hint": "跟随上方的筛选条件。" }
+  };
+  Object.keys(EXTRA11).forEach(function (k) { Object.assign(UI[k], EXTRA11[k]); });
+
+  var EXTRA12 = {
     "nl": { "xml_failed": "Dit XML-bestand is niet herkend als CAMT-bankexport (camt.052/053/054)." },
     "en": { "xml_failed": "This XML file was not recognised as a CAMT bank export (camt.052/053/054)." },
     "fr": { "xml_failed": "Ce fichier XML n'a pas été reconnu comme export bancaire CAMT (camt.052/053/054)." },
@@ -2428,7 +2504,131 @@
     "es": { "xml_failed": "Este archivo XML no se reconoció como exportación bancaria CAMT (camt.052/053/054)." },
     "zh": { "xml_failed": "该XML文件未被识别为CAMT银行导出文件（camt.052/053/054）。" }
   };
-  Object.keys(EXTRA8).forEach(function (k) { Object.assign(UI[k], EXTRA8[k]); });
+  Object.keys(EXTRA12).forEach(function (k) { Object.assign(UI[k], EXTRA12[k]); });
+
+  var EXTRA13 = {
+    "nl": { "lic_dekking": "Deze tabellen zijn van {jaar}, maar je tabellen-abonnement dekt dat jaar nog niet. Verleng het abonnement voor de nieuwste tabellen — je huidige tabellen blijven gewoon werken." },
+    "en": { "lic_dekking": "These tables are for {jaar}, but your table subscription doesn't cover that year yet. Renew it to use the newest tables — your current tables keep working." },
+    "fr": { "lic_dekking": "Ces barèmes concernent {jaar}, mais votre abonnement ne couvre pas encore cette année. Renouvelez-le pour les barèmes les plus récents — vos barèmes actuels restent utilisables." },
+    "de": { "lic_dekking": "Diese Tabellen gelten für {jaar}, dein Tabellen-Abo deckt dieses Jahr noch nicht ab. Verlängere es für die neuesten Tabellen — deine aktuellen Tabellen funktionieren weiter." },
+    "es": { "lic_dekking": "Estas tablas son de {jaar}, pero tu suscripción de tablas aún no cubre ese año. Renuévala para usar las tablas más recientes — tus tablas actuales siguen funcionando." },
+    "zh": { "lic_dekking": "这些税表适用于{jaar}年，但你的税表订阅尚未覆盖该年份。续订即可使用最新税表——当前税表仍可继续使用。" }
+  };
+  Object.keys(EXTRA13).forEach(function (k) { Object.assign(UI[k], EXTRA13[k]); });
+
+  var EXTRA14 = {
+    "nl": { "quick_add_title": "Snel invoeren",
+            "quick_add_hint": "Zet een uitgave of inkomst er direct in — hij komt bij je handmatige boekingen.",
+            "dash_potjes_title": "Potjes — nog te gaan",
+            "potje_te_gaan": "nog te gaan", "potje_gehaald": "gehaald" },
+    "en": { "quick_add_title": "Quick add",
+            "quick_add_hint": "Add an expense or income right away — it's stored with your manual entries.",
+            "dash_potjes_title": "Funds — still to go",
+            "potje_te_gaan": "to go", "potje_gehaald": "reached" },
+    "fr": { "quick_add_title": "Saisie rapide",
+            "quick_add_hint": "Ajoutez une dépense ou un revenu tout de suite — enregistré avec vos saisies manuelles.",
+            "dash_potjes_title": "Cagnottes — reste à épargner",
+            "potje_te_gaan": "restant", "potje_gehaald": "atteint" },
+    "de": { "quick_add_title": "Schnell erfassen",
+            "quick_add_hint": "Ausgabe oder Einnahme direkt erfassen — landet bei den manuellen Buchungen.",
+            "dash_potjes_title": "Töpfe — noch offen",
+            "potje_te_gaan": "noch offen", "potje_gehaald": "erreicht" },
+    "es": { "quick_add_title": "Registro rápido",
+            "quick_add_hint": "Añade un gasto o ingreso al momento — se guarda con tus registros manuales.",
+            "dash_potjes_title": "Fondos — aún por ahorrar",
+            "potje_te_gaan": "por ahorrar", "potje_gehaald": "conseguido" },
+    "zh": { "quick_add_title": "快速记一笔",
+            "quick_add_hint": "立即记录一笔支出或收入——保存在手动记录中。",
+            "dash_potjes_title": "储蓄罐——还差多少",
+            "potje_te_gaan": "还差", "potje_gehaald": "已达成" }
+  };
+  Object.keys(EXTRA14).forEach(function (k) { Object.assign(UI[k], EXTRA14[k]); });
+  // Sparen als vierde soort: geen uitgave, maar geld dat je opzij zet.
+  var EXTRA15 = {
+    "nl": {
+      "kind_save": "Sparen",
+      "kind_hint": "Vast = hoort in het budget. Vrij = betaal je uit de vrije ruimte, geen budget nodig. Opname = geld van de rekening halen, geen uitgave. Sparen = naar je eigen spaar- of beleggingsrekening: geen uitgave, en je vindt het terug op Investeringen.",
+      "kpi_aside": "Opzij gezet", "kpi_aside_sub": "naar sparen of beleggen",
+      "inv_saved": "Opzij gezet", "inv_saved_sub": "uit je boekingen",
+      "inv_auto_title": "Sparen uit je boekingen",
+      "inv_auto_hint": "Categorieën met soort ‘sparen’ zijn geen uitgave. Wat je daarheen overmaakt staat hier bij elkaar; opnames gaan er weer af. De soort stel je in op het tabblad Budget, in de kolom naast de categorie.",
+      "inv_auto_total": "Totaal opzij gezet", "inv_auto_year": "Dit jaar",
+      "inv_auto_count": "Boekingen", "inv_auto_last": "Laatste"
+    },
+    "en": {
+      "kind_save": "Saving",
+      "kind_hint": "Fixed = belongs in the budget. Free = paid from your free room, no budget needed. Withdrawal = moving money off the account, not spending. Saving = to your own savings or investment account: not spending, and you find it back under Investments.",
+      "kpi_aside": "Set aside", "kpi_aside_sub": "to savings or investments",
+      "inv_saved": "Set aside", "inv_saved_sub": "from your transactions",
+      "inv_auto_title": "Savings from your transactions",
+      "inv_auto_hint": "Categories of kind ‘saving’ are not spending. What you transfer there is collected here; withdrawals are deducted again. You set the kind on the Budget tab, in the column next to the category.",
+      "inv_auto_total": "Total set aside", "inv_auto_year": "This year",
+      "inv_auto_count": "Transactions", "inv_auto_last": "Last"
+    },
+    "fr": {
+      "kind_save": "Épargne",
+      "kind_hint": "Fixe = doit figurer au budget. Libre = payé sur la marge libre, sans budget. Retrait = déplacement d’argent, pas une dépense. Épargne = vers votre propre compte d’épargne ou de placement : pas une dépense, et vous le retrouvez dans Placements.",
+      "kpi_aside": "Mis de côté", "kpi_aside_sub": "vers épargne ou placements",
+      "inv_saved": "Mis de côté", "inv_saved_sub": "d’après vos opérations",
+      "inv_auto_title": "Épargne issue de vos opérations",
+      "inv_auto_hint": "Les catégories de type « épargne » ne sont pas des dépenses. Ce que vous y virez est regroupé ici ; les retraits sont déduits. Le type se règle dans l’onglet Budget, dans la colonne à côté de la catégorie.",
+      "inv_auto_total": "Total mis de côté", "inv_auto_year": "Cette année",
+      "inv_auto_count": "Opérations", "inv_auto_last": "Dernière"
+    },
+    "de": {
+      "kind_save": "Sparen",
+      "kind_hint": "Fix = gehört ins Budget. Frei = wird aus dem freien Spielraum bezahlt, kein Budget nötig. Abhebung = Geld vom Konto holen, keine Ausgabe. Sparen = auf Ihr eigenes Spar- oder Anlagekonto: keine Ausgabe, und Sie finden es unter Anlagen wieder.",
+      "kpi_aside": "Zur Seite gelegt", "kpi_aside_sub": "auf Sparen oder Anlagen",
+      "inv_saved": "Zur Seite gelegt", "inv_saved_sub": "aus Ihren Buchungen",
+      "inv_auto_title": "Sparen aus Ihren Buchungen",
+      "inv_auto_hint": "Kategorien der Art „Sparen“ sind keine Ausgabe. Was Sie dorthin überweisen, steht hier zusammen; Abhebungen werden wieder abgezogen. Die Art stellen Sie im Reiter Budget ein, in der Spalte neben der Kategorie.",
+      "inv_auto_total": "Insgesamt zur Seite gelegt", "inv_auto_year": "Dieses Jahr",
+      "inv_auto_count": "Buchungen", "inv_auto_last": "Letzte"
+    },
+    "es": {
+      "kind_save": "Ahorro",
+      "kind_hint": "Fijo = debe estar en el presupuesto. Libre = se paga con el margen libre, sin presupuesto. Retirada = sacar dinero de la cuenta, no es un gasto. Ahorro = a tu propia cuenta de ahorro o inversión: no es un gasto, y lo encuentras en Inversiones.",
+      "kpi_aside": "Apartado", "kpi_aside_sub": "a ahorro o inversión",
+      "inv_saved": "Apartado", "inv_saved_sub": "de tus operaciones",
+      "inv_auto_title": "Ahorro a partir de tus operaciones",
+      "inv_auto_hint": "Las categorías de tipo «ahorro» no son un gasto. Lo que transfieres allí se agrupa aquí; las retiradas se descuentan. El tipo se ajusta en la pestaña Presupuesto, en la columna junto a la categoría.",
+      "inv_auto_total": "Total apartado", "inv_auto_year": "Este año",
+      "inv_auto_count": "Operaciones", "inv_auto_last": "Última"
+    },
+    "zh": {
+      "kind_save": "储蓄",
+      "kind_hint": "固定＝应列入预算。自由＝从自由空间中支付，无需预算。取现＝把钱从账户取出，并非支出。储蓄＝转入你自己的储蓄或投资账户：不算支出，可在「投资」中看到。",
+      "kpi_aside": "已存起", "kpi_aside_sub": "转入储蓄或投资",
+      "inv_saved": "已存起", "inv_saved_sub": "来自你的记账",
+      "inv_auto_title": "来自记账的储蓄",
+      "inv_auto_hint": "「储蓄」类别不算支出。你转入的金额会汇总在这里，取出的部分会相应扣减。类别种类可在「预算」标签页中类别旁的一栏设置。",
+      "inv_auto_total": "累计存入", "inv_auto_year": "本年",
+      "inv_auto_count": "笔数", "inv_auto_last": "最近"
+    }
+  };
+  Object.keys(EXTRA15).forEach(function (k) { Object.assign(UI[k], EXTRA15[k]); });
+
+  // Contact: in de app staat nergens hoe je aan een licentie komt.
+  var EXTRA16 = {
+    "nl": { "lic_contact": "Vragen, of een licentie voor de uitgebreide versie? Mail me@myofflinebudget.app." },
+    "en": { "lic_contact": "Questions, or a licence for the extended version? Email me@myofflinebudget.app." },
+    "fr": { "lic_contact": "Une question, ou une licence pour la version étendue ? Écrivez à me@myofflinebudget.app." },
+    "de": { "lic_contact": "Fragen oder eine Lizenz für die erweiterte Version? Schreiben Sie an me@myofflinebudget.app." },
+    "es": { "lic_contact": "¿Preguntas o una licencia para la versión ampliada? Escribe a me@myofflinebudget.app." },
+    "zh": { "lic_contact": "有疑问，或想购买扩展版许可？请发邮件至 me@myofflinebudget.app。" }
+  };
+  Object.keys(EXTRA16).forEach(function (k) { Object.assign(UI[k], EXTRA16[k]); });
+
+  // De vragenlijst onder Over: dezelfde vragen als op de site, korter.
+  var EXTRA17 = {
+    "nl": { "faq_title": "Vragen", "faq_q_imp": "Hoe lees ik mijn bankafschriften in?", "faq_a_imp": "Tabblad Import: sleep het bestand op het vak of kies het. Je ziet eerst een voorbeeld; pas met “Deze regels toevoegen” staat het erin. Het liefst camt.053 van je bank, maar pdf, csv en Excel werken ook.", "faq_q_dub": "Wat als ik hetzelfde afschrift twee keer inlees?", "faq_a_dub": "Dan slaat de app de boekingen over die hij al heeft; in het voorbeeld staat hoeveel er al bekend waren. Overlappende periodes zijn dus veilig.", "faq_q_hand": "Kan ik zelf een boeking toevoegen?", "faq_a_hand": "Ja: “Snel invoeren” op het dashboard, of het tabblad Kas. Ze tellen overal mee en je kunt ze daar ook weer verwijderen.", "faq_q_cat": "Hoe wijzig ik een categorie?", "faq_a_cat": "Op Transacties staat achter elke boeking een keuzelijst. De wijziging geldt voor die ene boeking; daarna biedt de app aan er een regel van te maken voor alle boekingen van die tegenpartij.", "faq_q_eigen": "Kan ik zelf categorieën toevoegen?", "faq_a_eigen": "Nee, je kiest uit de vaste lijst van 45 categorieën. Wat er ín een categorie valt bepaal je wel zelf, met regels.", "faq_q_regels": "Wat zijn regels?", "faq_a_regels": "Staan deze woorden in de omschrijving, dan deze categorie. Hoofdletters en volgorde maken niet uit, en een regel werkt ook terug in de tijd. Ze staan onderaan Transacties.", "faq_q_rest": "Wat is “Nog te categoriseren”?", "faq_a_rest": "De restcategorie: die tegenpartij kende de app niet. Filter er op Transacties op, wijzig de bovenste en maak er een regel van — dan verdwijnen ze met tientallen tegelijk.", "faq_q_split": "Kan ik een boeking splitsen?", "faq_a_split": "Ja, met de knop “Splits” op Transacties. Je verdeelt het bedrag over meerdere categorieën; je totaal blijft gelijk.", "faq_q_sparen": "Waarom telt sparen niet als uitgave?", "faq_a_sparen": "Omdat je dat geld niet weggeeft maar opzij zet. Je ziet het op het dashboard als “Opzij gezet” en op Investeringen per categorie. Klopt de soort van een categorie niet, pas hem dan aan op Budget.", "faq_q_backup": "Waar staan mijn gegevens, en hoe maak ik een back-up?", "faq_a_backup": "In de opslag van je browser, op deze computer; er gaat niets naar een server. Maak zelf een back-up met de blauwe knop rechtsboven, of op Import onder “Back-up en herstel”. Doe dat vóórdat je dit bestand verplaatst of in een andere browser opent.", "faq_q_leeg": "Hoe begin ik opnieuw?", "faq_a_leeg": "Onderaan Import staat “Alles wissen”. Dat leegt na een bevestiging alles: boekingen, budget, regels, potjes en leningen. Maak eerst een back-up." },
+    "en": { "faq_title": "Questions", "faq_q_imp": "How do I load my bank statements?", "faq_a_imp": "Import tab: drop the file on the box or pick it. You get a preview first; only “Add these rows” puts it in. camt.053 from your bank is best, but pdf, csv and Excel work too.", "faq_q_dub": "What if I load the same statement twice?", "faq_a_dub": "The app skips the transactions it already has; the preview tells you how many were already known. Overlapping periods are safe.", "faq_q_hand": "Can I add a transaction myself?", "faq_a_hand": "Yes: “Quick entry” on the dashboard, or the Cash tab. They count everywhere and you can delete them there as well.", "faq_q_cat": "How do I change a category?", "faq_a_cat": "On Transactions every row ends with a dropdown. The change applies to that one transaction; the app then offers to turn it into a rule for every transaction from that payee.", "faq_q_eigen": "Can I add my own categories?", "faq_a_eigen": "No, you pick from the fixed list of 45 categories. What goes into a category is up to you, using rules.", "faq_q_regels": "What are rules?", "faq_a_regels": "If these words appear in the description, use this category. Case and order do not matter, and a rule also works backwards in time. You find them at the bottom of Transactions.", "faq_q_rest": "What is “To be categorised”?", "faq_a_rest": "The leftover category: the app did not know that payee. Filter on it in Transactions, change the top one and turn it into a rule — they disappear dozens at a time.", "faq_q_split": "Can I split a transaction?", "faq_a_split": "Yes, with the “Split” button on Transactions. You divide the amount over several categories; your total stays the same.", "faq_q_sparen": "Why does saving not count as spending?", "faq_a_sparen": "Because you are not giving that money away, you are setting it aside. You see it on the dashboard as “Set aside” and per category on Investments. If a category’s kind is wrong, change it on the Budget tab.", "faq_q_backup": "Where is my data, and how do I back it up?", "faq_a_backup": "In your browser’s storage, on this computer; nothing goes to a server. Make a backup yourself with the blue button top right, or under “Backup and restore” on the Import tab. Do that before you move this file or open it in another browser.", "faq_q_leeg": "How do I start over?", "faq_a_leeg": "At the bottom of Import there is “Erase everything”. After a confirmation it clears the lot: transactions, budget, rules, funds and loans. Make a backup first." },
+    "fr": { "faq_title": "Questions", "faq_q_imp": "Comment charger mes relevés bancaires ?", "faq_a_imp": "Onglet Import : déposez le fichier sur la zone ou choisissez-le. Un aperçu s’affiche d’abord ; seul « Ajouter ces lignes » l’enregistre. Le camt.053 de votre banque est idéal, mais pdf, csv et Excel fonctionnent aussi.", "faq_q_dub": "Et si je charge deux fois le même relevé ?", "faq_a_dub": "L’application ignore les opérations qu’elle possède déjà ; l’aperçu indique combien étaient connues. Les périodes qui se recoupent ne posent pas de problème.", "faq_q_hand": "Puis-je ajouter une opération moi-même ?", "faq_a_hand": "Oui : « Saisie rapide » sur le tableau de bord, ou l’onglet Caisse. Elles comptent partout et vous pouvez les y supprimer.", "faq_q_cat": "Comment changer une catégorie ?", "faq_a_cat": "Dans Opérations, chaque ligne se termine par une liste déroulante. Le changement vaut pour cette opération ; l’application propose ensuite d’en faire une règle pour toutes les opérations de ce bénéficiaire.", "faq_q_eigen": "Puis-je créer mes propres catégories ?", "faq_a_eigen": "Non, vous choisissez dans la liste fixe de 45 catégories. Ce qui entre dans une catégorie, en revanche, c’est vous qui le décidez, avec les règles.", "faq_q_regels": "Que sont les règles ?", "faq_a_regels": "Si ces mots figurent dans le libellé, alors cette catégorie. La casse et l’ordre n’importent pas, et une règle s’applique aussi au passé. Elles sont en bas de l’onglet Opérations.", "faq_q_rest": "Qu’est-ce que « À catégoriser » ?", "faq_a_rest": "La catégorie restante : l’application ne connaissait pas ce bénéficiaire. Filtrez dessus dans Opérations, corrigez la première et créez une règle — elles disparaissent par dizaines.", "faq_q_split": "Puis-je diviser une opération ?", "faq_a_split": "Oui, avec le bouton « Diviser » dans Opérations. Vous répartissez le montant sur plusieurs catégories ; votre total ne change pas.", "faq_q_sparen": "Pourquoi l’épargne n’est-elle pas une dépense ?", "faq_a_sparen": "Parce que vous ne donnez pas cet argent : vous le mettez de côté. Vous le voyez sur le tableau de bord sous « Mis de côté » et par catégorie dans Placements. Si le type d’une catégorie est faux, changez-le dans Budget.", "faq_q_backup": "Où sont mes données, et comment les sauvegarder ?", "faq_a_backup": "Dans le stockage de votre navigateur, sur cet ordinateur ; rien ne part vers un serveur. Faites une sauvegarde avec le bouton bleu en haut à droite, ou dans « Sauvegarde et restauration » de l’onglet Import. Faites-le avant de déplacer ce fichier ou de l’ouvrir dans un autre navigateur.", "faq_q_leeg": "Comment repartir de zéro ?", "faq_a_leeg": "En bas de l’onglet Import : « Tout effacer ». Après confirmation, tout est vidé : opérations, budget, règles, enveloppes et prêts. Faites d’abord une sauvegarde." },
+    "de": { "faq_title": "Fragen", "faq_q_imp": "Wie lese ich meine Kontoauszüge ein?", "faq_a_imp": "Reiter Import: Datei auf das Feld ziehen oder auswählen. Sie sehen zuerst eine Vorschau; erst „Diese Zeilen hinzufügen“ übernimmt sie. Am besten camt.053 von Ihrer Bank, aber pdf, csv und Excel gehen auch.", "faq_q_dub": "Was, wenn ich denselben Auszug zweimal einlese?", "faq_a_dub": "Die App überspringt Buchungen, die sie schon hat; die Vorschau nennt die Zahl der bekannten. Überlappende Zeiträume sind unproblematisch.", "faq_q_hand": "Kann ich selbst eine Buchung eintragen?", "faq_a_hand": "Ja: „Schnelleingabe“ auf dem Dashboard oder der Reiter Kasse. Sie zählen überall mit und lassen sich dort auch löschen.", "faq_q_cat": "Wie ändere ich eine Kategorie?", "faq_a_cat": "Im Reiter Buchungen steht hinter jeder Zeile eine Auswahlliste. Die Änderung gilt für diese Buchung; danach bietet die App an, daraus eine Regel für alle Buchungen dieses Empfängers zu machen.", "faq_q_eigen": "Kann ich eigene Kategorien anlegen?", "faq_a_eigen": "Nein, Sie wählen aus der festen Liste von 45 Kategorien. Was in eine Kategorie fällt, bestimmen Sie aber selbst — mit Regeln.", "faq_q_regels": "Was sind Regeln?", "faq_a_regels": "Stehen diese Wörter in der Beschreibung, dann diese Kategorie. Groß-/Kleinschreibung und Reihenfolge sind egal, und eine Regel wirkt auch rückwirkend. Sie stehen unten im Reiter Buchungen.", "faq_q_rest": "Was ist „Noch zuzuordnen“?", "faq_a_rest": "Die Restkategorie: diesen Empfänger kannte die App nicht. Filtern Sie im Reiter Buchungen darauf, ändern Sie die oberste und machen Sie eine Regel daraus — dann verschwinden sie zu Dutzenden.", "faq_q_split": "Kann ich eine Buchung aufteilen?", "faq_a_split": "Ja, mit der Taste „Aufteilen“ im Reiter Buchungen. Sie verteilen den Betrag auf mehrere Kategorien; die Summe bleibt gleich.", "faq_q_sparen": "Warum zählt Sparen nicht als Ausgabe?", "faq_a_sparen": "Weil Sie das Geld nicht weggeben, sondern zur Seite legen. Sie sehen es auf dem Dashboard als „Zur Seite gelegt“ und pro Kategorie unter Anlagen. Stimmt die Art einer Kategorie nicht, ändern Sie sie im Reiter Budget.", "faq_q_backup": "Wo liegen meine Daten, und wie sichere ich sie?", "faq_a_backup": "Im Speicher Ihres Browsers, auf diesem Rechner; nichts geht an einen Server. Erstellen Sie selbst eine Sicherung mit der blauen Taste oben rechts oder unter „Sicherung und Wiederherstellung“ im Reiter Import — bevor Sie diese Datei verschieben oder in einem anderen Browser öffnen.", "faq_q_leeg": "Wie fange ich neu an?", "faq_a_leeg": "Unten im Reiter Import steht „Alles löschen“. Nach einer Bestätigung wird alles geleert: Buchungen, Budget, Regeln, Töpfe und Darlehen. Erstellen Sie vorher eine Sicherung." },
+    "es": { "faq_title": "Preguntas", "faq_q_imp": "¿Cómo cargo mis extractos bancarios?", "faq_a_imp": "Pestaña Importar: arrastra el archivo al recuadro o elígelo. Primero ves una vista previa; solo «Añadir estas filas» lo guarda. Lo mejor es camt.053 de tu banco, pero pdf, csv y Excel también valen.", "faq_q_dub": "¿Y si cargo el mismo extracto dos veces?", "faq_a_dub": "La aplicación omite las operaciones que ya tiene; la vista previa indica cuántas eran conocidas. Los periodos solapados no son problema.", "faq_q_hand": "¿Puedo añadir una operación yo mismo?", "faq_a_hand": "Sí: «Entrada rápida» en el panel, o la pestaña Caja. Cuentan en todas partes y ahí también las puedes borrar.", "faq_q_cat": "¿Cómo cambio una categoría?", "faq_a_cat": "En Operaciones cada fila termina con un desplegable. El cambio vale para esa operación; después la aplicación ofrece convertirlo en una regla para todas las operaciones de ese beneficiario.", "faq_q_eigen": "¿Puedo añadir categorías propias?", "faq_a_eigen": "No, eliges de la lista fija de 45 categorías. Lo que entra en cada categoría sí lo decides tú, con reglas.", "faq_q_regels": "¿Qué son las reglas?", "faq_a_regels": "Si estas palabras aparecen en la descripción, esta categoría. Mayúsculas y orden no importan, y una regla también actúa hacia atrás. Están al final de Operaciones.", "faq_q_rest": "¿Qué es «Por categorizar»?", "faq_a_rest": "La categoría sobrante: la aplicación no conocía a ese beneficiario. Filtra por ella en Operaciones, corrige la primera y crea una regla: desaparecen por decenas.", "faq_q_split": "¿Puedo dividir una operación?", "faq_a_split": "Sí, con el botón «Dividir» en Operaciones. Repartes el importe entre varias categorías; tu total no cambia.", "faq_q_sparen": "¿Por qué el ahorro no cuenta como gasto?", "faq_a_sparen": "Porque no regalas ese dinero, lo apartas. Lo ves en el panel como «Apartado» y por categoría en Inversiones. Si el tipo de una categoría no encaja, cámbialo en Presupuesto.", "faq_q_backup": "¿Dónde están mis datos y cómo hago una copia?", "faq_a_backup": "En el almacenamiento de tu navegador, en este ordenador; nada va a un servidor. Haz tú la copia con el botón azul de arriba a la derecha, o en «Copia de seguridad y restauración» de Importar. Hazlo antes de mover este archivo o abrirlo en otro navegador.", "faq_q_leeg": "¿Cómo empiezo de cero?", "faq_a_leeg": "Al final de Importar está «Borrar todo». Tras confirmar se vacía todo: operaciones, presupuesto, reglas, sobres y préstamos. Haz una copia primero." },
+    "zh": { "faq_title": "常见问题", "faq_q_imp": "如何导入银行流水？", "faq_a_imp": "在「导入」标签页把文件拖到方框里，或选择文件。先看到预览，只有点「添加这些记录」才会真正写入。最好用银行的 camt.053，pdf、csv 和 Excel 也可以。", "faq_q_dub": "同一份流水导入两次会怎样？", "faq_a_dub": "应用会跳过已有的记录，预览里会写明有多少条是已知的。所以时间段重叠没有关系。", "faq_q_hand": "我可以自己添加一笔记录吗？", "faq_a_hand": "可以：仪表板上的「快速录入」，或「现金」标签页。它们在各处都计入，也能在那里删除。", "faq_q_cat": "怎么修改类别？", "faq_a_cat": "在「交易」标签页，每一行末尾都有一个下拉框。修改只作用于该笔记录；随后应用会询问是否为该收款方的所有记录建立规则。", "faq_q_eigen": "我可以自己添加类别吗？", "faq_a_eigen": "不可以，只能从固定的 45 个类别中选择。但哪些记录归入哪个类别，可以由你用规则来决定。", "faq_q_regels": "什么是规则？", "faq_a_regels": "描述里出现这些词，就归入这个类别。大小写和顺序都不影响，规则也会追溯到过去的记录。规则列在「交易」标签页下方。", "faq_q_rest": "「待分类」是什么意思？", "faq_a_rest": "这是兜底类别：应用不认识该收款方。在「交易」里按它筛选，改好第一条并建立规则，就能一次清掉几十条。", "faq_q_split": "可以拆分一笔记录吗？", "faq_a_split": "可以，在「交易」里点「拆分」。把金额分到多个类别，总额保持不变。", "faq_q_sparen": "为什么储蓄不算支出？", "faq_a_sparen": "因为这笔钱没有花掉，只是存起来了。仪表板上显示为「已存起」，在「投资」里按类别列出。若某类别的种类不对，可在「预算」里修改。", "faq_q_backup": "我的数据在哪里，怎么备份？", "faq_a_backup": "在这台电脑上、你浏览器的存储里，不会发往任何服务器。请自己备份：右上角的蓝色按钮，或「导入」标签页的「备份与恢复」。在移动此文件或换浏览器打开之前先备份。", "faq_q_leeg": "怎么从头开始？", "faq_a_leeg": "「导入」标签页底部有「清除全部」。确认后会清空所有内容：记录、预算、规则、储蓄罐和借款。请先备份。" }
+  };
+  Object.keys(EXTRA17).forEach(function (k) { Object.assign(UI[k], EXTRA17[k]); });
 
   var CATS = {
     'Salaris & inkomen': { en: 'Salary & income', fr: 'Salaire et revenus', de: 'Gehalt und Einkommen', es: 'Salario e ingresos', zh: '工资与收入' },
