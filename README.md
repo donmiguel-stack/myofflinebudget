@@ -26,6 +26,11 @@ als app naast je andere programma's zetten.
 **Als bestand:** download `index.html` (of het hele project als zip) en dubbelklik het. Het
 opent in je browser en blijft van jou, ook als de website ooit verdwijnt.
 
+**Op de Mac:** in de repo staat ook `My Offline Budget.app` — dubbelklikken en hij opent in je
+browser, met een eigen icoon in Finder, Dock en Launchpad. Geen installatie, gewoon hetzelfde
+`index.html` in een klein jasje. (Onherkend als developer bij de eerste keer openen? Rechtsklik
+op de app en kies **Open**.)
+
 Daarna in beide gevallen: ga naar **Import** en sleep je afschriften erin.
 
 Let op dat je browser gegevens per plek bewaart. De versie in je browser en het gedownloade
