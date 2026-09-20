@@ -57,10 +57,14 @@ jobs:
 
       - name: Aan de release hangen
         if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v2
+        run: cp index.html my-offline-budget.html
+      - uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
         with:
+          # de site linkt naar releases/latest/download/my-offline-budget.html,
+          # dus de asset moet precies zo heten
           files: |
-            index.html
+            my-offline-budget.html
             fiscaal-nl.txt
           generate_release_notes: true
 
