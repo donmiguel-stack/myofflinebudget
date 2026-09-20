@@ -74,7 +74,9 @@ parser toe in `src/parsers.js`; ze zijn kort en los van elkaar te lezen.
 - **Vaste lasten** — herkent zelf welke bedragen met een vast ritme terugkomen: wat je per maand en per
   jaar kwijt bent aan abonnementen, wanneer de volgende afschrijving komt, welke prijs is gestegen en
   welk abonnement is gestopt.
-- **Leningen** — openstaande leningen met doorlopende rente en een scenario voor vervroegd aflossen.
+- **Leningen** — leningen die je zelf invult: annuïtair of aflossingsvrij, met maandtermijn,
+  betaalde rente tot nu toe en wat er nog openstaat.
+- **Prognose, potjes, analyse en belasting** — zie hieronder; ze zitten er allemaal bij.
 - **Taal en valuta** — zes talen en zes valuta's, direct te wisselen; je keuze wordt onthouden.
 
 ### Vast, vrij of opname
@@ -111,10 +113,11 @@ en dan getoetst op twee dingen: komt de tussenpoos regelmatig terug (wekelijks t
 mediaan als maat), en staat het bedrag min of meer vast. Die tweede eis is wat boodschappen buiten de
 lijst houdt: bij Albert Heijn is de frequentie regelmatig, maar het bedrag niet.
 
-## Er is ook een uitgebreide versie
+## Uitgebreid: prognose, potjes, analyse en belasting
 
-Wat hierboven staat is compleet en blijft gratis. Daarnaast bestaat er een betaalde
-uitgave met vier onderdelen die hier niet in zitten:
+Deze vier onderdelen zaten tot september 2026 in een aparte, betaalde uitgave. Ze zitten
+er nu gewoon bij: geen licentiecode, geen tweede repository, alles onder dezelfde
+MIT-licentie.
 
 - **Prognose** — je saldo per dag voor de komende drie tot twaalf maanden, met het laagste
   punt en de dagen waarop je onder een zelfgekozen grens komt.
@@ -123,21 +126,20 @@ uitgave met vier onderdelen die hier niet in zitten:
 - **Analyse en doorlichting** — twee even lange periodes per categorie met de inflatie
   ernaast, het seizoenspatroon, opvallende boekingen, en een doorlichting van je vaste
   lasten: prijsstijgingen, dubbel lopende posten en wat er is gestopt.
-- **Belasting** — een schatting van de Nederlandse inkomstenbelasting: krijg je iets terug
-  of moet je bijbetalen, en wat is je marginale druk.
+- **Belasting** — een schatting van de inkomstenbelasting voor Nederland en Duitsland:
+  krijg je iets terug of moet je bijbetalen, en wat is je marginale druk.
 
-Eenmalig bedrag, inclusief een jaar updates; wat je hebt blijft daarna werken. Zie
-[yourpersonalbudget.app](https://yourpersonalbudget.app).
-
-De code daarvan staat niet in deze repository — niet verborgen, maar er domweg niet in.
-Dat kun je zelf nagaan: de build-stap controleert erop.
+De bron staat in `src/pro.js` en `src/fiscaal.js`. Wat erbij komt kijken om de tabellen
+te onderhouden — een nieuw belastingjaar, een land toevoegen, een tabellenbestand
+ondertekenen — staat in [ONDERHOUD.md](ONDERHOUD.md).
 
 ## Bijwerken
 
-In de uitgebreide versie staat op het tabblad **Over** een knop om de belastingtabellen
-bij te werken. Die doet niets uit zichzelf: pas als jij erop drukt haalt hij één klein
-ondertekend bestand op met de nieuwe tarieven. Er gaat niets van jou mee — geen boeking,
-geen bedrag, geen licentiecode.
+Op het tabblad **Belasting** staat een knop om de belastingtabellen bij te werken. Die
+doet niets uit zichzelf: pas als jij erop drukt haalt hij één klein ondertekend bestand op
+met de nieuwe tarieven. Er gaat niets van jou mee — geen boeking, geen bedrag, geen
+identificatie. De handtekening wordt gecontroleerd met de publieke sleutel die in de app
+zit, zodat er onderweg niet met het bestand geknoeid kan worden.
 
 Het adres staat in een apart veld dat door een update nooit wordt overschreven. Houd je
 een eigen kopie bij, wijs hem daarheen; maak je het veld leeg, dan staat bijwerken uit.
@@ -169,28 +171,28 @@ Het bestand `index.html` is samengesteld uit de losse bronnen in `src/`:
 src/styles.css       opmaak en kleuren (licht en donker)
 src/parsers.js       de importlezers per bank
 src/app.js           de app zelf: berekeningen, grafieken, opslag
+src/pro.js           prognose, potjes, analyse, doorlichting en belasting
+src/fiscaal.js       de fiscale tabellen per land en per jaar
+src/licentie.js      handtekeningcontrole bij het bijwerken van de tabellen
 src/rules.json       categorieregels
+src/demo.json        de voorbeelddata
 src/i18n.js          vertalingen: interface, groepen en categorieën
 src/index.tpl.html   het sjabloon
+tools/sign.py        tabellenbestanden ondertekenen (zie ONDERHOUD.md)
+tools/public.b64     de publieke sleutel die bij het bouwen wordt ingezet
+tools/versie.json    uitgavedatum, naam en release-tekst per taal
 ```
 
 Opnieuw samenstellen:
 
 ```bash
-python3 build.py --alleen-kern
+python3 build.py
 ```
 
-De vendor-bibliotheken worden verwacht in `vendor/`:
-
-```bash
-mkdir -p vendor && cd vendor
-curl -LO https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js
-curl -LO https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js
-curl -LO https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js
-```
-
-Je kunt de app ook met eigen data uitleveren: zet een `data.json` en `budget.json` klaar in de
-vorm die `build.py` verwacht, dan wordt die in het html-bestand meegebakken.
+Meer is er niet nodig. Ontbreekt de map `vendor/`, dan haalt het script pdf.js en SheetJS
+één keer op van cdnjs en bakt ze in het html-bestand; daarna heeft de app nooit meer
+internet nodig. Met `--pwa` krijg je de variant voor op een webserver (manifest en service
+worker), met `--uit MAP` schrijf je hem ergens anders heen.
 
 ## Vertalingen
 

@@ -7,4 +7,6 @@ leningen.json
 cats_persoonlijk.json
 cattype.json
 lic_mike.txt
-tools/keys/private.pem
+lic_*.txt
+tools/keys/
+*.pem

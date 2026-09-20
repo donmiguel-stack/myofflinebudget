@@ -1,14 +1,12 @@
 name: Bouwen en publiceren
 
-# De gratis uitgave. Bij elke tag wordt het losse html-bestand gebouwd,
-# aan de release gehangen en naar GitHub Pages gezet.
+# Eén uitgave, met alles erin. Bij een tag wordt het losse html-bestand gebouwd,
+# aan de release gehangen en naar GitHub Pages gezet. Handmatig starten mag ook:
+# Actions -> "Bouwen en publiceren" -> Run workflow.
 
 on:
-  # Uitgezet op 17 augustus: build.py kan hier niet slagen, want de kern-checkout
-  # mist bewust pro.js/licentie.js/de sleutel/persoonlijke databestanden (die horen
-  # niet in de publieke repo). Zie de commit-boodschap voor de reden. Handmatig
-  # starten kan nog wel (Actions-tab -> "Bouwen en publiceren" -> Run workflow),
-  # maar loopt op dit moment nog steeds vast op build.py zelf.
+  push:
+    tags: ['v*']
   workflow_dispatch:
 
 permissions:
@@ -19,6 +17,10 @@ permissions:
 jobs:
   bouwen:
     runs-on: ubuntu-latest
+    # Het secret staat hier op jobniveau, zodat de ondertekenstap kan kijken of hij
+    # er is: in een `if` van een stap is de secrets-context niet beschikbaar.
+    env:
+      PRIVE_SLEUTEL: ${{ secrets.PRIVE_SLEUTEL }}
     steps:
       - uses: actions/checkout@v4
 
@@ -26,29 +28,40 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Bibliotheken ophalen
-        run: |
-          mkdir -p vendor && cd vendor
-          curl -sLO https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js
-          curl -sLO https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js
-          curl -sLO https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js
+      - name: Importlezers testen
+        run: node tests/parsers.test.js
 
       - name: Bouwen
-        run: python3 build.py --alleen-kern
+        run: python3 build.py
 
-      - name: Controleren dat er geen betaalde code in zit
+      - name: Controleren dat er niets persoonlijks in zit
         run: |
-          for term in "function renderBelasting" "function berekenPersoon" "g.HB_PRO ="; do
+          for term in "window.HB_LICENTIE=" "window.HB_CATS_EXTRA=" "BEGIN EC PRIVATE KEY"; do
             if grep -qF "$term" index.html; then
-              echo "::error::betaalde code in de publieke uitgave: $term"; exit 1
+              echo "::error::hoort niet in een uitgave: $term"; exit 1
             fi
           done
+          if grep -qE 'NL[0-9]{2}[A-Z]{4}[0-9]{10}' index.html; then
+            echo "::error::er staat een iban in de build"; exit 1
+          fi
+
+      - name: Tabellen ondertekenen
+        if: env.PRIVE_SLEUTEL != ''
+        run: |
+          pip install cryptography
+          mkdir -p tools/keys
+          printf '%s' "$PRIVE_SLEUTEL" > tools/keys/private.pem
+          cp tools/public.b64 tools/keys/public.b64
+          python3 tools/sign.py tabellen src/fiscaal.js > fiscaal-nl.txt
+          rm -f tools/keys/private.pem
 
       - name: Aan de release hangen
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: index.html
+          files: |
+            index.html
+            fiscaal-nl.txt
           generate_release_notes: true
 
       - name: Naar Pages

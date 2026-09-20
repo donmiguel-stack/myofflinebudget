@@ -1947,11 +1947,10 @@
   };
   window.HBCore = HBCore;
 
-  // De pro-onderdelen zitten alleen in de betaalde uitgave, en draaien alleen met
-  // een geldige licentie. Ontbreekt die, dan doet de app gewoon niets extra's.
+  // Alles zit in dezelfde uitgave; er is geen licentie meer voor nodig. De controle
+  // blijft staan zodat de app ook draait als pro.js een keer niet is meegebouwd.
   function proActief() {
-    var L = window.HBLicentie;
-    return !!window.HB_PRO && !!L && L.geldig;
+    return !!window.HB_PRO;
   }
 
   function pro(fn) {
@@ -1976,8 +1975,6 @@
     if (proLabel) proLabel.classList.toggle('hide', !aan);
     var audit = document.getElementById('audit-card');
     if (audit) audit.classList.toggle('hide', !aan);
-    var slot = document.getElementById('pro-slot');
-    if (slot) slot.classList.toggle('hide', aan);
     // bijwerken kan alleen als er tabellen zijn om bij te werken
     ['btn-update', 'lic-drop'].forEach(function (id) {
       var e = document.getElementById(id);
@@ -2044,18 +2041,8 @@
   }
 
   function toonLicentie() {
-    var L = window.HBLicentie;
-    if (!L) return;
-    if (!window.HB_PRO) { licStatus(T('lic_free')); return; }
-    if (L.geldig) {
-      licStatus(T('lic_ok', { e: esc(L.payload.email || ''), d: dmy(L.verloopt()) }), 'ok');
-    } else if (L.reden === 'te-nieuw') {
-      licStatus(T('lic_expired', { d: dmy(L.verloopt()) }), 'over');
-    } else if (L.reden === 'ongeldig') {
-      licStatus(T('lic_bad'), 'over');
-    } else {
-      licStatus(T('lic_none'));
-    }
+    if (!window.HBLicentie) return;
+    licStatus(T('lic_free'), 'ok');
   }
 
   // Een aangekondigde nieuwere uitgave laten zien. De app werkt zichzelf niet bij —
@@ -2091,16 +2078,6 @@
   function koppelLicentie() {
     var L = window.HBLicentie;
     if (!L) return;
-    var inp = document.getElementById('lic-code');
-    if (inp && S.settings.licentie) inp.value = S.settings.licentie;
-
-    var bewaar = document.getElementById('btn-lic');
-    if (bewaar) bewaar.addEventListener('click', function () {
-      var code = document.getElementById('lic-code').value.trim();
-      S.settings.licentie = code; save();
-      L.init(code).then(function () { toonLicentie(); renderAll(); });
-    });
-
     // Het adres staat los en wordt door een update nooit overschreven: wie een
     // eigen kopie bijhoudt wijst hem ergens anders heen, en leeg zet het uit.
     var url = document.getElementById('lic-url');
@@ -2134,8 +2111,7 @@
           return;
         }
         toonLicentie();
-        if (m === 'dekking') flash(T('lic_dekking', { jaar: e.jaar || '' }), true);
-        else flash(T(m === 'geen-url' ? 'lic_no_url' : 'lic_fail'), true);
+        flash(T(m === 'geen-url' ? 'lic_no_url' : 'lic_fail'), true);
       });
     });
 
@@ -2145,9 +2121,8 @@
       fr.onload = function () {
         L.leesTabellen(fr.result).then(function (data) {
           pasTabellenToe(data); toonLicentie();
-        }).catch(function (e) {
-          if (e && e.message === 'dekking') flash(T('lic_dekking', { jaar: e.jaar || '' }), true);
-          else flash(T('lic_fail'), true);
+        }).catch(function () {
+          flash(T('lic_fail'), true);
         });
       };
       fr.readAsText(f);
@@ -2300,7 +2275,7 @@
     if (window.HB_PRO) koppelPro();
     koppelLicentie();
     if (window.HBLicentie) {
-      window.HBLicentie.init(S.settings.licentie || window.HB_LICENTIE).then(function () {
+      window.HBLicentie.init().then(function () {
         toonLicentie(); proZichtbaar();
       });
     }

@@ -1906,13 +1906,13 @@
 
   var EXTRA5 = {
     "nl": {
-      "lic_title": "Licentie en tabellen",
+      "lic_title": "Belastingtabellen bijwerken",
       "lic_code": "Licentiecode",
       "lic_save": "Bewaren",
       "lic_update": "Tabellen bijwerken",
       "lic_file": "Bestand inlezen",
       "lic_note": "Bijwerken gebeurt alleen als jij erop drukt, en haalt één klein ondertekend bestand met de nieuwe tarieven op. Er gaat niets van jou mee: geen boekingen, geen bedragen, geen licentiecode. Kan de app niet bij het internet, download het bestand dan zelf en lees het hier in.",
-      "lic_free": "Gratis uitgave",
+      "lic_free": "Volledige uitgave — gratis en open",
       "lic_ok": "Geldig voor {e} · updates tot {d}",
       "lic_expired": "Je licentie liep tot {d}. Deze uitgave is nieuwer; de vorige blijft gewoon werken.",
       "lic_bad": "Deze code klopt niet",
@@ -1934,13 +1934,13 @@
       "slot_btn": "Bekijk de mogelijkheden"
     },
     "en": {
-      "lic_title": "Licence and tables",
+      "lic_title": "Updating the tax tables",
       "lic_code": "Licence code",
       "lic_save": "Save",
       "lic_update": "Update tables",
       "lic_file": "Load from file",
       "lic_note": "Updating happens only when you press the button, and fetches one small signed file with the new rates. Nothing of yours goes along: no entries, no amounts, no licence code. If the app cannot reach the internet, download the file yourself and load it here.",
-      "lic_free": "Free edition",
+      "lic_free": "Full edition — free and open",
       "lic_ok": "Valid for {e} · updates until {d}",
       "lic_expired": "Your licence ran until {d}. This edition is newer; your previous one keeps working.",
       "lic_bad": "This code is not valid",
@@ -1962,13 +1962,13 @@
       "slot_btn": "See what it adds"
     },
     "fr": {
-      "lic_title": "Licence et tables",
+      "lic_title": "Mise à jour des barèmes",
       "lic_code": "Code de licence",
       "lic_save": "Enregistrer",
       "lic_update": "Mettre à jour les tables",
       "lic_file": "Charger un fichier",
       "lic_note": "La mise à jour n’a lieu que si vous cliquez, et récupère un petit fichier signé contenant les nouveaux taux. Rien de vous n’est transmis : ni écritures, ni montants, ni code de licence. Si l’application n’a pas accès à internet, téléchargez le fichier vous-même et chargez-le ici.",
-      "lic_free": "Édition gratuite",
+      "lic_free": "Édition complète — gratuite et ouverte",
       "lic_ok": "Valide pour {e} · mises à jour jusqu’au {d}",
       "lic_expired": "Votre licence courait jusqu’au {d}. Cette édition est plus récente ; la précédente continue de fonctionner.",
       "lic_bad": "Ce code n’est pas valide",
@@ -1990,13 +1990,13 @@
       "slot_btn": "Voir ce que cela apporte"
     },
     "de": {
-      "lic_title": "Lizenz und Tabellen",
+      "lic_title": "Steuertabellen aktualisieren",
       "lic_code": "Lizenzcode",
       "lic_save": "Speichern",
       "lic_update": "Tabellen aktualisieren",
       "lic_file": "Datei laden",
       "lic_note": "Aktualisiert wird nur, wenn du darauf drückst; dabei wird eine kleine signierte Datei mit den neuen Sätzen geholt. Von dir geht nichts mit: keine Buchungen, keine Beträge, kein Lizenzcode. Kommt die App nicht ins Internet, lade die Datei selbst herunter und lies sie hier ein.",
-      "lic_free": "Kostenlose Ausgabe",
+      "lic_free": "Vollständige Ausgabe — kostenlos und offen",
       "lic_ok": "Gültig für {e} · Updates bis {d}",
       "lic_expired": "Deine Lizenz lief bis {d}. Diese Ausgabe ist neuer; die vorige funktioniert weiterhin.",
       "lic_bad": "Dieser Code stimmt nicht",
@@ -2018,13 +2018,13 @@
       "slot_btn": "Ansehen, was dazukommt"
     },
     "es": {
-      "lic_title": "Licencia y tablas",
+      "lic_title": "Actualizar las tablas fiscales",
       "lic_code": "Código de licencia",
       "lic_save": "Guardar",
       "lic_update": "Actualizar tablas",
       "lic_file": "Cargar archivo",
       "lic_note": "La actualización solo ocurre si pulsas el botón, y descarga un pequeño archivo firmado con los nuevos tipos. No se envía nada tuyo: ni apuntes, ni importes, ni código de licencia. Si la app no llega a internet, descarga el archivo tú mismo y cárgalo aquí.",
-      "lic_free": "Edición gratuita",
+      "lic_free": "Edición completa — gratuita y abierta",
       "lic_ok": "Válida para {e} · actualizaciones hasta {d}",
       "lic_expired": "Tu licencia llegaba hasta {d}. Esta edición es más reciente; la anterior sigue funcionando.",
       "lic_bad": "Este código no es válido",
@@ -2046,13 +2046,13 @@
       "slot_btn": "Ver qué añade"
     },
     "zh": {
-      "lic_title": "许可证与税表",
+      "lic_title": "更新税表",
       "lic_code": "许可证代码",
       "lic_save": "保存",
       "lic_update": "更新税表",
       "lic_file": "从文件载入",
       "lic_note": "只有你点击时才会更新，且仅获取一个包含新税率的小型签名文件。不会上传你的任何数据：没有记账、没有金额、没有许可证代码。若应用无法联网，可自行下载文件后在此载入。",
-      "lic_free": "免费版",
+      "lic_free": "完整版——免费开源",
       "lic_ok": "{e} 有效 · 更新至 {d}",
       "lic_expired": "你的许可证有效至 {d}。此版本更新；你原有的版本仍可正常使用。",
       "lic_bad": "此代码无效",
@@ -2255,7 +2255,7 @@
       "inv_hint": "Waardes vul je zelf in, op het moment dat het jou uitkomt. De app legt geen verbinding om koersen op te halen — dat past niet bij een programma zonder internet.",
       "inv_naam_ph": "Naam (bv. Shell, Krugerrand 1oz, Bitcoin)",
       "inv_notitie_ph": "Notitie (optioneel)",
-      "lic_update_moved": "De knop om de tabellen bij te werken vind je, zodra je licentie actief is, op het tabblad Belasting."
+      "lic_update_moved": "De knop om de tabellen bij te werken vind je op het tabblad Belasting."
     },
     "en": {
       "nav_invest": "Investments",
@@ -2287,7 +2287,7 @@
       "inv_hint": "You enter the values yourself, whenever it suits you. The app makes no connection to fetch prices — that would not fit a program with no internet.",
       "inv_naam_ph": "Name (e.g. Shell, 1oz Krugerrand, Bitcoin)",
       "inv_notitie_ph": "Note (optional)",
-      "lic_update_moved": "Once your licence is active, the button to update the tables is on the Tax tab."
+      "lic_update_moved": "The button to update the tables is on the Tax tab."
     },
     "fr": {
       "nav_invest": "Investissements",
@@ -2319,7 +2319,7 @@
       "inv_hint": "Vous saisissez vous-même les valeurs, quand cela vous arrange. L’application n’établit aucune connexion pour récupérer des cours — cela ne conviendrait pas à un programme sans internet.",
       "inv_naam_ph": "Nom (ex. Shell, Krugerrand 1oz, Bitcoin)",
       "inv_notitie_ph": "Note (facultatif)",
-      "lic_update_moved": "Une fois votre licence active, le bouton de mise à jour des tables se trouve dans l'onglet Impôts."
+      "lic_update_moved": "Le bouton de mise à jour des barèmes se trouve dans l'onglet Impôts."
     },
     "de": {
       "nav_invest": "Anlagen",
@@ -2351,7 +2351,7 @@
       "inv_hint": "Sie tragen die Werte selbst ein, wann immer es Ihnen passt. Die App baut keine Verbindung auf, um Kurse abzurufen — das würde nicht zu einem Programm ohne Internet passen.",
       "inv_naam_ph": "Name (z. B. Shell, 1oz Krügerrand, Bitcoin)",
       "inv_notitie_ph": "Notiz (optional)",
-      "lic_update_moved": "Sobald Ihre Lizenz aktiv ist, finden Sie die Schaltfläche zum Aktualisieren der Tabellen im Reiter Steuer."
+      "lic_update_moved": "Die Schaltfläche zum Aktualisieren der Tabellen finden Sie im Reiter Steuer."
     },
     "es": {
       "nav_invest": "Inversiones",
@@ -2383,7 +2383,7 @@
       "inv_hint": "Introduces los valores tú mismo, cuando te convenga. La aplicación no establece ninguna conexión para consultar cotizaciones — eso no encajaría con un programa sin internet.",
       "inv_naam_ph": "Nombre (p. ej. Shell, Krugerrand 1oz, Bitcoin)",
       "inv_notitie_ph": "Nota (opcional)",
-      "lic_update_moved": "En cuanto tu licencia esté activa, el botón para actualizar las tablas estará en la pestaña Impuestos."
+      "lic_update_moved": "El botón para actualizar las tablas está en la pestaña Impuestos."
     },
     "zh": {
       "nav_invest": "投资",
@@ -2415,7 +2415,7 @@
       "inv_hint": "价值由你自行填写，方便时更新即可。应用不会联网获取行情——这不符合一个不联网程序的原则。",
       "inv_naam_ph": "名称（如 Shell、1盎司克鲁格金币、Bitcoin）",
       "inv_notitie_ph": "备注（可选）",
-      "lic_update_moved": "许可激活后，更新税表的按钮会出现在「税务」标签页中。"
+      "lic_update_moved": "更新税表的按钮在「税务」标签页中。"
     }
   };
   Object.keys(EXTRA7).forEach(function (k) { Object.assign(UI[k], EXTRA7[k]); });
@@ -2610,12 +2610,12 @@
 
   // Contact: in de app staat nergens hoe je aan een licentie komt.
   var EXTRA16 = {
-    "nl": { "lic_contact": "Vragen, of een licentie voor de uitgebreide versie? Mail me@myofflinebudget.app." },
-    "en": { "lic_contact": "Questions, or a licence for the extended version? Email me@myofflinebudget.app." },
-    "fr": { "lic_contact": "Une question, ou une licence pour la version étendue ? Écrivez à me@myofflinebudget.app." },
-    "de": { "lic_contact": "Fragen oder eine Lizenz für die erweiterte Version? Schreiben Sie an me@myofflinebudget.app." },
-    "es": { "lic_contact": "¿Preguntas o una licencia para la versión ampliada? Escribe a me@myofflinebudget.app." },
-    "zh": { "lic_contact": "有疑问，或想购买扩展版许可？请发邮件至 me@myofflinebudget.app。" }
+    "nl": { "lic_contact": "Vragen of ideeën? Mail me@myofflinebudget.app." },
+    "en": { "lic_contact": "Questions or ideas? Email me@myofflinebudget.app." },
+    "fr": { "lic_contact": "Une question ou une idée ? Écrivez à me@myofflinebudget.app." },
+    "de": { "lic_contact": "Fragen oder Ideen? Schreiben Sie an me@myofflinebudget.app." },
+    "es": { "lic_contact": "¿Preguntas o ideas? Escribe a me@myofflinebudget.app." },
+    "zh": { "lic_contact": "有疑问或建议？请发邮件至 me@myofflinebudget.app。" }
   };
   Object.keys(EXTRA16).forEach(function (k) { Object.assign(UI[k], EXTRA16[k]); });
 
